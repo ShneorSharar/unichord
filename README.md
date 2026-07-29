@@ -4,7 +4,7 @@
 
 הליבה הטכנית של unichord — התוסף (plugin) המציג ומעבד את תווי האקורדים, וערכת ה-theme הנלווית — היא **קוד פתוח**, ומפורסמת כאן תחת רישיון AGPL-3.0.
 
-> האתר החי: **https://unichord.co.il** (קישור placeholder — יש לעדכן בהתאם למצב הפריסה בפועל)
+> האתר החי: **https://unichord.co.il**
 
 ---
 
@@ -81,7 +81,7 @@ unichord נולד מתוך אמונה פשוטה: הידע המוזיקלי הב
 
 The technical core of unichord — the WordPress plugin that renders and processes chord sheets, and its companion child theme — is **open source**, published here under the **AGPL-3.0** license.
 
-> Live site: **https://unichord.co.il** (placeholder link — update to match actual deployment)
+> Live site: **https://unichord.co.il**
 
 ### The "Freedom to Play" ethos
 
