@@ -1,0 +1,101 @@
+# =============================================================
+# unichord — .gitignore
+# WordPress open-core repo (plugin + child theme)
+#
+# ⚠️  SECURITY: never commit credentials, keys, or environment
+# files. If something in this list was ever committed by mistake,
+# rotate the secret AND scrub it from git history — removing the
+# file in a new commit is NOT enough, it stays in history.
+# =============================================================
+
+# --- WordPress configuration & secrets --------------------------
+wp-config.php
+wp-config-*.php
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.php
+secrets.json
+credentials.json
+*credentials*
+.htpasswd
+
+# --- Database dumps / backups ------------------------------------
+*.sql
+*.sql.gz
+*.sqlite
+*.bak
+*.bak-*
+*.backup
+*.new
+*.old
+*.orig
+*.tar.gz
+*.zip
+db-backup/
+backups/
+_backups/
+
+# --- Logs ----------------------------------------------------------
+*.log
+debug.log
+error_log
+wp-content/debug.log
+
+# --- Dependencies (installed, not source) --------------------------
+node_modules/
+vendor/
+# Vendored third-party JS libraries shipped as part of the plugin's
+# runtime (abcjs notation renderer, pitchy pitch-detection) — these
+# are checked-in assets, not a package-manager dependency directory.
+!plugins/achord-master-suite-optimized11/assets/vendor/
+!plugins/achord-master-suite-optimized11/assets/vendor/**
+bower_components/
+.pnpm-store/
+
+# --- Build output ----------------------------------------------------
+dist/
+build/
+*.min.js.map
+*.min.css.map
+
+# --- WordPress runtime data that shouldn't be versioned ---------------
+uploads/
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup*/
+*.cache
+cache/
+
+# --- Core WordPress (this repo only ships plugin + theme, not core) ----
+/wp-admin/
+/wp-includes/
+/wp-*.php
+!wp-config-sample.php
+
+# --- OS cruft ---------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# --- Editor / IDE ------------------------------------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# --- Local dev tooling (Local by Flywheel, etc.) -----------------------
+.claude/
+.local/
+
+# --- Misc temp / probe files sometimes used for local debugging --------
+_*_probe.php
+*.tmp

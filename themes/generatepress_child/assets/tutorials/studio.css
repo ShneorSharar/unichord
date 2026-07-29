@@ -1,0 +1,107 @@
+/* ============================================================================
+ * unichord — Studio shared styles  ·  studio.css
+ * Brand palette mirrors assets/css/achord-child.css (:root --uc-*)
+ * ========================================================================== */
+:root{
+  --uc-paper:#F7F3EC; --uc-paper-hi:#FCF8F1; --uc-bg:#EDE8DF; --uc-white:#fff;
+  --uc-ink:#1F1810; --uc-ink-soft:#6B5D49; --uc-muted:rgba(31,24,16,.45);
+  --uc-gold:#A9743F; --uc-gold-deep:#8A5C30; --uc-gold-tint:#F0E6D8;
+  --uc-terracotta:#C75B39; --uc-terracotta-soft:#F0DACF;
+  --uc-border:#DED4C2; --uc-border-strong:#C9BBA2;
+  --uc-r-sm:8px; --uc-r-md:14px; --uc-r-lg:20px; --uc-r-pill:999px;
+  --uc-shadow-md:0 4px 16px rgba(80,55,25,.10); --uc-shadow-lg:0 14px 38px rgba(80,55,25,.15);
+  --uc-font:"Heebo","Assistant","Segoe UI",system-ui,sans-serif;
+  --uc-font-mark:"Poppins","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--uc-font); direction:rtl; background:#000;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+
+/* ---- stage: the fixed canvas the renderer screenshots ---- */
+.stage{
+  position:relative; overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% -10%, var(--uc-paper-hi), var(--uc-paper) 55%, var(--uc-bg) 100%);
+  color:var(--uc-ink);
+}
+.stage.a-16x9{ width:1280px; height:720px; }
+.stage.a-1x1 { width:1080px; height:1080px; }
+.stage.a-9x16{ width:720px;  height:1280px; }
+
+/* paper grain / warm vignette */
+.stage::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(130% 120% at 50% 0%, transparent 60%, rgba(80,55,25,.06));
+}
+
+/* ---- brand wordmark ---- */
+.uc-mark{ font-family:var(--uc-font-mark); font-weight:700; letter-spacing:-.02em; color:var(--uc-ink); }
+.uc-mark b{ color:var(--uc-gold); font-weight:700; }
+.uc-mark .dot{ color:var(--uc-terracotta); }
+
+/* ---- caption bar (subtitles) ---- */
+.studio-cap{
+  position:absolute; left:0; right:0; bottom:0; z-index:60;
+  display:flex; flex-direction:column; align-items:center; gap:.15em;
+  padding:0 6%; text-align:center; transition:opacity .18s ease;
+}
+.a-16x9 .studio-cap{ bottom:46px; } .a-1x1 .studio-cap{ bottom:90px; } .a-9x16 .studio-cap{ bottom:150px; }
+.studio-cap__main{
+  font-weight:800; line-height:1.25; color:#fff;
+  background:rgba(31,24,16,.82); padding:.34em .7em; border-radius:var(--uc-r-pill);
+  box-shadow:var(--uc-shadow-md); backdrop-filter:blur(2px);
+}
+.a-16x9 .studio-cap__main{ font-size:34px; } .a-1x1 .studio-cap__main{ font-size:40px; } .a-9x16 .studio-cap__main{ font-size:44px; }
+.studio-cap__sub{ font-size:.62em; font-weight:600; color:var(--uc-gold-deep); }
+.studio-cap__sub:empty{ display:none; }
+
+/* ---- fake user cursor + tap ripple ---- */
+.studio-cursor{
+  position:absolute; top:0; left:0; width:30px; height:30px; z-index:80; pointer-events:none;
+  background:no-repeat center/contain
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M5 2l14 7-6 2 3.5 7-2.6 1.2L10.5 12 5 16z' fill='white' stroke='%231F1810' stroke-width='1.4' stroke-linejoin='round'/></svg>");
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.35));
+}
+.studio-ripple{
+  position:absolute; top:0; left:0; width:120px; height:120px; margin:-60px -60px; z-index:79;
+  border-radius:50%; background:radial-gradient(circle,var(--uc-gold) 0%,rgba(169,116,63,.25) 45%,transparent 70%);
+  display:none; pointer-events:none;
+}
+
+/* ---- progress bar baked into frame (orientation cue) ---- */
+.studio-bar{ position:absolute; top:0; right:0; height:5px; background:var(--uc-gold); z-index:90; width:0; }
+
+/* ====================== reusable UI MOCK primitives ====================== */
+/* phone frame */
+.ui-phone{
+  position:relative; background:var(--uc-white); border-radius:38px;
+  border:10px solid #2a2118; box-shadow:var(--uc-shadow-lg); overflow:hidden;
+}
+.ui-phone__notch{ position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:22px; background:#2a2118; border-radius:0 0 14px 14px; z-index:5; }
+
+/* browser chrome */
+.ui-browser{ background:var(--uc-white); border-radius:var(--uc-r-lg); box-shadow:var(--uc-shadow-lg); overflow:hidden; border:1px solid var(--uc-border); }
+.ui-browser__bar{ display:flex; align-items:center; gap:8px; padding:12px 16px; background:var(--uc-bg); border-bottom:1px solid var(--uc-border); }
+.ui-browser__dot{ width:11px; height:11px; border-radius:50%; background:var(--uc-border-strong); }
+.ui-browser__url{ flex:1; margin-inline-start:10px; background:var(--uc-white); border-radius:var(--uc-r-pill); padding:6px 14px; font-size:14px; color:var(--uc-ink-soft); font-family:var(--uc-font-mark); }
+
+/* generic card / search / button / chip */
+.ui-card{ background:var(--uc-white); border:1px solid var(--uc-border); border-radius:var(--uc-r-md); box-shadow:var(--uc-shadow-md); padding:18px 20px; }
+.ui-search{ display:flex; align-items:center; gap:10px; background:var(--uc-white); border:2px solid var(--uc-border); border-radius:var(--uc-r-pill); padding:14px 22px; font-size:24px; color:var(--uc-ink-soft); box-shadow:var(--uc-shadow-md); }
+.ui-search svg{ width:26px; height:26px; flex:0 0 26px; fill:var(--uc-gold); }
+.ui-btn{ display:inline-flex; align-items:center; gap:8px; background:var(--uc-gold); color:#fff; font-weight:800; border:none; border-radius:var(--uc-r-pill); padding:14px 28px; font-size:22px; box-shadow:var(--uc-shadow-md); }
+.ui-btn--ghost{ background:transparent; color:var(--uc-gold-deep); border:2px solid var(--uc-gold); }
+.ui-chip{ display:inline-flex; align-items:center; gap:6px; background:var(--uc-gold-tint); color:var(--uc-gold-deep); border-radius:var(--uc-r-pill); padding:8px 16px; font-weight:700; font-size:18px; }
+.ui-chord{ display:inline-block; font-family:var(--uc-font-mark); font-weight:700; color:var(--uc-gold); }
+
+/* lyric line with chords above (song mock) */
+.ui-lyric{ font-size:26px; line-height:2.6; color:var(--uc-ink); }
+.ui-lyric .ui-chord{ position:relative; }
+.ui-lyric .ui-chord::before{ content:attr(data-chord); position:absolute; top:-1.05em; right:0; font-size:.7em; color:var(--uc-gold); font-weight:800; }
+
+/* soft entrance default (hidden until track animates) */
+.anim-init{ opacity:0; }

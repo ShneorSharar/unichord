@@ -1,0 +1,401 @@
+/* ==========================================================================
+   unichord — רכיב נגישות (Accessibility Toolbar)
+   קוד עצמאי, ללא תלות חיצונית (אין CDN, אין ווידג'ט מסחרי).
+   מבוסס על הרכיב שנבנה לאתר "אבן לקט" (קוד של שניאור שרר), הותאם לפלטת --uc-*.
+
+   ⚠️ הרכיב הזה הוא *תוספת נוחות* — הוא איננו תחליף לעמידת האתר בתקן.
+      החובה החוקית היא שהאתר עצמו יעמוד בת"י 5568 / WCAG 2.0 AA.
+
+   כל ההגדרות נשמרות ב-localStorage ומיושמות כ-class על <html>.
+   ========================================================================== */
+
+/* ── כפתור צף ──────────────────────────────────────────────────────────────
+   מיקום: שמאל-תחתון (פיזי, לא לוגי) — במכוון.
+   ⚠️ `inset-inline-start` היה שגוי כאן: במסמך RTL הוא נפתר ל*ימין*, ושם כבר
+      יושב `.generate-back-to-top` של GeneratePress. אומת בדפדפן (probe left=345
+      מתוך רוחב 381). לכן משתמשים ב-`left` פיזי — גם התקן וגם הקונבנציה מציבים
+      רכיב נגישות בפינה השמאלית.
+
+   שכבות (z-index) שנמדדו באתר החי:
+      .achord-bottom-controls-cluster = 1000   (סרגל השליטה בעמוד שיר)
+      #achord-overlay / #achord-panel = 9998 / 9999  (מגירת הניווט)
+      #achord-popup = 10001 · #uc-ios-sheet = 10002 · #uc-offline-bar = 10050
+   ⚠️ ערך גבוה (99998) היה מציב את הכפתור מעל המגירה, מעל פופאפ הדיאגרמה
+      ומעל פס-האופליין. 1200 = מעל תוכן וסרגל-השיר, אך מתחת לכל שכבת-מודאל. */
+.uc-a11y-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1200;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: var(--uc-r-pill, 999px);
+  /* --uc-gold-deep = #8A5C30 מול לבן = 5.75:1 → עובר AA (ולא --uc-gold #A9743F
+     שנותן 3.6:1 בלבד). הכפתור עצמו חייב לעמוד בתקן, אחרת הוא בדיחה. */
+  background: var(--uc-gold-deep, #8A5C30);
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 16px rgba(80, 55, 25, .34);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--uc-t-fast, .15s ease), background var(--uc-t-fast, .15s ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.uc-a11y-toggle:hover { background: #6E4826; transform: scale(1.06); }
+.uc-a11y-toggle:focus-visible { outline: 3px solid #1F1810; outline-offset: 3px; }
+.uc-a11y-toggle svg { width: 28px; height: 28px; display: block; }
+
+/* מובייל: קטן יותר וצמוד לפינה, כדי לא לחסום תוכן/כפתורי-שיר */
+@media (max-width: 640px) {
+  .uc-a11y-toggle { width: 44px; height: 44px; bottom: 12px; left: 12px; }
+  .uc-a11y-toggle svg { width: 23px; height: 23px; }
+}
+
+/* ⚠️ בעמוד שיר `.achord-bottom-controls-cluster` (טרנספוזיציה/גלילה) תופס את
+   ~130px התחתונים לרוחב כמעט מלא — נמדד חי [29,695]→[359,809] במסך 381×825.
+   כפתור בפינה התחתונה היה יושב עליו ומסתיר שליטה. לכן מרימים אותו מעליו. */
+body.single-achord_song_cpt .uc-a11y-toggle { bottom: 150px; }
+@media (max-width: 640px) {
+  body.single-achord_song_cpt .uc-a11y-toggle { bottom: 146px; }
+}
+
+/* בזמן הדפסה הרכיב לא רלוונטי */
+@media print {
+  .uc-a11y-toggle, .uc-a11y-panel { display: none !important; }
+}
+
+/* ── הפאנל ────────────────────────────────────────────────────────────── */
+.uc-a11y-panel {
+  position: fixed;
+  bottom: 84px;
+  left: 20px;
+  z-index: 1201;
+  width: min(330px, calc(100vw - 24px));
+  max-height: min(78vh, 620px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--uc-white, #fff);
+  color: var(--uc-ink, #1F1810);
+  border: 1px solid var(--uc-border, #DED4C2);
+  border-radius: var(--uc-r-md, 14px);
+  box-shadow: var(--uc-shadow-lg, 0 14px 38px rgba(80, 55, 25, .15));
+  padding: 14px 14px 16px;
+  font-family: Assistant, "Segoe UI", system-ui, sans-serif;
+  direction: rtl;
+  text-align: right;
+  display: none;
+}
+.uc-a11y-panel[aria-hidden="false"] { display: block; }
+
+/* הפאנל נפתח מעל הכפתור — לכן הוא מוסט יחד איתו בעמוד שיר.
+   סדר הכללים חשוב: כלל הדסקטופ חייב להופיע *לפני* ה-media query,
+   אחרת (ספציפיות זהה) הוא היה גובר גם במובייל. */
+body.single-achord_song_cpt .uc-a11y-panel { bottom: 214px; }
+
+@media (max-width: 640px) {
+  .uc-a11y-panel { bottom: 64px; left: 12px; }
+  body.single-achord_song_cpt .uc-a11y-panel { bottom: 198px; }
+}
+
+.uc-a11y-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--uc-border, #DED4C2);
+  padding-bottom: 9px;
+  margin-bottom: 11px;
+}
+.uc-a11y-panel__title {
+  margin: 0;
+  font-size: 1.06rem;
+  font-weight: 800;
+  color: var(--uc-ink, #1F1810);
+  font-family: Assistant, "Segoe UI", system-ui, sans-serif;
+}
+.uc-a11y-panel__title::before { content: none; }   /* מנטרל את הקישוט של .uc-prose h2 */
+
+.uc-a11y-panel__close {
+  width: 34px; height: 34px;
+  border-radius: var(--uc-r-sm, 8px);
+  background: var(--uc-gold-tint, #F0E6D8);
+  color: var(--uc-ink, #1F1810);
+  border: 1px solid var(--uc-border, #DED4C2);
+  font-size: 1.3rem; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.uc-a11y-panel__close:hover { background: var(--uc-border, #DED4C2); }
+.uc-a11y-panel__close:focus-visible { outline: 2px solid var(--uc-ink, #1F1810); outline-offset: 2px; }
+
+/* ── שורת גודל טקסט ───────────────────────────────────────────────────── */
+.uc-a11y-fontrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--uc-border, #DED4C2);
+  border-radius: var(--uc-r-sm, 8px);
+  background: var(--uc-paper, #F7F3EC);
+  margin-bottom: 8px;
+}
+.uc-a11y-fontrow__label { font-size: .88rem; font-weight: 700; }
+.uc-a11y-fontrow__controls { display: flex; align-items: center; gap: 6px; }
+.uc-a11y-step {
+  width: 34px; height: 34px;
+  border-radius: var(--uc-r-sm, 8px);
+  background: var(--uc-white, #fff);
+  border: 1.5px solid var(--uc-border-strong, #C9BBA2);
+  color: var(--uc-ink, #1F1810);
+  font-size: 1.15rem; font-weight: 800; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.uc-a11y-step:hover:not([disabled]) { border-color: var(--uc-gold, #A9743F); background: var(--uc-gold-tint, #F0E6D8); }
+.uc-a11y-step:focus-visible { outline: 2px solid var(--uc-ink, #1F1810); outline-offset: 2px; }
+.uc-a11y-step[disabled] { opacity: .38; cursor: not-allowed; }
+.uc-a11y-fontval { min-width: 4ch; text-align: center; font-weight: 800; font-size: .9rem; }
+
+/* ── גריד מתגים ───────────────────────────────────────────────────────── */
+.uc-a11y-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-bottom: 9px;
+}
+.uc-a11y-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  padding: 10px 5px;
+  min-height: 74px;
+  border: 1.5px solid var(--uc-border, #DED4C2);
+  border-radius: var(--uc-r-sm, 8px);
+  background: var(--uc-paper-hi, #FCF8F1);
+  color: var(--uc-ink, #1F1810);
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.uc-a11y-btn svg { width: 22px; height: 22px; flex: 0 0 auto; }
+.uc-a11y-btn:hover { border-color: var(--uc-gold, #A9743F); background: var(--uc-gold-tint, #F0E6D8); }
+.uc-a11y-btn:focus-visible { outline: 2px solid var(--uc-ink, #1F1810); outline-offset: 2px; }
+.uc-a11y-btn[aria-pressed="true"] {
+  border-color: var(--uc-gold-deep, #8A5C30);
+  background: var(--uc-gold-deep, #8A5C30);
+  color: #fff;
+}
+
+/* ── איפוס + קישור להצהרה ─────────────────────────────────────────────── */
+.uc-a11y-reset {
+  width: 100%;
+  padding: 9px;
+  border: 0;
+  border-radius: var(--uc-r-sm, 8px);
+  background: var(--uc-ink, #1F1810);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: .88rem;
+  cursor: pointer;
+}
+.uc-a11y-reset:hover { background: #3A2E20; }
+.uc-a11y-reset:focus-visible { outline: 2px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+
+.uc-a11y-panel__link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--uc-gold-deep, #8A5C30);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.uc-a11y-panel__link:focus-visible { outline: 2px solid var(--uc-ink, #1F1810); outline-offset: 2px; }
+
+/* דילוג לתוכן — נדרש ב-WCAG 2.4.1 (Bypass Blocks) */
+.uc-a11y-skip {
+  position: absolute;
+  inset-inline-start: -9999px;
+  top: 0;
+  z-index: 100000;
+  padding: 10px 18px;
+  background: var(--uc-ink, #1F1810);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0 0 var(--uc-r-sm, 8px) 0;
+  text-decoration: none;
+}
+.uc-a11y-skip:focus {
+  inset-inline-start: 0;
+  outline: 3px solid var(--uc-gold, #A9743F);
+}
+
+/* ==========================================================================
+   מצבי תצוגה — מוחלים כ-class על <html>
+   ========================================================================== */
+
+/* ── (1) הגדלת/הקטנת טקסט ─────────────────────────────────────────────────
+   האתר בנוי ב-rem (יחסית ל-<html>), לכן שינוי font-size של html מגדיל הכול.
+   ⚠️ קריטי: טקסט השיר משתמש ב---base-font-size: clamp(24px, 1.8vw + 0.8rem, 30px)
+      — יש בו רכיב rem, ולכן הוא כן מושפע. האקורדים ממוקמים ב-position:absolute
+      עם הסטות שנמדדות ב-px ע"י window.__amsMidwordFix. שינוי גודל טקסט הופך
+      את המדידה הזו לישנה ⇒ ה-JS חייב להריץ את __amsMidwordFix מחדש.
+      (ה-ResizeObserver המובנה מגיב רק לשינוי *רוחב*, ולכן לא נורה כאן.) */
+/* הגדלת הטקסט מבוצעת ב-JS (applyFontScale) ולא כאן: האתר כתוב ב-px,
+   ולכן הגדלת font-size של <html> לא הייתה משנה דבר — ורק הייתה מנפחת
+   מידות אחרות שמבוססות rem. האטריביוט נשאר ככוונון-CSS עתידי. */
+
+/* ── (2) הדגשת קישורים ──────────────────────────────────────────────────── */
+html.uc-a11y-links a:not(.uc-a11y-toggle):not(.uc-a11y-btn) {
+  text-decoration: underline !important;
+  text-underline-offset: 2px;
+}
+/* לא נוגעים באקורדים — הם קישורים-לכאורה ותצוגתם קריטית ליישור */
+html.uc-a11y-links .achord-chord { text-decoration: none !important; }
+
+/* ── (3) גופן קריא ──────────────────────────────────────────────────────── */
+html.uc-a11y-readable body,
+html.uc-a11y-readable h1, html.uc-a11y-readable h2, html.uc-a11y-readable h3,
+html.uc-a11y-readable h4, html.uc-a11y-readable h5, html.uc-a11y-readable h6,
+html.uc-a11y-readable .uc-phero__title, html.uc-a11y-readable .uc-wordmark {
+  font-family: Arial, "Arial Hebrew", "Segoe UI", sans-serif !important;
+  letter-spacing: .01em;
+}
+html.uc-a11y-readable p,
+html.uc-a11y-readable li { line-height: 1.9 !important; }
+/* טקסט השיר מוחרג בכוונה: החלפת גופן משנה רוחב-תווים ⇒ מזיזה את יישור האקורדים.
+   (אילו כן היינו מחליפים, היה חובה להריץ __amsMidwordFix אחרי font-loading.) */
+html.uc-a11y-readable .achord-lyrics,
+html.uc-a11y-readable .achord-chord { font-family: var(--font-body, Assistant, sans-serif) !important; }
+
+/* ── (4) ביטול אנימציות ─────────────────────────────────────────────────── */
+html.uc-a11y-pause *,
+html.uc-a11y-pause *::before,
+html.uc-a11y-pause *::after {
+  animation-duration: .001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ── (5) ניגודיות גבוהה (שחור/לבן/צהוב) ────────────────────────────────── */
+/* ⚠️ ה---:where() כאן איננו קישוט: הוא מאפס את הספציפיות של החלק שבתוכו.
+   בלעדיו הכלל הגורף (0,1,4) גובר על החריגים (קישורים/כפתורים = 0,1,2)
+   והקישורים נשארים לבנים במקום צהובים. אומת בדפדפן — ראה דוח. */
+/* ⚠️ ביטול מעברים במצב ניגודיות — לא קוסמטיקה.
+   GeneratePress מגדיר `a, button, input { transition: color .1s, background-color .1s }`,
+   והתבנית מוסיפה `transition: background` על כפתורים. בלי הביטול, המעבר לניגודיות
+   מתבצע באנימציה: הכפתורים "נתקעים" בצבע הישן למשך המעבר, וב-render איטי/מוקפא
+   הם לא מתעדכנים כלל. אומת בדפדפן: בלי השורה הזו 5 כפתורים נשארו בצבע המקורי;
+   איתה — 41/41 כפתורים עברו לשחור. */
+html.uc-a11y-contrast *,
+html.uc-a11y-contrast *::before,
+html.uc-a11y-contrast *::after { transition: none !important; }
+
+html.uc-a11y-contrast body,
+html.uc-a11y-contrast body *:where(:not(svg):not(svg *)) {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+/* רקעים דקורטיביים (gradient/תמונה) חייבים להתבטל, אחרת הם מכסים את השחור */
+html.uc-a11y-contrast .uc-phero__bg,
+html.uc-a11y-contrast .uc-cta-band__bg,
+html.uc-a11y-contrast [class*="__bg"] { background-image: none !important; opacity: 1 !important; }
+
+/* ⚠️ `:not(#_)` — טריק ספציפיות מכוון, לא טעות.
+   התבנית והתוסף מגדירים כפתורים דרך מזהה עם !important
+   (למשל `#achord-menu-btn { background: ... !important }` ב-achord-child.css).
+   כלל ברמת-class לא יכול לגבור על כך. `:not(#_)` מוסיף משקל-מזהה בלי להתאים
+   לשום אלמנט (אין אלמנט עם id="_"), ובכך מנצח את כללי-התבנית.
+   בלי זה כפתור ההמבורגר נשאר זהב-על-קרם (2.96:1) גם במצב ניגודיות. אומת בדפדפן. */
+html.uc-a11y-contrast a:not(#_),
+html.uc-a11y-contrast a:not(#_) * { color: #FFFF00 !important; }
+
+html.uc-a11y-contrast button:not(#_),
+html.uc-a11y-contrast .uc-btn:not(#_),
+html.uc-a11y-contrast [role="button"]:not(#_),
+html.uc-a11y-contrast input[type="submit"]:not(#_) {
+  background-color: #000 !important;
+  background-image: none !important;
+  color: #FFFF00 !important;
+  border: 2px solid #FFFF00 !important;
+}
+html.uc-a11y-contrast button:not(#_) *,
+html.uc-a11y-contrast .uc-btn:not(#_) * { color: #FFFF00 !important; }
+/* פסי ההמבורגר מצוירים כרקע, לא כטקסט */
+html.uc-a11y-contrast #achord-menu-btn .bar { background: #FFFF00 !important; }
+
+html.uc-a11y-contrast input:not(#_),
+html.uc-a11y-contrast textarea:not(#_),
+html.uc-a11y-contrast select:not(#_) {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+html.uc-a11y-contrast ::placeholder { color: #CCC !important; opacity: 1; }
+html.uc-a11y-contrast :focus-visible { outline: 3px solid #FFFF00 !important; outline-offset: 2px; }
+/* אקורדים בציאן — נבדלים מהמילים (לבן) ומהקישורים (צהוב), 16.7:1 על שחור */
+html.uc-a11y-contrast .achord-chord:not(#_) { color: #00FFFF !important; }
+
+/* הרכיב עצמו נשאר קריא — ספציפיות גבוהה מכל הכללים שמעל */
+html.uc-a11y-contrast #uc-a11y-panel:not(#_),
+html.uc-a11y-contrast #uc-a11y-panel:not(#_) *:not(svg):not(svg *) {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+html.uc-a11y-contrast #uc-a11y-panel:not(#_) .uc-a11y-btn[aria-pressed="true"],
+html.uc-a11y-contrast #uc-a11y-panel:not(#_) .uc-a11y-btn[aria-pressed="true"] * {
+  background-color: #FFFF00 !important;
+  color: #000 !important;
+  border-color: #FFFF00 !important;
+}
+html.uc-a11y-contrast #uc-a11y-toggle:not(#_):not(#__) {
+  background-color: #FFFF00 !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+}
+
+/* ── (6) מונוכרום ───────────────────────────────────────────────────────── */
+/* מוחל על <html>. הערה: filter על אלמנט-שורש אינו יוצר containing-block
+   ל-position:fixed בדפדפנים מודרניים (הפילטר מוחל על ה-canvas), ולכן הכפתור
+   הצף והכותרת הדביקה ממשיכים לעבוד. אומת בכרום — ראה דוח. */
+html.uc-a11y-mono { filter: grayscale(1); }
+/* אם גם ניגודיות דלוקה — אין טעם ב-grayscale, הכול כבר חד-גוני */
+html.uc-a11y-mono.uc-a11y-contrast { filter: none; }
+
+/* ── (7) הדגשת כותרות ───────────────────────────────────────────────────── */
+html.uc-a11y-headings h1,
+html.uc-a11y-headings h2,
+html.uc-a11y-headings h3 {
+  outline: 2px dashed var(--uc-gold-deep, #8A5C30);
+  outline-offset: 4px;
+}
+html.uc-a11y-headings .uc-a11y-panel__title { outline: none; }
+
+/* ── (8) סמן גדול ───────────────────────────────────────────────────────── */
+html.uc-a11y-cursor,
+html.uc-a11y-cursor * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M8 4l30 18-12 3-3 12z' fill='%23000' stroke='%23fff' stroke-width='2.5'/%3E%3C/svg%3E") 4 4, auto !important;
+}
+html.uc-a11y-cursor a,
+html.uc-a11y-cursor button,
+html.uc-a11y-cursor .achord-chord,
+html.uc-a11y-cursor [role="button"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M18 4v22l-5-5-4 4 12 17h14l6-16V14h-5v-3h-5v-3h-5V4z' fill='%23fff' stroke='%23000' stroke-width='2.5'/%3E%3C/svg%3E") 16 4, pointer !important;
+}

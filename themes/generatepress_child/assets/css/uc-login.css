@@ -1,0 +1,181 @@
+/**
+ * unichord — עמוד כניסה ממותג (Google בלבד)
+ * נטען כקובץ עצמאי מתוך מסך הכניסה שמרונדר ב-mu-plugin uc-login-page.php.
+ * צבעים תואמים לפלטת המיתוג (זהב חם) ולשער הבנייה.
+ * נוצר 29.7.2026.
+ */
+
+:root {
+	--uc-paper: #f7f1e7;
+	--uc-paper-2: #efe5d4;
+	--uc-ink: #241d15;      /* טקסט ראשי — ~14:1 על הנייר */
+	--uc-muted: #574d3f;    /* טקסט משני — ≥5:1 על הכרטיס */
+	--uc-gold: #a9743f;
+	--uc-gold-dk: #825931;  /* זהב-טקסט נגיש (6.1:1 על לבן) */
+	--uc-terra: #c75b39;
+	--uc-line: rgba(36, 29, 21, 0.16);
+	--uc-card: #fffdf9;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+
+body.uc-login-body {
+	font-family: 'Heebo', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+	color: var(--uc-ink);
+	background:
+		radial-gradient(1200px 600px at 82% -12%, rgba(199, 91, 57, 0.10), transparent 60%),
+		radial-gradient(900px 520px at -12% 112%, rgba(169, 116, 63, 0.16), transparent 55%),
+		var(--uc-paper);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	min-height: 100dvh;
+	padding: 24px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.uc-login-card {
+	width: 100%;
+	max-width: 430px;
+	background: var(--uc-card);
+	border: 1px solid var(--uc-line);
+	border-radius: 20px;
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.7) inset,
+		0 26px 64px -26px rgba(36, 29, 21, 0.42),
+		0 8px 24px -16px rgba(36, 29, 21, 0.28);
+	padding: 44px 36px 34px;
+	text-align: center;
+}
+
+/* מותג */
+.uc-login-brand {
+	font-family: 'Heebo', sans-serif;
+	font-weight: 700;
+	font-size: 32px;
+	letter-spacing: -0.5px;
+	color: var(--uc-ink);
+	direction: ltr;
+	display: inline-block;
+	margin: 0;
+	line-height: 1;
+}
+.uc-login-brand .dot { color: var(--uc-terra); }
+
+.uc-login-slogan {
+	margin: 9px 0 0;
+	font-size: 13px;
+	letter-spacing: 2px;
+	color: var(--uc-gold-dk);
+	font-weight: 500;
+}
+
+.uc-login-rule {
+	width: 54px;
+	height: 3px;
+	border-radius: 3px;
+	background: linear-gradient(90deg, var(--uc-gold), var(--uc-terra));
+	margin: 24px auto;
+	border: 0;
+}
+
+/* כותרת */
+.uc-login-title {
+	font-family: 'Frank Ruhl Libre', Georgia, 'Times New Roman', serif;
+	font-weight: 700;
+	font-size: 27px;
+	line-height: 1.25;
+	margin: 0 0 10px;
+	color: var(--uc-ink);
+}
+.uc-login-sub {
+	margin: 0 0 28px;
+	font-size: 15px;
+	line-height: 1.6;
+	color: var(--uc-muted);
+}
+
+/* הודעת שגיאה */
+.uc-login-error {
+	margin: 0 0 20px;
+	padding: 12px 14px;
+	border: 1px solid rgba(199, 91, 57, 0.35);
+	background: rgba(199, 91, 57, 0.08);
+	border-radius: 12px;
+	color: #a2402a;
+	font-size: 14px;
+	line-height: 1.5;
+	text-align: center;
+}
+
+/* כפתור Google — לפי הנחיות המיתוג של גוגל (וריאנט לבן) */
+.uc-gbtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	width: 100%;
+	min-height: 48px;
+	padding: 0 16px;
+	background: #ffffff;
+	border: 1px solid #dadce0;
+	border-radius: 12px;
+	color: #3c4043;            /* אפור-גוגל — ~8.9:1 על לבן */
+	font-family: 'Roboto', 'Heebo', system-ui, Arial, sans-serif;
+	font-size: 16px;
+	font-weight: 500;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color .18s ease, box-shadow .18s ease, border-color .18s ease;
+	direction: rtl;
+}
+.uc-gbtn:hover {
+	background: #f8faff;
+	border-color: #d2d6dc;
+	box-shadow: 0 1px 3px rgba(60, 64, 67, 0.16), 0 2px 8px rgba(60, 64, 67, 0.10);
+}
+.uc-gbtn:active { background: #f1f4fb; }
+.uc-gbtn:focus-visible {
+	outline: 3px solid rgba(66, 133, 244, 0.55);
+	outline-offset: 2px;
+}
+.uc-gbtn__icon {
+	flex: 0 0 auto;
+	width: 20px;
+	height: 20px;
+	display: block;
+}
+.uc-gbtn__text { display: inline-block; }
+
+/* פוטר */
+.uc-login-foot {
+	margin: 26px 0 0;
+	font-size: 12px;
+	color: var(--uc-muted);
+	letter-spacing: .3px;
+}
+.uc-login-foot a {
+	color: var(--uc-gold-dk);
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+}
+.uc-login-foot a:hover { border-bottom-color: currentColor; }
+.uc-login-foot a:focus-visible {
+	outline: 2px solid var(--uc-gold);
+	outline-offset: 2px;
+	border-radius: 3px;
+}
+
+/* מובייל */
+@media (max-width: 420px) {
+	.uc-login-card { padding: 36px 22px 28px; border-radius: 16px; }
+	.uc-login-brand { font-size: 28px; }
+	.uc-login-title { font-size: 24px; }
+}
+
+/* כיבוד העדפת תנועה מופחתת */
+@media (prefers-reduced-motion: reduce) {
+	.uc-gbtn { transition: none; }
+}

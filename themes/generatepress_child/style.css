@@ -1,0 +1,37 @@
+/*
+ Theme Name:   GeneratePress Child
+ Theme URI:    https://generatepress.com
+ Description:  Achord child theme
+ Author:       Tom Usborne
+ Author URI:   https://tomusborne.com
+ Template:     generatepress
+ Version:      0.1
+*/
+
+/* =============================================================================
+   CSS Variables — מקור אחיד לצבעי האתר
+   ========================================================================== */
+:root {
+  --bg-song:       #F1DAC4;
+  --text-primary:  #0D1B33;
+  --border-color:  #DCD0C1;
+}
+
+/* =============================================================================
+   GeneratePress — תיקוני header בסיסיים
+   ========================================================================== */
+.site-header,
+.site-header .inside-header,
+header.wp-block-template-part,
+.wp-site-blocks > header {
+  background-color: var(--bg-song) !important;
+  color:            var(--text-primary) !important;
+  border-bottom:    1px solid var(--border-color);
+}
+
+/* מניעת כיסוי חיפוש בתוך ה-header */
+header .asl_w,
+header .asp_w {
+  background:  transparent !important;
+  box-shadow:  none !important;
+}

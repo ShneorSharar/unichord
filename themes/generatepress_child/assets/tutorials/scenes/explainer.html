@@ -1,0 +1,144 @@
+<!doctype html><html lang="he" dir="rtl"><head>
+<meta charset="utf-8">
+<title>unichord · סרטון הסבר מלא</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../studio.css">
+<style>
+  .ex{ position:absolute; inset:0; }
+  /* sections are OPAQUE and stack in DOM order — each fades IN over the previous.
+     (single fade-in only; no fade-out — avoids the engine's hold-start-before-from overlap) */
+  .secbg{ background:radial-gradient(120% 90% at 50% -10%, var(--uc-paper-hi), var(--uc-paper) 55%, var(--uc-bg) 100%); }
+  .sec{ position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8%; gap:18px;
+        background:radial-gradient(120% 90% at 50% -10%, var(--uc-paper-hi), var(--uc-paper) 55%, var(--uc-bg) 100%); }
+  .big{ font-weight:900; color:var(--uc-ink); line-height:1.1; }
+  .a-16x9 .big{ font-size:64px; } .a-1x1 .big{ font-size:72px; } .a-9x16 .big{ font-size:70px; }
+  .mid{ font-weight:800; color:var(--uc-ink); }
+  .a-16x9 .mid{ font-size:40px; } .a-1x1 .mid{ font-size:46px; } .a-9x16 .mid{ font-size:46px; }
+  .sm{ font-weight:600; color:var(--uc-ink-soft); font-size:26px; }
+  .gold{ color:var(--uc-gold); } .terra{ color:var(--uc-terracotta); }
+  /* wordmark */
+  .wm{ font-family:var(--uc-font-mark); font-weight:800; letter-spacing:-.02em; color:var(--uc-ink); display:inline-flex; }
+  .a-16x9 .wm{ font-size:96px; } .a-1x1 .wm{ font-size:104px; } .a-9x16 .wm{ font-size:96px; }
+  .wm .c2{ color:var(--uc-gold); } .wm .dot{ color:var(--uc-terracotta); }
+  /* floating notes */
+  .note{ position:absolute; font-size:48px; color:var(--uc-gold); opacity:.0; z-index:5; }
+  /* value pills */
+  .pills{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; max-width:90%; }
+  .pill{ background:var(--uc-white); border:2px solid var(--uc-border); border-radius:var(--uc-r-pill); padding:14px 26px; font-weight:800; font-size:28px; color:var(--uc-gold-deep); box-shadow:var(--uc-shadow-md); display:inline-flex; gap:10px; align-items:center; }
+  /* feature cards */
+  .fcard{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+          background:radial-gradient(120% 90% at 50% -10%, var(--uc-paper-hi), var(--uc-paper) 55%, var(--uc-bg) 100%); }
+  .fcard .ic{ width:130px; height:130px; border-radius:32px; background:var(--uc-gold-tint); display:flex; align-items:center; justify-content:center; font-size:64px; box-shadow:var(--uc-shadow-md); }
+  .fcard .ft{ font-weight:800; font-size:42px; color:var(--uc-ink); }
+  .fcard .fs{ font-weight:600; font-size:26px; color:var(--uc-ink-soft); }
+  .count{ font-family:var(--uc-font-mark); font-weight:800; color:var(--uc-gold); }
+  .a-16x9 .count{ font-size:120px; } .a-1x1 .count{ font-size:140px; } .a-9x16 .count{ font-size:130px; }
+  .url{ font-family:var(--uc-font-mark); font-weight:700; font-size:34px; color:var(--uc-gold-deep); }
+  .rule{ height:5px; width:120px; background:var(--uc-terracotta); border-radius:3px; }
+</style></head>
+<body>
+<div class="stage">
+  <div class="ex">
+
+    <!-- floating notes (whole-video ambience) -->
+    <div class="note" id="n1" style="top:14%; right:14%">♪</div>
+    <div class="note" id="n2" style="top:24%; left:12%">♫</div>
+    <div class="note" id="n3" style="bottom:20%; right:18%">♩</div>
+    <div class="note" id="n4" style="bottom:16%; left:16%">♬</div>
+
+    <!-- SEC 1 — intro logo -->
+    <div class="sec" id="s1">
+      <div class="wm"><span class="c1" id="wm1">uni</span><span class="c2" id="wm2">chord</span><span class="dot" id="wm3">.</span></div>
+      <div class="mid gold" id="slogan">החופש לנגן</div>
+    </div>
+
+    <!-- SEC 2 — problem -->
+    <div class="sec" id="s2" style="opacity:0">
+      <div class="big" id="p1">מחפשים אקורדים<br>לשירים שגדלתם עליהם?</div>
+      <div class="mid terra" id="p2">בלי פרסומות · בלי הרשמה · בלי תשלום</div>
+    </div>
+
+    <!-- SEC 3 — value -->
+    <div class="sec" id="s3" style="opacity:0">
+      <div class="sm" id="v0">מספר האקורדים הישראלי</div>
+      <div class="count" id="vcount">אלפי שירים</div>
+      <div class="pills">
+        <span class="pill" id="pl1">🎁 חינם לתמיד</span>
+        <span class="pill" id="pl2">🎼 אקורדים · תווים · שיעורים</span>
+        <span class="pill" id="pl3">🤝 נבנה בידי קהילה</span>
+        <span class="pill" id="pl4">⌨️ קוד פתוח</span>
+      </div>
+    </div>
+
+    <!-- SEC 4 — feature montage -->
+    <div class="sec" id="s4" style="opacity:0">
+      <div class="fcard" id="f1"><div class="ic">🔎</div><div class="ft">חיפוש מיידי</div><div class="fs">מקלידים — והשיר נפתח</div></div>
+      <div class="fcard" id="f2"><div class="ic">🎸</div><div class="ft">אקורדים מעל המילים</div><div class="fs">בדיוק במקום הנכון</div></div>
+      <div class="fcard" id="f3"><div class="ic">🎚️</div><div class="ft">סולם וגלילה</div><div class="fs">מתאימים לקול שלכם</div></div>
+      <div class="fcard" id="f4"><div class="ic">🎤</div><div class="ft">לומדים עם מיקרופון</div><div class="fs">המנוע מקשיב ומאשר</div></div>
+      <div class="fcard" id="f5"><div class="ic">🎵</div><div class="ft">חליל ותווים</div><div class="fs">תרשים אצבוע לכל תו</div></div>
+      <div class="fcard" id="f6"><div class="ic">📲</div><div class="ft">אפליקציה אופליין</div><div class="fs">עובד גם בלי אינטרנט</div></div>
+    </div>
+
+    <!-- SEC 5 — CTA -->
+    <div class="sec" id="s5" style="opacity:0">
+      <div class="wm"><span>uni</span><span class="c2">chord</span><span class="dot">.</span></div>
+      <div class="rule" id="cta-rule"></div>
+      <div class="mid" id="cta1">האתר. עכשיו גם אפליקציה.</div>
+      <div class="url" id="cta2">unichord.co.il</div>
+      <div class="mid gold" id="cta3">החופש לנגן 🎶</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../studio.js"></script>
+<script>
+  const aspect = (new URLSearchParams(location.search).get('aspect')) || '16x9';
+  document.querySelector('.stage').classList.add('a-' + aspect);
+  const S = Studio.create({ fps: 30, aspect });
+
+  // ambient notes drift the whole time
+  [['#n1',0,-30],['#n2',300,26],['#n3',600,-22],['#n4',900,30]].forEach(([sel,d,dy])=>{
+    S.track(sel,{from:d,to:d+1400,opacity:[0,.5],y:[0,dy]});
+    S.track(sel,{from:21000,to:22500,opacity:[.5,0]});
+  });
+
+  /* ===== SEC 1 (0–3.2s) intro ===== */
+  S.track('#wm1',{from:200,to:1000,ease:'outBack',y:[40,0],opacity:[0,1]});
+  S.track('#wm2',{from:500,to:1300,ease:'outBack',y:[40,0],opacity:[0,1]});
+  S.track('#wm3',{from:900,to:1500,ease:'outBack',scale:[0,1],opacity:[0,1]});
+  S.track('#slogan',{from:1300,to:2000,y:[16,0],opacity:[0,1]});
+  // (no fade-out: the next opaque section covers this one)
+
+  /* ===== SEC 2 (3.2–7s) problem ===== */
+  S.track('#s2',{from:3200,to:3500,opacity:[0,1]});
+  S.track('#p1',{from:3500,to:4200,ease:'outCubic',y:[24,0],opacity:[0,1]});
+  S.track('#p2',{from:4600,to:5300,ease:'outBack',scale:[.8,1],opacity:[0,1]});
+
+  /* ===== SEC 3 (7–11.4s) value ===== */
+  S.track('#s3',{from:7000,to:7300,opacity:[0,1]});
+  S.track('#v0',{from:7300,to:7900,y:[14,0],opacity:[0,1]});
+  S.track('#vcount',{from:7700,to:8500,ease:'outBack',scale:[.6,1],opacity:[0,1]});
+  S.track('.pill',{from:8700,to:9300,ease:'outBack',y:[20,0],opacity:[0,1],stagger:180});
+
+  /* ===== SEC 4 (11.4–18.5s) feature montage ===== */
+  S.track('#s4',{from:11400,to:11700,opacity:[0,1]});
+  // each opaque card fades in over the previous (single track — no overlap)
+  const feats=['#f1','#f2','#f3','#f4','#f5','#f6'];
+  feats.forEach((f,i)=>{
+    const t=11700+i*1050;
+    S.track(f,{from:t,to:t+480,ease:'outBack',y:[34,0],scale:[.9,1],opacity:[0,1]});
+  });
+
+  /* ===== SEC 5 (18.5–22.5s) CTA ===== */
+  S.track('#s5',{from:18400,to:18800,opacity:[0,1]});
+  S.track('#cta-rule',{from:18800,to:19400,ease:'outCubic',w:[0,100],opacity:[0,1]});
+  S.track('#cta1',{from:19200,to:19800,y:[16,0],opacity:[0,1]});
+  S.track('#cta2',{from:19700,to:20300,ease:'outBack',scale:[.8,1],opacity:[0,1]});
+  S.track('#cta3',{from:20300,to:21000,y:[14,0],opacity:[0,1]});
+
+  S.ready();
+</script>
+</body></html>

@@ -1,0 +1,199 @@
+<!doctype html><html lang="he" dir="rtl"><head>
+<meta charset="utf-8">
+<title>unichord · כלי עמוד השיר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../studio.css">
+<style>
+  .scene{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .phone{ width:330px; height:650px; }
+  .a-9x16 .phone{ transform:scale(1.25); } .a-16x9 .phone{ transform:scale(.96); }
+  .phone__screen{ position:absolute; inset:10px; border-radius:30px; overflow:hidden; background:var(--uc-paper); }
+
+  /* song page */
+  .song{ position:absolute; inset:0; background:var(--uc-paper); display:flex; flex-direction:column; }
+  .song__head{ padding:30px 18px 10px; background:var(--uc-paper-hi); border-bottom:1px solid var(--uc-border); }
+  .song__h{ font-weight:800; font-size:21px; color:var(--uc-ink); }
+  .song__meta{ font-size:12px; color:var(--uc-gold-deep); margin-top:2px; }
+
+  /* toolbar of round buttons */
+  .toolbar{ display:flex; align-items:center; gap:9px; padding:11px 14px; background:var(--uc-paper-hi); border-bottom:1px solid var(--uc-border); }
+  .tbtn{ width:38px; height:38px; border-radius:50%; background:var(--uc-white); border:1.5px solid var(--uc-border-strong);
+         display:flex; align-items:center; justify-content:center; color:var(--uc-gold-deep); font-weight:800; font-size:17px; box-shadow:var(--uc-shadow-md); }
+  .tbtn svg{ width:19px; height:19px; }
+  .tbtn--key{ width:auto; border-radius:var(--uc-r-pill); padding:0 13px; gap:7px; font-family:var(--uc-font-mark); font-size:14px; color:var(--uc-ink); }
+  .tbtn--key .lbl{ font-weight:700; }
+  .tbtn.is-active{ background:var(--uc-gold-tint); border-color:var(--uc-gold); color:var(--uc-gold-deep); }
+  .toolbar .spacer{ flex:1; }
+
+  /* lyrics scroll viewport */
+  .song__view{ position:relative; flex:1; overflow:hidden; }
+  .lyrics{ position:absolute; inset:0; padding:18px 20px; }
+  .lyrics .ui-lyric{ font-size:21px; line-height:2.7; transition:font-family .25s ease; }
+  /* serif font applied when chosen */
+  .lyrics.font-serif .ui-lyric{ font-family:Georgia,"Times New Roman",serif; }
+
+  /* stacked chord layers for transpose: high layer hidden by default */
+  .ui-lyric .ui-chord .hi{ position:absolute; top:-1.05em; right:0; font-size:.7em; color:var(--uc-gold); font-weight:800; opacity:0; }
+  /* the low (original) label is the ::before; we fade it out via a class toggle */
+  .ui-lyric .ui-chord.transposed::before{ opacity:0; }
+
+  /* font drawer */
+  .fontdrawer{ position:absolute; left:14px; right:14px; bottom:12px; z-index:20;
+               background:var(--uc-white); border:1px solid var(--uc-border); border-radius:var(--uc-r-md);
+               box-shadow:var(--uc-shadow-lg); padding:12px; display:flex; gap:8px; }
+  .fontchip{ flex:1; text-align:center; padding:9px 6px; border-radius:var(--uc-r-sm);
+             background:var(--uc-gold-tint); color:var(--uc-gold-deep); font-weight:700; font-size:15px; border:1.5px solid transparent; }
+  .fontchip.serif{ font-family:Georgia,serif; }
+  .fontchip.is-active{ border-color:var(--uc-gold); background:var(--uc-paper-hi); }
+
+  .brandchip{ position:absolute; top:22px; right:26px; font-family:var(--uc-font-mark); font-weight:700; font-size:22px; color:var(--uc-ink); z-index:50; }
+  .brandchip b{ color:var(--uc-gold); } .brandchip .d{ color:var(--uc-terracotta); }
+</style></head>
+<body>
+<div class="stage">
+  <div class="brandchip" id="brand">uni<b>chord</b><span class="d">.</span></div>
+  <div class="scene">
+    <div class="ui-phone phone" id="phone">
+      <div class="ui-phone__notch"></div>
+      <div class="phone__screen">
+        <div class="song" id="song">
+          <div class="song__head">
+            <div class="song__h">ירושלים של זהב</div>
+            <div class="song__meta">נעמי שמר · קל לנגינה</div>
+          </div>
+
+          <div class="toolbar" id="toolbar">
+            <span class="tbtn" id="tb-minus">−</span>
+            <span class="tbtn tbtn--key" id="tb-key"><span class="lbl">סולם</span> <span id="keyname">Am</span></span>
+            <span class="tbtn" id="tb-plus">+</span>
+            <span class="spacer"></span>
+            <span class="tbtn" id="tb-scroll" title="גלילה">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+            <span class="tbtn" id="tb-font">Aa</span>
+            <span class="tbtn" id="tb-save">
+              <svg id="bm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3h14a1 1 0 0 1 1 1v17l-8-4-8 4V4a1 1 0 0 1 1-1z"/></svg>
+            </span>
+          </div>
+
+          <div class="song__view">
+            <div class="lyrics" id="lyrics">
+              <div class="ui-lyric">
+                <span class="ui-chord swap" data-chord="Am">אוויר<span class="hi">Bm</span></span> הרים צלול <span class="ui-chord swap" data-chord="Dm">כיין<span class="hi">Em</span></span><br>
+                <span class="ui-chord swap" data-chord="Am">וריח<span class="hi">Bm</span></span> אורנים<br>
+                <span class="ui-chord swap" data-chord="E">נישא<span class="hi">F#</span></span> ברוח <span class="ui-chord swap" data-chord="Am">הערביים<span class="hi">Bm</span></span><br>
+                <span class="ui-chord swap" data-chord="Dm">בעצי<span class="hi">Em</span></span> אורן<br>
+                <span class="ui-chord swap" data-chord="Am">איך<span class="hi">Bm</span></span> יבשו בורות <span class="ui-chord swap" data-chord="E">המים<span class="hi">F#</span></span><br>
+                <span class="ui-chord swap" data-chord="Am">כיכר<span class="hi">Bm</span></span> השוק ריקה
+              </div>
+            </div>
+
+            <!-- font drawer (hidden until tool 3) -->
+            <div class="fontdrawer" id="fontdrawer" style="opacity:0;">
+              <span class="fontchip" id="fc1">רגיל</span>
+              <span class="fontchip serif" id="fc2">אות חיים</span>
+              <span class="fontchip" id="fc3">מודרני</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../studio.js"></script>
+<script>
+  // aspect from query (renderer passes ?aspect=)
+  const aspect = (new URLSearchParams(location.search).get('aspect')) || '16x9';
+  document.querySelector('.stage').classList.add('a-' + aspect);
+
+  const S = Studio.create({ fps: 30, aspect });
+
+  // elements that animate in
+  ['song','toolbar'].forEach(id=>document.getElementById(id).classList.add('anim-init'));
+
+  // 0 — phone + page enter
+  S.track('#phone',   { from: 0,   to: 700, ease:'outBack', y:[50,0], opacity:[0,1] });
+  S.track('#brand',   { from: 200, to: 900, y:[-12,0], opacity:[0,1] });
+  S.track('#song',    { from: 150, to: 750, opacity:[0,1] });
+  S.track('#toolbar', { from: 450, to: 1000, y:[-10,0], opacity:[0,1] });
+  S.caption('כל שיר נפתח עם ארגז כלים קטן', 250, 1900);
+
+  // ============ TOOL 1 — TRANSPOSE ============
+  S.tap('#tb-plus', 2400);
+  S.track('#tb-plus', { from: 2350, to: 2550, scale:[1,1.18] });
+  S.track('#tb-plus', { from: 2550, to: 2750, scale:[1.18,1] });
+  // chord labels rise one step: high layer (.hi) fades in; low ::before labels
+  // are hidden via the .transposed class toggled in the post-ready seek hook.
+  S.track('.ui-chord .hi', { from: 2650, to: 2950, opacity:[0,1] });
+  S.track('#keyname', { from: 2600, to: 2800, opacity:[1,0] });
+  S.type('#keyname', 'Bm', 2800, 2950);
+  S.track('#keyname', { from: 2800, to: 3000, opacity:[0,1] });
+  S.caption('שנו סולם בלחיצה — שיתאים לקול שלכם', 2500, 4200);
+
+  // ============ TOOL 2 — AUTO-SCROLL ============
+  S.tap('#tb-scroll', 4600);
+  S.track('#tb-scroll', { from: 4550, to: 4700, scale:[1,1.18] });
+  S.track('#tb-scroll', { from: 4700, to: 4850, scale:[1.18,1] });
+  S.track('#tb-scroll', { from: 4700, to: 4900 }); // mark active
+  document.getElementById('tb-scroll').classList.add('is-active');
+  S.track('#lyrics', { from: 4800, to: 6100, ease:'inOutCubic', y:[0,-120] });
+  S.caption('גלילה אוטומטית — שתי הידיים על הגיטרה', 4600, 6300);
+
+  // ============ TOOL 3 — FONT ============
+  S.tap('#tb-font', 6700);
+  S.track('#tb-font', { from: 6650, to: 6800, scale:[1,1.18] });
+  S.track('#tb-font', { from: 6800, to: 6950, scale:[1.18,1] });
+  // drawer slides up
+  S.track('#fontdrawer', { from: 6850, to: 7250, ease:'outCubic', y:[40,0], opacity:[0,1] });
+  S.caption('בחרו גופן ‘אות חיים’ — לזכר יקיריכם', 6800, 8400);
+  // cursor taps the serif chip → font changes
+  S.tap('#fc2', 7700);
+  S.track('#fc2', { from: 7650, to: 7800, scale:[1,1.1] });
+  S.track('#fc2', { from: 7800, to: 7950, scale:[1.1,1] });
+
+  // ============ TOOL 4 — SAVE ============
+  S.tap('#tb-save', 8800);
+  S.track('#tb-save', { from: 8750, to: 8900, scale:[1,1.2] });
+  S.track('#tb-save', { from: 8900, to: 9100, scale:[1.2,1] });
+  S.caption('שמרו למועדפים — בלי הרשמה', 8700, 9500);
+
+  // ---- cursor path: visits each tool in order, click on the action ----
+  S.cursor([
+    { x: 999, y: 999, at: 0 },
+    { sel:'#tb-plus',   at: 2200 },
+    { sel:'#tb-plus',   at: 2400, click: true },
+    { sel:'#tb-scroll', at: 4500, click: true },
+    { sel:'#tb-font',   at: 6600, click: true },
+    { sel:'#fc2',       at: 7700, click: true },
+    { sel:'#tb-save',   at: 8800, click: true },
+  ]);
+
+  S.ready();
+
+  // post-ready deterministic state toggles wrapped around the engine seek
+  (function(){
+    const lyrics = document.getElementById('lyrics');
+    const bm = document.getElementById('bm');
+    const tbSave = document.getElementById('tb-save');
+    const fc2 = document.getElementById('fc2');
+    const tbPlus = document.getElementById('tb-plus');
+    const swaps = Array.from(document.querySelectorAll('.ui-chord.swap'));
+    const baseSeek = window.__seek;
+    window.__seek = function(t){
+      baseSeek(t);
+      // tool 1: hide low chord labels once high layer has appeared
+      if (t >= 2800){ swaps.forEach(s=>s.classList.add('transposed')); tbPlus.classList.add('is-active'); }
+      else { swaps.forEach(s=>s.classList.remove('transposed')); tbPlus.classList.remove('is-active'); }
+      // tool 3: serif font after chip tap
+      if (t >= 7800){ lyrics.classList.add('font-serif'); fc2.classList.add('is-active'); }
+      else { lyrics.classList.remove('font-serif'); fc2.classList.remove('is-active'); }
+      // tool 4: bookmark fills gold after save tap
+      if (t >= 8850){ bm.setAttribute('fill','var(--uc-gold)'); bm.setAttribute('stroke','var(--uc-gold)'); tbSave.classList.add('is-active'); }
+      else { bm.setAttribute('fill','none'); bm.setAttribute('stroke','currentColor'); tbSave.classList.remove('is-active'); }
+    };
+    window.__seek(0);
+  })();
+</script>
+</body></html>

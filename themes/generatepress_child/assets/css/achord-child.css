@@ -1,0 +1,3210 @@
+/* =============================================================================
+   Achord Child Theme — Main Stylesheet
+   ========================================================================== */
+
+/* --- Header --- */
+.achord-ux-header {
+  background: var(--bg-song);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+.achord-topbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 14px;
+  text-align: center;
+}
+.achord-brandwrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline: auto;
+}
+.achord-site-title {
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--uc-gold);
+  letter-spacing: .3px;
+}
+.achord-logo {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+/* --- Hamburger → X --- */
+#achord-menu-btn {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  appearance: none !important;
+  border: 2px solid var(--uc-gold) !important;
+  background: var(--uc-paper-hi) !important;
+  color: var(--uc-gold) !important;
+  box-shadow: 0 2px 10px rgba(169, 116, 63, .18);
+  cursor: pointer;
+}
+#achord-menu-btn:hover,
+#achord-menu-btn:focus {
+  background: var(--uc-gold-tint) !important;
+}
+#achord-menu-btn .bar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: var(--uc-gold);
+  border-radius: 2px;
+  transition: transform .2s, opacity .2s;
+}
+#achord-menu-btn .b1 { top: 14px; }
+#achord-menu-btn .b2 { top: 22px; }
+#achord-menu-btn .b3 { top: 30px; }
+#achord-menu-btn.is-open .b1 { transform: translateY(8px) rotate(45deg); }
+#achord-menu-btn.is-open .b2 { opacity: 0; }
+#achord-menu-btn.is-open .b3 { transform: translateY(-8px) rotate(-45deg); }
+
+/* --- Search --- */
+.achord-searchbar {
+  padding: 12px 14px;
+  display: flex;
+  justify-content: center;
+}
+.achord-main-search-container {
+  width: 100%;
+  max-width: 660px;
+}
+
+/* --- Overlay --- */
+:root { --achord-drawer-top: 80px; }
+.achord-overlay {
+  position: fixed;
+  top: var(--achord-drawer-top);
+  left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, .34);
+  backdrop-filter: saturate(85%) blur(1px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s ease;
+  z-index: 9998;
+}
+.achord-overlay.open { opacity: 1; visibility: visible; }
+
+/* --- Drawer panel --- */
+.achord-panel {
+  position: fixed;
+  top: var(--achord-drawer-top);
+  left: 0; right: 0; bottom: 0;
+  background: #F7F1E6;
+  transform: translateY(-16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .2s ease;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -2px 24px rgba(0, 0, 0, .08);
+}
+.achord-panel.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Panel header row */
+.achord-panel__top {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid #E6D9C2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.achord-panel__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0D1B33;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+#achord-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #EFE4D1;
+  color: #0D1B33;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .15s;
+}
+#achord-close-btn:hover,
+#achord-close-btn:focus { background: #E6D9C2; color: #0D1B33; }
+
+/* Panel scroll body */
+.achord-panel__body {
+  flex: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.achord-panel__body::-webkit-scrollbar { width: 6px; }
+.achord-panel__body::-webkit-scrollbar-track { background: transparent; }
+.achord-panel__body::-webkit-scrollbar-thumb { background: #d6dbe4; border-radius: 10px; }
+
+/* Menu list */
+.achord-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 6px 8px 12px;
+  position: relative;
+}
+.achord-panel li { border-bottom: 1px solid #f3f4f6; }
+.achord-panel li:last-child { border-bottom: 0; }
+.achord-panel a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 12px 13px 14px;
+  text-decoration: none;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 10px;
+}
+.achord-panel a:hover { background: #f8f9fa; }
+.achord-panel a:active { background: #f0f1f3; }
+
+/* Icons */
+.achord-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--uc-gold-tint);
+  flex: 0 0 28px;
+}
+.achord-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  color: var(--uc-gold);
+  fill: currentColor;
+}
+
+/* Active item */
+.achord-panel .current-menu-item > a,
+.achord-panel .current_page_item > a {
+  color: var(--uc-gold);
+  background: var(--uc-gold-tint);
+}
+
+/* Fade hint at bottom */
+.achord-panel ul::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 24px;
+  background: linear-gradient(to top, #ffffff, rgba(255,255,255,0));
+  pointer-events: none;
+}
+
+/* "הוספת שיר" — כפתור ראשי */
+.achord-panel a.achord-menu-button {
+  background: var(--uc-gold);
+  color: #ffffff;
+  border-radius: 12px;
+  margin: 8px 12px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  text-align: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(169, 116, 63, 0.22);
+}
+.achord-panel a.achord-menu-button .achord-icon {
+  background: rgba(255, 255, 255, 0.15);
+}
+.achord-panel a.achord-menu-button .achord-icon svg { color: #ffffff; }
+.achord-panel a.achord-menu-button:hover { background: #1049b3; color: #ffffff; }
+.achord-panel li:has(a.achord-menu-button) { border-bottom: 0; }
+
+/* תת-תפריטים (אקורדיון) */
+.achord-panel li.menu-item-has-children {
+  position: relative;
+  overflow: hidden;
+}
+.achord-panel li.menu-item-has-children > a { padding-left: 50px; }
+
+.achord-submenu-toggle {
+  position: absolute;
+  top: 9px;
+  left: 8px;
+  width: 40px;
+  height: 40px;
+  background: var(--uc-paper-hi);
+  border: none;
+  border-radius: 10px;
+  color: var(--uc-gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .2s;
+}
+.achord-submenu-toggle:hover { background: var(--uc-gold-tint); }
+.achord-submenu-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform .2s ease-out;
+  color: var(--uc-gold) !important;
+  fill: var(--uc-gold) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+.achord-submenu-toggle svg path {
+  color: var(--uc-gold) !important;
+  fill: var(--uc-gold) !important;
+}
+.achord-submenu-toggle.is-open svg { transform: rotate(180deg); }
+
+.achord-panel .sub-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0 28px 0 0;
+  background: var(--uc-paper-hi);
+  display: none;
+}
+.achord-panel .sub-menu li { border-color: var(--uc-border); }
+.achord-panel .sub-menu a {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 12px 16px;
+}
+.achord-panel .sub-menu .achord-icon { width: 24px; height: 24px; flex-shrink: 0; }
+
+/* קישורי משתמש */
+.achord-panel__user-links {
+  margin: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--uc-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.achord-panel__user-links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: var(--uc-ink);
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 12px;
+}
+.achord-panel__user-links a:hover { background: var(--uc-paper-hi); }
+.achord-panel__user-links a .achord-icon { width: 24px; height: 24px; background: var(--uc-gold-tint); }
+.achord-panel__user-links a .achord-icon svg { color: var(--uc-gold); }
+
+/* ══════════════════════════════════════════════════════
+   Panel Nav — תפריט משתמש מבנה חדש
+   ══════════════════════════════════════════════════════ */
+.achord-panel__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.achord-panel__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 8px;
+}
+.achord-panel__nav-list li {
+  border-bottom: 1px solid #EBE0CD;
+}
+.achord-panel__nav-list li:last-child {
+  border-bottom: 0;
+}
+.achord-panel__nav-list a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  text-decoration: none;
+  color: #0D1B33;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 10px;
+  position: relative;
+}
+.achord-panel__nav-list a:hover {
+  background: rgba(181, 147, 106, 0.13);
+  box-shadow: inset -4px 0 0 0 #B5936A;
+}
+.achord-menu-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-style: normal;
+}
+.achord-menu-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: #9E7E55;
+}
+.achord-menu-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.achord-menu-profile__title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.achord-menu-profile__email {
+  font-size: 0.875rem;
+  color: #5A4E3A;
+  line-height: 1.4;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+.achord-panel__divider {
+  height: 1px;
+  background: #E6D9C2;
+  margin: 4px 16px;
+}
+
+/* שורת קישורים משנית קומפקטית (אודות · תורמים · יצירת קשר…) — מצמצמת גובה בתפריט */
+.achord-panel__links-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 22px 10px;
+}
+.achord-panel__links-row a {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--uc-ink-soft, #6B5D49);
+  text-decoration: none;
+  padding: 4px 0;
+  line-height: 1.3;
+}
+.achord-panel__links-row a:not(:last-child)::after {
+  content: "·";
+  margin: 0 9px;
+  color: var(--uc-border-strong, #C9BBA2);
+  font-weight: 700;
+}
+.achord-panel__links-row a:hover {
+  color: var(--uc-gold-deep, #8A5C30);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.achord-panel__links-row a:focus-visible {
+  outline: 2px solid var(--uc-gold, #A9743F);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Badge */
+.achord-badge {
+  margin-right: auto;
+  margin-left: 4px;
+  background: #e8edf7;
+  color: #3b5cc4;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 2px 8px;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1.5;
+}
+.achord-badge--alert {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* כפתורי Auth (אורח) */
+.achord-panel__auth-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+}
+.achord-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.15s;
+}
+.achord-panel .achord-btn--google {
+  background: #FFFDF8;
+  color: #0D1B33;
+  border: 1px solid #DBCBAD;
+  font-weight: 500;
+}
+.achord-panel .achord-btn--google:hover {
+  background: #F5EDDF;
+  border-color: #CBB793;
+}
+.achord-panel .achord-btn--register {
+  background: #B5936A;
+  color: #FFF8EE;
+  border: none;
+}
+.achord-panel .achord-btn--register:hover {
+  background: #9E7E55;
+}
+
+/* נגישות: מחווני focus גלויים לניווט-מקלדת (WCAG 2.4.7) — גלוי רק במקלדת, לא בעכבר */
+.achord-panel__nav-list a:focus-visible {
+  outline: 2px solid #B5936A;
+  outline-offset: -3px;
+  background: rgba(181, 147, 106, 0.10);
+}
+.achord-panel .achord-btn:focus-visible,
+#achord-close-btn:focus-visible {
+  outline: 2px solid #0D1B33;
+  outline-offset: -3px;
+}
+
+/* ══════════════════════════════════════════════════════
+   Footer
+   ══════════════════════════════════════════════════════ */
+.achord-footer {
+    background: var(--bg-song, #fff);
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    padding: 32px 20px 24px;
+    margin-top: 40px;
+    direction: rtl;
+}
+.achord-footer__inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+}
+.achord-footer__tagline {
+    font-size: 0.95rem;
+    color: var(--text-primary, #333);
+    opacity: 0.65;
+    margin: 0;
+}
+.achord-footer__nav {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.achord-footer__nav a {
+    color: var(--text-primary, #333);
+    text-decoration: none;
+    font-size: 0.9rem;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+}
+.achord-footer__nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+/* קרדיטים בפוטר */
+.achord-footer__credits {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+}
+.achord-footer__credit {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text-primary, #333);
+    opacity: 0.62;
+    margin: 0;
+}
+.achord-footer__credit a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.2s;
+}
+.achord-footer__credit a:hover {
+    opacity: 1;
+}
+.achord-footer__copy {
+    font-size: 0.8rem;
+    color: var(--text-primary, #333);
+    opacity: 0.5;
+    margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   Plugin footer — שירים קשורים בלבד (ניווט הפלאגין מוסתר)
+   ══════════════════════════════════════════════════════ */
+
+/* מסתיר את ניווט הפלאגין + הקופירייט שלו */
+.achord-footer-links {
+    display: none !important;
+}
+
+/* עיצוב פוטר הפלאגין (רק שירים קשורים) */
+.achord-main-footer {
+    direction: rtl;
+    padding: 32px 20px 0;
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    margin-top: 40px;
+}
+.related-posts-container {
+    max-width: 860px;
+    margin: 0 auto;
+}
+.related-posts-section {
+    margin-bottom: 28px;
+}
+.related-posts-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary, #333);
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+.related-posts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.related-post-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-primary, #333);
+    background: var(--bg-song, #fff);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 140px;
+}
+.related-post-card:hover {
+    border-color: var(--accent, #4a90d9);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.related-post-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+.related-post-performer {
+    font-size: 0.78rem;
+    opacity: 0.65;
+}
+
+/* --- Plugin theme overrides ---
+   1. משווה --bg-page ל--bg-song (מסיר פאנלים צבעוניים)
+   2. מסנכרן header + footer לתבנית הפעילה דרך body class
+      (JS ב-achord-drawer.js מוסיף את ה-class לגוף הדף)
+   -------------------------------------------------------- */
+
+/* ── bg-page = bg-song לכל תבנית (אין פאנלים) ── */
+.theme-conductor      { --bg-page: #F1DAC4; }
+.theme-studio         { --bg-page: #FFFFFF; }
+.dark-mode.theme-conductor { --bg-page: #1f2937; }
+.dark-mode.theme-studio    { --bg-page: #0b2531; }
+
+/* ── Header + Footer: תגובה לתבנית הפעילה ── */
+
+/* ── הסתרת entry-header של GP בדפי שיר/שיעור/תווים ──
+   הפלאגין מציג את הכותרת בתוך השורטקוד — אין צורך כפל */
+.single-achord_song_cpt .entry-header,
+.single-lesson .entry-header,
+.single-tavim_score .entry-header {
+    display: none;
+}
+
+/* ── באנר "רוצה ללמוד איך לנגן?" — מיותר, הטאבים בנגן מספיקים */
+.lesson-link-banner {
+    display: none;
+}
+
+/* ── GP containers — שקוף בדפי שיר כדי שרקע ה-body יעבור ──
+   מונע פסים צבעוניים מ-padding/margin של GP */
+.single-achord_song_cpt .site-main,
+.single-achord_song_cpt .content-area,
+.single-achord_song_cpt .inside-article,
+.single-achord_song_cpt .entry-content,
+.single-lesson .site-main,
+.single-lesson .content-area,
+.single-lesson .inside-article,
+.single-lesson .entry-content,
+.single-tavim_score .site-main,
+.single-tavim_score .content-area,
+.single-tavim_score .inside-article,
+.single-tavim_score .entry-content {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ── GP #page wrapper — שקוף כדי שרקע ה-body יעבור ── */
+#page {
+    background-color: transparent !important;
+}
+
+/* ── Body background sync ── */
+body.theme-studio                  { background-color: #FFFFFF; }
+body.dark-mode.theme-conductor     { background-color: #1f2937; }
+body.dark-mode.theme-studio        { background-color: #0b2531; }
+/* conductor בהיר = ברירת מחדל בז'י מ-:root */
+
+/* Studio — בהיר */
+body.theme-studio .achord-ux-header,
+body.theme-studio .achord-footer {
+    background-color: #FFFFFF;
+    color: #00171F;
+    border-color: #E2E8F0;
+}
+body.theme-studio .achord-site-title { color: #1D4E89; }
+body.theme-studio #achord-menu-btn {
+    border-color: #1D4E89 !important;
+    background: #f0f5ff !important;
+    color: #1D4E89 !important;
+}
+body.theme-studio #achord-menu-btn .bar { background: #1D4E89; }
+
+/* Conductor — כהה */
+body.dark-mode.theme-conductor .achord-ux-header,
+body.dark-mode.theme-conductor .achord-footer {
+    background-color: #1f2937;
+    color: #E5E7EB;
+    border-color: #374151;
+}
+body.dark-mode.theme-conductor .achord-site-title { color: #FFC857; }
+body.dark-mode.theme-conductor #achord-menu-btn {
+    border-color: #FFC857 !important;
+    background: rgba(255,200,87,0.1) !important;
+    color: #FFC857 !important;
+}
+body.dark-mode.theme-conductor #achord-menu-btn .bar { background: #FFC857; }
+body.dark-mode.theme-conductor .achord-searchbar { background-color: #1f2937; }
+
+/* Studio — כהה */
+body.dark-mode.theme-studio .achord-ux-header,
+body.dark-mode.theme-studio .achord-footer {
+    background-color: #0b2531;
+    color: #F1F7F9;
+    border-color: #1E293B;
+}
+body.dark-mode.theme-studio .achord-site-title { color: #00A8E8; }
+body.dark-mode.theme-studio #achord-menu-btn {
+    border-color: #00A8E8 !important;
+    background: rgba(0,168,232,0.1) !important;
+    color: #00A8E8 !important;
+}
+body.dark-mode.theme-studio #achord-menu-btn .bar { background: #00A8E8; }
+body.dark-mode.theme-studio .achord-searchbar { background-color: #0b2531; }
+
+/* ══════════════════════════════════════════════════════
+   Homepage — front-page.php
+   ══════════════════════════════════════════════════════ */
+
+/* מסיר padding/margin מיותרים שGP מוסיף לעמוד הבית */
+.home .site-main,
+.home .content-area,
+.home .inside-article,
+.home .entry-content {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.home .entry-header { display: none; }
+
+/* GP site-content הוא flex-row עם padding — מאפסים לעמוד הבית */
+.home #content.site-content {
+    padding: 0;
+    display: block;
+}
+
+/* עמוד הבית */
+.achord-homepage {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 20px;
+    direction: rtl;
+    box-sizing: border-box;
+}
+
+/* פס הקדמה */
+.achord-home-intro {
+    text-align: center;
+    padding: 28px 16px 20px;
+}
+.achord-home-tagline {
+    font-size: 1.05rem;
+    color: var(--text-primary);
+    opacity: 0.7;
+    margin: 0;
+    letter-spacing: 0.01em;
+}
+
+/* כל סקשן */
+.achord-home-section {
+    margin-bottom: 44px;
+}
+
+/* כותרת הסקשן */
+.achord-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    border-bottom: 2px solid var(--border-color);
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+.achord-section-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+.achord-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* --- Global --- */
+/* מרווח תחתון כדי שהמגירה התחתונה של הפלאגין לא תסתיר תוכן */
+body { padding-bottom: 20vh; }
+
+/* ══════════════════════════════════════════════════════════════
+   טופס העלאת שיר — עיצוב יפני + עורך ויזואלי
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── design tokens (scoped) ── */
+#achord-upload-form.auf-form {
+    --auf-paper:       #F7F3EC;
+    --auf-bg:          #EDE8DF;
+    --auf-white:       #FFFFFF;
+    --auf-gold:        #B5936A;
+    --auf-gold-light:  rgba(181,147,106,0.15);
+    --auf-gold-text:   #7A5C3A;
+    --auf-border:      var(--border-color, #D9D0BF);
+    --auf-text:        var(--text-primary, #1A140A);
+    --auf-muted:       rgba(30,20,10,0.42);
+    --auf-radius:      6px;
+    --auf-gap:         2rem;
+    --auf-t:           0.17s ease;
+    --auf-shadow:      0 1px 4px rgba(0,0,0,.07);
+}
+.dark-mode #achord-upload-form.auf-form {
+    --auf-paper:       #1C2128;
+    --auf-gold-light:  rgba(181,147,106,0.1);
+    --auf-muted:       rgba(220,210,200,0.45);
+}
+
+/* ── override plugin's sticky-bar padding-top (old layout artefact) ── */
+#achord-upload-form {
+    padding-top: 0 !important;
+}
+
+/* ── layout ── */
+.auf-form {
+    max-width: 780px;
+    margin: 2rem auto;
+    padding: 0 1rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--auf-gap);
+    direction: rtl;
+    font-family: Assistant, sans-serif;
+}
+
+/* ── section card ── */
+.auf-section {
+    background: var(--auf-paper);
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    box-shadow: var(--auf-shadow);
+}
+.auf-section__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.1rem;
+    border-bottom: 1px solid var(--auf-border);
+    gap: 0.5rem;
+}
+.auf-section--collapsible .auf-section__head {
+    cursor: pointer;
+    user-select: none;
+}
+.auf-section--collapsible .auf-section__head:hover {
+    background: var(--auf-gold-light);
+}
+.auf-section__title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--auf-muted);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.auf-optional-badge {
+    font-size: 0.68rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0.7;
+    background: var(--auf-gold-light);
+    color: var(--auf-gold-text);
+    border-radius: 99px;
+    padding: 1px 8px;
+}
+.auf-chevron {
+    font-size: 0.6rem;
+    color: var(--auf-muted);
+    transition: transform var(--auf-t);
+}
+.auf-section__head[aria-expanded="true"] .auf-chevron {
+    transform: rotate(180deg);
+}
+.auf-section__body {
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ── collapsible animation ── */
+.auf-collapsible-body {
+    overflow: hidden;
+}
+.auf-collapsible-body[hidden] {
+    display: none;
+}
+
+/* ── field rows ── */
+.auf-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+.auf-field-row--compact { grid-template-columns: 140px 1fr; }
+@media (max-width: 520px) {
+    .auf-field-row, .auf-field-row--compact { grid-template-columns: 1fr; }
+}
+.auf-field { display: flex; flex-direction: column; gap: 0.3rem; }
+.auf-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--auf-muted);
+}
+.auf-field--required .auf-label::after { content: ' *'; color: var(--auf-gold); }
+
+/* ── inputs ── */
+.auf-input {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    background: var(--auf-white, #FFFFFF);
+    color: var(--auf-text);
+    font-family: Assistant, sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color var(--auf-t);
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
+}
+.auf-input:focus { border-color: var(--auf-gold); box-shadow: 0 0 0 3px var(--auf-gold-light); }
+.auf-input--sm   { width: auto; }
+.auf-field-error { border-color: #e05252 !important; }
+.auf-select {
+    appearance: none;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    background: var(--auf-white, #FFFFFF);
+    color: var(--auf-text);
+    font-family: Assistant, sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    width: 100%;
+}
+.auf-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    background: var(--auf-white, #FFFFFF);
+    color: var(--auf-text);
+    font-family: Assistant, sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    resize: vertical;
+    outline: none;
+    transition: border-color var(--auf-t);
+    box-sizing: border-box;
+    direction: rtl;
+}
+.auf-textarea:focus     { border-color: var(--auf-gold); }
+.auf-textarea--ltr      { direction: ltr; text-align: left; font-family: monospace; }
+
+/* ── genre chips ── */
+.auf-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.auf-chip  { cursor: pointer; }
+.auf-chip span {
+    display: inline-block;
+    padding: 0.28rem 0.8rem;
+    border: 1px solid var(--auf-border);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    color: var(--auf-text);
+    background: transparent;
+    transition: background var(--auf-t), border-color var(--auf-t), color var(--auf-t);
+    user-select: none;
+}
+.auf-chip input:checked + span {
+    background: var(--auf-gold-light);
+    border-color: var(--auf-gold);
+    color: var(--auf-gold-text);
+    font-weight: 600;
+}
+
+/* ── capo pills ── */
+.auf-capo-pills { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.auf-capo-pill  { cursor: pointer; }
+.auf-capo-pill span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    font-size: 0.82rem;
+    font-weight: 600;
+    background: transparent;
+    color: var(--auf-text);
+    transition: background var(--auf-t), border-color var(--auf-t), color var(--auf-t);
+    user-select: none;
+}
+.auf-capo-pill input:checked + span {
+    background: var(--auf-gold);
+    border-color: var(--auf-gold);
+    color: #fff;
+}
+
+/* ── ghost button ── */
+.auf-ghost-btn {
+    all: unset;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--auf-muted);
+    padding: 0.28rem 0.65rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    transition: color var(--auf-t), border-color var(--auf-t);
+    white-space: nowrap;
+}
+.auf-ghost-btn:hover { color: var(--auf-gold-text); border-color: var(--auf-gold); }
+
+/* ── recommended bar ── */
+.auf-rec-bar-wrap { display: flex; flex-direction: column; gap: 0.4rem; }
+.auf-rec-bar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+.auf-rec-bar-actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.auf-rec-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    background: var(--auf-paper);
+}
+.auf-rec-bar--editing { outline: 2px dashed var(--auf-gold); }
+.auf-rec-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border: 1px solid var(--auf-border);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    background: var(--auf-paper);
+    color: var(--auf-text);
+    transition: border-color var(--auf-t);
+    user-select: none;
+}
+.auf-rec-btn:hover { border-color: var(--auf-gold); }
+/* אזור-מגע מוגדל ל-× — הגליף הזעיר היה כמעט בלתי-פגיע במובייל.
+   קריטי: ההגדלה יוצאת **החוצה בלבד** (margin-inline-end שלילי + גובה),
+   ולעולם לא לכיוון התווית — אחרת הקשה על שם האקורד מוחקת אותו. */
+.auf-rec-btn__x,
+.auf-rec-btn__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    min-height: 24px;
+    margin-block: -8px;
+    margin-inline-end: -5px;
+    margin-inline-start: 0;
+    padding-block: 8px;
+    line-height: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background var(--auf-t), color var(--auf-t);
+}
+.auf-rec-btn__x {
+    color: var(--auf-muted);
+    font-size: 1rem;
+    font-weight: 700;
+}
+.auf-rec-btn__x:hover {
+    background: rgba(224,82,82,0.14);
+    color: #e05252;
+}
+.auf-rec-btn__remove { color: #e05252; font-weight: 800; font-size: 1rem; }
+/* במצב-עריכה כל הכפתור הוא יעד-הסרה (ה-JS מסיר בהקשה כלשהי) — סמן ורמז ויזואלי */
+.auf-rec-bar--editing .auf-rec-btn { cursor: pointer; }
+.auf-rec-bar--editing .auf-rec-btn:hover { border-color: #e05252; }
+.auf-rec-btn.auf-dragging { opacity: 0.5; }
+
+/* ── toolbar (quick chords) ── */
+.auf-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+.auf-quick-chords { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.auf-quick-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 10px;
+    border: 1px solid var(--auf-border, #D9D0BF);
+    border-radius: var(--auf-radius, 6px);
+    font-size: 0.88rem;
+    font-weight: 700;
+    background: var(--auf-white, #FFFFFF);
+    color: var(--auf-text, #1A140A);
+    box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    transition: border-color var(--auf-t, .17s ease), background var(--auf-t, .17s ease), box-shadow var(--auf-t, .17s ease);
+    user-select: none;
+}
+.auf-quick-btn:hover {
+    border-color: var(--auf-gold, #B5936A);
+    background: var(--auf-gold-light, rgba(181,147,106,0.15));
+    box-shadow: 0 1px 4px rgba(181,147,106,0.22);
+}
+.auf-quick-btn--starred .auf-quick-btn__star { color: var(--auf-gold); }
+.auf-quick-btn__star { color: var(--auf-border); font-size: 0.65rem; transition: color var(--auf-t); }
+.auf-chord-input-wrap { display: flex; gap: 0.3rem; align-items: center; }
+.auf-dragging { opacity: 0.45; transform: scale(0.96); }
+
+/* ── editor mode bar ── */
+.auf-editor-mode-bar {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+.auf-mode-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--auf-muted);
+    transition: all var(--auf-t);
+}
+.auf-mode-btn--active {
+    background: var(--auf-gold);
+    border-color: var(--auf-gold);
+    color: #fff;
+}
+.auf-mode-btn:not(.auf-mode-btn--active):hover {
+    border-color: var(--auf-gold);
+    color: var(--auf-gold-text);
+}
+
+/* ── editor panels ── */
+.auf-editor-wrap { display: flex; flex-direction: column; }
+.auf-editor-panel { }
+
+/* ── token canvas (מצב אקורדים) ── */
+.auf-chord-hint {
+    font-size: 0.8rem;
+    color: var(--auf-muted);
+    margin-bottom: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    background: var(--auf-gold-light);
+    border-radius: var(--auf-radius);
+}
+.auf-token-canvas {
+    min-height: 220px;
+    padding: 1.5rem 1.2rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    /* רקע חם — בולט על הsection */
+    background: var(--bg-song, var(--auf-bg, #EDE8DF));
+    direction: rtl;
+    /* line-height גדול = מקום לאקורד מעל המילה */
+    line-height: 3.6;
+    font-size: clamp(18px, 1.4vw + 0.6rem, 24px);
+    overflow-wrap: break-word;
+    cursor: default;
+    user-select: none;
+    font-family: var(--font-body, Assistant, sans-serif);
+    /* hint עדין שניתן לגרור לכאן */
+    outline: 2px dashed transparent;
+    transition: outline-color 0.15s;
+}
+/* הצג outline כשגוררים מעל ה-canvas */
+.auf-token-canvas:has(.auf-token--drag-over),
+.auf-token-canvas:has(.dnd-over) {
+    outline-color: var(--text-chord, var(--auf-gold));
+}
+.auf-token {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 0 2px;
+    transition: background var(--auf-t);
+    vertical-align: bottom;
+}
+/* חצאי מילה מפוצלת (המ[Am]רצע[Eb]) — ללא padding בצד המחובר, אחרת
+   נפתח רווח של 4px והמילה נראית שבורה לשתי מילים */
+.auf-token.auf-token--joined-prev { padding-inline-start: 0; }
+.auf-token.auf-token--joined-next { padding-inline-end: 0; }
+
+/* סמן יעד-ההטלה: מלא = פיצול בתוך מילה · מקווקו = אקורד יתום בין מילים */
+.auf-split-marker {
+    position: fixed;
+    width: 2px;
+    margin-inline-start: -1px;
+    background: var(--text-chord, #B5936A);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.65);
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 9998;
+}
+.auf-split-marker--insert {
+    width: 0;
+    margin-inline-start: -1.5px;
+    background: none;
+    box-shadow: none;
+    border-inline-start: 3px dashed var(--text-chord, #B5936A);
+}
+.auf-split-marker[hidden] { display: none; }
+
+.auf-token:focus { outline: 2px solid var(--auf-gold); outline-offset: 1px; }
+.auf-token--selected { background: var(--auf-gold-light); }
+.auf-token--drag-over,
+.dnd-over { outline: 2px dashed var(--auf-gold); border-radius: 3px; background: var(--auf-gold-light, rgba(200,160,40,.12)); }
+/* token עם אקורד — move mode cursor */
+.auf-token--has-chord { cursor: grab; }
+.auf-token--has-chord:active { cursor: grabbing; }
+
+/* Ghost element for custom mouse drag */
+.auf-drag-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    padding: 3px 9px;
+    background: var(--auf-gold, #c8a028);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    transform: translate(-50%, -130%);
+    user-select: none;
+}
+.auf-token--flash .auf-token__chord { animation: auf-chord-pop 0.5s ease; }
+
+@keyframes auf-chord-pop {
+    0%   { transform: scale(1.4); color: #fff; }
+    50%  { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.auf-token__chord {
+    font-size: 0.72rem;
+    font-weight: 700;
+    /* צבע זהה לאקורד בנגן הסופי של הפלאגין */
+    color: var(--text-chord, var(--auf-gold));
+    line-height: 1.2;
+    min-height: 1em;
+    white-space: nowrap;
+    font-family: var(--font-chord, Assistant, sans-serif);
+    /* חיוני: ילדי הטוקן לא מיירטים drag/click events */
+    pointer-events: none;
+    user-select: none;
+}
+.auf-token__word {
+    line-height: 1.35;
+    padding-bottom: 2px;
+    font-family: var(--font-body, Assistant, sans-serif);
+    pointer-events: none;
+    user-select: none;
+}
+/* קו תחתי למילים עם אקורד */
+.auf-token--has-chord .auf-token__word {
+    border-bottom: 1.5px solid var(--text-chord, var(--auf-gold));
+}
+.auf-space { white-space: pre; }
+
+/* אלמנטי `.auf-gap` הוסרו — יעד ההטלה מחושב גיאומטרית ב-JS.
+   הרצועות הישנות (0→10px בתחילת גרירה) הזיזו כל שורה עד 80px מתחת
+   לסמן, היו יעד של 10px בלבד, ולא כיסו את שורת המילים עצמה. */
+.auf-token-canvas--dragging { cursor: crosshair; }
+/* standalone chord token (no word below) */
+/* vertical-align: bottom כמו שאר הטוקנים, padding-bottom מדמה גובה ה-word-span */
+.auf-token--standalone {
+    cursor: grab;
+    min-width: 1.8rem;
+    justify-content: flex-start;
+    vertical-align: bottom;
+    padding-bottom: calc(1.35em + 4px);
+}
+.auf-token--standalone:active { cursor: grabbing; }
+
+/* ── preview panel ── */
+/* הסתר את הסרגל התחתון בתצוגה החיה — אינו מתפקד ללא אתחול JS מלא */
+.auf-preview-content .achord-bottom-controls-cluster { display: none !important; }
+
+.auf-preview-content {
+    padding: 1rem;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    min-height: 100px;
+    background: var(--auf-paper);
+}
+
+/* ── ABC preview ── */
+.auf-abc-preview {
+    margin-top: 0.75rem;
+    min-height: 60px;
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    padding: 0.5rem;
+    background: var(--auf-paper);
+}
+
+/* ── transpose ── */
+.auf-transpose-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.auf-range { flex: 1; min-width: 120px; accent-color: var(--auf-gold); }
+.auf-transpose-display {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--auf-gold);
+    min-width: 2rem;
+    text-align: center;
+}
+.auf-muted { color: var(--auf-muted); font-size: 0.85rem; }
+
+/* ── PDF viewer ── */
+.auf-pdf-viewer {
+    border: 1px solid var(--auf-border);
+    border-radius: var(--auf-radius);
+    overflow: hidden;
+}
+.auf-pdf-viewer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--auf-border);
+    font-size: 0.85rem;
+}
+.auf-pdf-iframe { width: 100%; height: 160px; display: block; border: none; }
+
+/* ── library modal ── */
+.auf-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* dvh ולא vh: במובייל סרגל-הכתובת גורע מהאזור הנראה, ו-vh לא יודע על כך.
+       inset:0 + height → הגובה גובר על bottom, כך שהמסגרת נצמדת לחלק הנראה. */
+    height: 100vh;
+    height: 100dvh;
+}
+.auf-modal[hidden] { display: none; }
+.auf-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+}
+.auf-modal__content {
+    position: relative;
+    z-index: 1;
+    background: var(--auf-bg, #EDE8DF);
+    border-radius: 10px;
+    width: 92%;
+    max-width: 860px;
+    height: 88vh;
+    height: 88dvh;
+    /* רשת-ביטחון: לעולם לא גבוה מהמסגרת, אחרת הכותרת (וה-×) נחתכת מלמעלה.
+       box-sizing חיוני — בלעדיו ה-border של 1px גולש מעבר ל-100%. */
+    box-sizing: border-box;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--auf-border, #D9D0BF);
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+}
+.auf-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.1rem;
+    background: var(--auf-paper, #F7F3EC);
+    border-bottom: 1px solid var(--auf-border, #D9D0BF);
+    flex-shrink: 0;
+}
+.auf-modal__close {
+    all: unset;
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--auf-muted);
+    /* יעד-מגע 44px (Apple HIG) — ההגדלה יוצאת החוצה כדי לא לגלוש על הכותרת */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin-block: -0.6rem;
+    margin-inline-end: -0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background var(--auf-t), color var(--auf-t);
+}
+.auf-modal__close:hover { color: var(--auf-text); background: rgba(0,0,0,.06); }
+.auf-modal__close:focus-visible { outline: 2px solid var(--auf-gold); outline-offset: 2px; }
+.auf-modal__body {
+    padding: 1rem;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+    background: var(--auf-bg, #EDE8DF);
+}
+/* מובייל: גיליון מסך-מלא. מבטל לגמרי את חשבון ה-vh — הכותרת (וה-×)
+   תמיד בקצה העליון הנראה, גם כשהמקלדת פתוחה. */
+@media (max-width: 640px) {
+    .auf-modal { align-items: stretch; justify-content: stretch; }
+    .auf-modal__content {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border-inline: 0;
+    }
+    .auf-modal__header {
+        padding-top: max(0.85rem, env(safe-area-inset-top));
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+    .auf-modal__body { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+}
+
+.auf-lib-group { margin-bottom: 1rem; }
+.auf-lib-group__title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--auf-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--auf-border);
+    position: sticky;
+    top: 0;
+    background: var(--auf-bg, #EDE8DF);
+    z-index: 1;
+}
+.auf-lib-group__chords { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.auf-library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+/* ── submit bar ── */
+.auf-submit-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+}
+.auf-submit-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 0.75rem 2.2rem;
+    background: var(--auf-gold);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: var(--auf-radius);
+    letter-spacing: 0.02em;
+    transition: opacity var(--auf-t);
+    font-family: Assistant, sans-serif;
+}
+.auf-submit-btn:hover    { opacity: 0.88; }
+.auf-submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── status messages ── */
+.auf-msg { font-size: 0.9rem; font-weight: 600; flex: 1; min-height: 1.4em; }
+.auf-msg--success { color: #3a7d44; }
+.auf-msg--error   { color: #c0392b; }
+.auf-msg--loading { color: var(--auf-muted); }
+
+/* =============================================================================
+   Search icon fallback — prevents SVG from filling viewport when plugin CSS is absent
+   ========================================================================== */
+.ams-search-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   עמוד 404
+   ========================================================================== */
+.achord-404 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 40px 20px;
+  direction: rtl;
+}
+.achord-404__inner {
+  max-width: 480px;
+}
+.achord-404__code {
+  font-size: 6rem;
+  font-weight: 900;
+  color: var(--text-dark-blue, var(--uc-gold));
+  line-height: 1;
+  margin-bottom: 16px;
+  opacity: 0.15;
+}
+.achord-404__title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-dark-blue, var(--uc-gold));
+  margin-bottom: 12px;
+}
+.achord-404__text {
+  color: var(--text-secondary, #555);
+  font-size: 1rem;
+  margin-bottom: 28px;
+}
+.achord-404__btn {
+  display: inline-block;
+  background: var(--text-dark-blue, var(--uc-gold));
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.achord-404__btn:hover { opacity: 0.85; }
+.achord-404__search { width: 100%; max-width: 420px; margin: 0 auto 24px; }
+.achord-404__form { display: flex; gap: 8px; direction: rtl; }
+.achord-404__input {
+  flex: 1; padding: 10px 14px; border: 1.5px solid #ccc; border-radius: 8px;
+  font-size: 1rem; font-family: inherit; outline: none; text-align: right;
+  background: #fff;
+}
+.achord-404__input:focus { border-color: var(--text-dark-blue, var(--uc-gold)); }
+.achord-404__search-btn {
+  padding: 10px 14px; background: var(--text-dark-blue, var(--uc-gold));
+  color: #fff; border: none; border-radius: 8px; cursor: pointer;
+  font-size: 1rem; transition: opacity .15s;
+}
+.achord-404__search-btn:hover { opacity: 0.85; }
+
+/* ╔══════════════════════════════════════════════════════════════════════╗
+   ║  unichord — מיתוג + עמוד בית מחדש  ·  "החופש לנגן"                     ║
+   ║  פלטת נייר חם מאוחדת (מחליפה את הכחול הישן)                            ║
+   ╚══════════════════════════════════════════════════════════════════════╝ */
+
+:root {
+  /* ── בסיס ── */
+  --uc-paper:           #F7F3EC;
+  --uc-paper-hi:        #FCF8F1;
+  --uc-bg:              #EDE8DF;
+  --uc-white:           #FFFFFF;
+  --uc-ink:             #1F1810;
+  --uc-ink-soft:        #6B5D49;
+  --uc-muted:           rgba(31,24,16,0.45);
+
+  /* ── accent ── */
+  --uc-gold:            #A9743F;
+  --uc-gold-deep:       #8A5C30;
+  --uc-gold-tint:       #F0E6D8;
+  --uc-terracotta:      #C75B39;
+  --uc-terracotta-soft: #F0DACF;
+
+  /* ── מסגרות ── */
+  --uc-border:          #DED4C2;
+  --uc-border-strong:   #C9BBA2;
+
+  /* ── רדיוסים ── */
+  --uc-r-sm: 8px;  --uc-r-md: 14px;  --uc-r-lg: 20px;  --uc-r-pill: 999px;
+
+  /* ── צללים חמים ── */
+  --uc-shadow-sm:   0 1px 3px rgba(80,55,25,0.07);
+  --uc-shadow-md:   0 4px 16px rgba(80,55,25,0.10);
+  --uc-shadow-lg:   0 14px 38px rgba(80,55,25,0.15);
+
+  /* ── טיפוגרפיה ── */
+  --uc-font-mark:   "Poppins", "Segoe UI", system-ui, sans-serif;
+  --uc-fs-h1: clamp(1.85rem, 6.5vw, 2.6rem);
+  --uc-fs-h2: clamp(1.25rem, 4vw, 1.6rem);
+
+  /* ── מעברים ── */
+  --uc-t-fast: 0.15s ease;
+  --uc-t-base: 0.22s cubic-bezier(.4,0,.2,1);
+
+  /* ════ גישור: דריסת הטוקנים הגלובליים הישנים → הכחול נעלם מהפלאגין ════ */
+  --accent-primary:      var(--uc-gold);
+  --accent-primary-text: #FFFFFF;
+  --accent:              var(--uc-gold);
+  --text-dark-blue:      var(--uc-gold);
+}
+
+/* ══ Wordmark unichord (מחליף לוגו שבור + כותרת כחולה) ══ */
+.achord-brandwrap { gap: 14px; }
+.uc-brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  text-decoration: none;
+  line-height: 1;
+}
+.uc-wordmark {
+  font-family: var(--uc-font-mark);
+  font-weight: 700;
+  font-size: 1.7rem;
+  letter-spacing: -0.015em;
+  color: var(--uc-ink);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.uc-wordmark .uc-i {
+  color: var(--uc-gold);
+  position: relative;
+}
+.uc-wordmark .uc-i::after {
+  content: "";
+  position: absolute;
+  top: -0.04em; left: 50%;
+  transform: translateX(-50%);
+  width: 0.17em; height: 0.17em;
+  border-radius: 50%;
+  background: var(--uc-terracotta);
+}
+.uc-slogan {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--uc-gold-deep);
+  direction: rtl;
+}
+.uc-brand:hover .uc-wordmark { color: var(--uc-gold-deep); }
+.uc-brand:hover .uc-i        { color: var(--uc-terracotta); }
+
+/* ══ Header: כפתור המבורגר זהב במקום כחול (ברירת מחדל) ══ */
+#achord-menu-btn {
+  border: 2px solid var(--uc-gold) !important;
+  background: var(--uc-gold-tint) !important;
+  color: var(--uc-gold) !important;
+  box-shadow: var(--uc-shadow-sm);
+  border-radius: var(--uc-r-md);
+  transition: background var(--uc-t-fast), transform var(--uc-t-fast);
+}
+#achord-menu-btn:hover,
+#achord-menu-btn:focus { background: var(--uc-terracotta-soft) !important; transform: scale(1.04); }
+#achord-menu-btn:active { transform: scale(0.96); }
+#achord-menu-btn .bar { background: var(--uc-gold); }
+
+/* פוקוס נגיש זהב במקום כחול דיפולטי */
+.achord-homepage :where(a, button, input):focus-visible {
+  outline: 2px solid var(--uc-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   עמוד הבית החדש
+   ══════════════════════════════════════════════════════════════════════ */
+
+.achord-homepage { max-width: 920px; }
+
+/* בעמוד הבית החיפוש חי בתוך ה-hero — מסתירים את חיפוש ה-header כדי למנוע כפילות */
+.home .achord-searchbar { display: none; }
+
+/* ── HERO ── */
+.uc-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--uc-r-lg);
+  margin: 18px 0 40px;
+  padding: clamp(34px, 9vw, 60px) 22px clamp(28px, 7vw, 44px);
+  background: radial-gradient(125% 110% at 78% -15%, var(--uc-paper-hi) 0%, var(--uc-paper) 46%, var(--uc-bg) 100%);
+  border: 1px solid var(--uc-border);
+  box-shadow: var(--uc-shadow-md);
+  text-align: center;
+}
+.uc-hero__bg {
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, var(--uc-border-strong) 0 1px, transparent 1px 38px),
+    repeating-linear-gradient(0deg,  var(--uc-border-strong) 0 1px, transparent 1px 28px);
+  opacity: 0.13;
+  -webkit-mask-image: radial-gradient(72% 80% at 50% 26%, #000 28%, transparent 76%);
+          mask-image: radial-gradient(72% 80% at 50% 26%, #000 28%, transparent 76%);
+  pointer-events: none;
+}
+.uc-hero__inner { position: relative; z-index: 1; max-width: 640px; margin-inline: auto; }
+.uc-hero__slogan {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--uc-gold);
+  background: var(--uc-gold-tint);
+  border: 1px solid var(--uc-border-strong);
+  padding: 5px 16px;
+  border-radius: var(--uc-r-pill);
+  margin-bottom: 16px;
+}
+.uc-hero__title {
+  font-size: var(--uc-fs-h1);
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--uc-ink);
+  margin: 0 0 12px;
+}
+.uc-hero__title span { color: var(--uc-gold); }
+.uc-hero__sub {
+  font-size: 1.06rem;
+  color: var(--uc-ink-soft);
+  line-height: 1.6;
+  margin: 0 auto 24px;
+  max-width: 44ch;
+}
+.uc-hero__sub b { color: var(--uc-gold-deep); font-weight: 700; }
+.uc-hero__search { max-width: 560px; margin-inline: auto; }
+/* טופס החיפוש תוכנן לרוחב מלא — מתאימים אותו ל-hero הצר כך שלא יגלוש */
+.uc-hero__search .ams-simple-search-wrapper { max-width: 100%; margin: 0; }
+.uc-hero__search .ams-omnibox-input { min-width: 0; font-size: 1rem; }
+.uc-hero__search .ams-omnibox { box-shadow: var(--uc-shadow-sm); }
+.uc-hero__note {
+  margin: 14px 0 0;
+  font-size: 0.85rem;
+  color: var(--uc-muted);
+}
+
+/* ── כותרת סקשן אחידה ── */
+.uc-section { margin-bottom: 40px; }
+.uc-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.uc-section__title {
+  font-size: var(--uc-fs-h2);
+  font-weight: 800;
+  color: var(--uc-ink);
+  margin: 0;
+  position: relative;
+  padding-inline-start: 14px;
+}
+.uc-section__title::before {
+  content: "";
+  position: absolute;
+  inline-size: 4px; block-size: 0.95em;
+  inset-inline-start: 0; inset-block-start: 0.12em;
+  background: var(--uc-terracotta);
+  border-radius: 4px;
+}
+.uc-section__link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--uc-gold);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--uc-t-fast);
+}
+.uc-section__link:hover { color: var(--uc-gold-deep); }
+
+/* ── Genre chips ── */
+.uc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.uc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-pill);
+  color: var(--uc-ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--uc-shadow-sm);
+  transition: transform var(--uc-t-base), border-color var(--uc-t-base), background var(--uc-t-base), color var(--uc-t-base);
+}
+.uc-chip__count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--uc-gold);
+  background: var(--uc-gold-tint);
+  padding: 1px 8px;
+  border-radius: var(--uc-r-pill);
+  transition: background var(--uc-t-base), color var(--uc-t-base);
+}
+.uc-chip:hover {
+  transform: translateY(-2px);
+  border-color: var(--uc-gold);
+  background: var(--uc-gold);
+  color: #fff;
+}
+.uc-chip:hover .uc-chip__count { background: rgba(255,255,255,0.25); color: #fff; }
+
+/* ── Song cards ── */
+.uc-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 560px) { .uc-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 820px) { .uc-cards { grid-template-columns: repeat(3, 1fr); } }
+.uc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 16px 18px;
+  text-decoration: none;
+  box-shadow: var(--uc-shadow-sm);
+  transition: transform var(--uc-t-base), box-shadow var(--uc-t-base), border-color var(--uc-t-base);
+}
+.uc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--uc-shadow-md);
+  border-color: var(--uc-border-strong);
+}
+.uc-card__title {
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: var(--uc-ink);
+  line-height: 1.35;
+}
+.uc-card__singer {
+  font-size: 0.88rem;
+  color: var(--uc-ink-soft);
+}
+.uc-card__tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+.uc-tag {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: var(--uc-r-pill);
+  background: var(--uc-gold-tint);
+  color: var(--uc-gold-deep);
+}
+.uc-tag--easy { background: var(--uc-terracotta-soft); color: var(--uc-terracotta); }
+
+/* ── Doors (כרטיסי פיצ'ר) ── */
+.uc-doors {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 640px) { .uc-doors { grid-template-columns: repeat(2, 1fr); } }
+.uc-door {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 20px;
+  text-decoration: none;
+  box-shadow: var(--uc-shadow-sm);
+  transition: transform var(--uc-t-base), box-shadow var(--uc-t-base), border-color var(--uc-t-base);
+}
+.uc-door:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--uc-shadow-md);
+  border-color: var(--uc-gold);
+}
+.uc-door__icon {
+  flex: 0 0 auto;
+  width: 50px; height: 50px;
+  display: grid; place-items: center;
+  border-radius: var(--uc-r-md);
+  background: var(--uc-gold-tint);
+  color: var(--uc-gold);
+}
+.uc-door__icon svg { width: 26px; height: 26px; }
+.uc-door__body { display: flex; flex-direction: column; gap: 3px; }
+.uc-door__title { font-size: 1.08rem; font-weight: 800; color: var(--uc-ink); }
+.uc-door__desc  { font-size: 0.9rem; color: var(--uc-ink-soft); line-height: 1.45; }
+
+/* ── אקורדיון ז'אנרים — עיצוב נייר חם ── */
+#section-shirim .achord-section-header { border-bottom-color: var(--uc-gold-tint); }
+.achord-accordion-container { display: flex; flex-direction: column; }
+.achord-accordion-section-title {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--uc-gold);
+  margin: 22px 0 10px;
+  padding-inline-start: 11px;
+  border-inline-start: 3px solid var(--uc-terracotta);
+}
+.achord-accordion-item {
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border) !important;
+  border-radius: var(--uc-r-md);
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: var(--uc-shadow-sm);
+  transition: box-shadow var(--uc-t-base), border-color var(--uc-t-base), transform var(--uc-t-base);
+}
+.achord-accordion-item:hover {
+  box-shadow: var(--uc-shadow-md);
+  border-color: var(--uc-border-strong) !important;
+  transform: translateY(-1px);
+}
+.achord-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 18px;
+  font-weight: 700;
+  color: var(--uc-ink);
+  cursor: pointer;
+  background: transparent;
+  transition: background var(--uc-t-fast), color var(--uc-t-fast);
+}
+.achord-accordion-header:hover { background: var(--uc-gold-tint); }
+.achord-accordion-header.active { background: var(--uc-gold); color: #fff; }
+.achord-accordion-header .arrow {
+  color: var(--uc-gold);
+  font-size: 0.78em;
+  transition: transform var(--uc-t-base), color var(--uc-t-fast);
+}
+.achord-accordion-header.active .arrow { color: #fff; transform: rotate(180deg); }
+.achord-accordion-content { background: var(--uc-paper); }
+.achord-accordion-list { margin: 0; padding: 6px 18px 12px; list-style: none; }
+.achord-accordion-list li { border-top: 1px solid var(--uc-border); }
+.achord-accordion-list li:first-child { border-top: none; }
+.achord-accordion-list a {
+  display: block;
+  padding: 9px 0;
+  color: var(--uc-ink);
+  text-decoration: none;
+  transition: color var(--uc-t-fast), padding-inline-start var(--uc-t-base);
+}
+.achord-accordion-list a:hover { color: var(--uc-gold-deep); padding-inline-start: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-chip, .uc-card, .uc-door, .achord-accordion-item, #achord-menu-btn { transition: none !important; }
+  .uc-chip:hover, .uc-card:hover, .uc-door:hover, .achord-accordion-item:hover { transform: none !important; }
+}
+
+/* ══ מצב כהה: התאמת טוקני unichord (אחרת ה-wordmark/כרטיסים כהים על כהה) ══ */
+.dark-mode {
+  --uc-paper:           #243140;
+  --uc-paper-hi:        #2b3a4a;
+  --uc-bg:              #1a2330;
+  --uc-white:           #2b3a4a;
+  --uc-ink:             #EDE6D8;
+  --uc-ink-soft:        #B9AE9A;   /* היה #A89C86 = 4.30 על #2B3A4A ⇒ הובהר ל-5.29 (30.7.2026) */
+  --uc-muted:           rgba(220,210,200,0.45);
+  --uc-gold:            #D8A86E;
+  --uc-gold-deep:       #E8BC83;
+  --uc-gold-tint:       rgba(216,168,110,0.14);
+  --uc-terracotta:      #E07B57;
+  --uc-terracotta-soft: rgba(224,123,87,0.18);
+  --uc-border:          #3A4756;
+  --uc-border-strong:   #4B5A6B;
+  --accent-primary:     var(--uc-gold);
+  --text-dark-blue:     var(--uc-gold);
+}
+
+/* ══ איחוד הזהות לכל תבנית: המבורגר זהב גם ב-studio/dark (במקום כחול) ══ */
+body.theme-studio #achord-menu-btn,
+body.dark-mode.theme-studio #achord-menu-btn,
+body.dark-mode.theme-conductor #achord-menu-btn {
+  border-color: var(--uc-gold) !important;
+  background: var(--uc-gold-tint) !important;
+  color: var(--uc-gold) !important;
+}
+body.theme-studio #achord-menu-btn .bar,
+body.dark-mode.theme-studio #achord-menu-btn .bar,
+body.dark-mode.theme-conductor #achord-menu-btn .bar { background: var(--uc-gold); }
+
+/* כותרת אתר ישנה (אם נותרה במקומות אחרים) → זהב במקום כחול */
+body.theme-studio .achord-site-title,
+body.dark-mode.theme-studio .achord-site-title,
+body.dark-mode.theme-conductor .achord-site-title { color: var(--uc-gold); }
+
+/* ╔══════════════════════════════════════════════════════════════════════╗
+   ║  unichord — שכבת "מגע אנושי" + ארכיונים + עמוד תווים                   ║
+   ║  סריף עברי לכותרות · קו מצויר-ביד · נייר · עידון editorial            ║
+   ╚══════════════════════════════════════════════════════════════════════╝ */
+
+:root {
+  --uc-font-display: "Frank Ruhl Libre", Georgia, "Times New Roman", serif;
+  /* צללים חמים, דו-שכבתיים — תחושת נייר מורם ולא div צף */
+  --uc-shadow-sm: 0 1px 2px rgba(90,60,25,0.06), 0 1px 1px rgba(90,60,25,0.04);
+  --uc-shadow-md: 0 2px 4px rgba(90,60,25,0.06), 0 8px 22px rgba(90,60,25,0.10);
+  --uc-shadow-lg: 0 4px 8px rgba(90,60,25,0.08), 0 18px 44px rgba(90,60,25,0.16);
+  /* easing עם overshoot עדין — תנועה "חיה" */
+  --uc-t-base: 0.26s cubic-bezier(.34, 1.2, .64, 1);
+}
+
+/* ── 1. טיפוגרפיה: סריף לכותרות (רגש), sans לגוף (פונקציה) ── */
+.uc-hero__title { font-family: var(--uc-font-display); font-weight: 900; letter-spacing: -0.01em; line-height: 1.12; }
+.uc-section__title { font-family: var(--uc-font-display); font-weight: 700; }
+.uc-card__title { font-family: var(--uc-font-display); font-weight: 500; font-size: 1.12rem; line-height: 1.3; }
+.uc-door__title { font-family: var(--uc-font-display); font-weight: 700; }
+.achord-accordion-section-title { font-family: var(--uc-font-display); font-weight: 700; }
+.entry-title, .uc-archive-hero__title { font-family: var(--uc-font-display); }
+
+/* ── 2. אלמנט חתימה: קו תחתון מצויר-ביד (טרקוטה) ── */
+.uc-underline { position: relative; white-space: nowrap; color: var(--uc-gold); }
+.uc-underline::after {
+  content: "";
+  position: absolute;
+  left: -2%; right: -2%;
+  bottom: -0.12em;
+  height: 0.36em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M2 9 C 40 3, 80 12, 120 6 S 180 4, 198 8' fill='none' stroke='%23C75B39' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  pointer-events: none;
+  opacity: 0.92;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .uc-underline::after { background-size: 0% 100%; animation: uc-draw 0.7s 0.35s cubic-bezier(.4,0,.2,1) forwards; }
+}
+@keyframes uc-draw { to { background-size: 100% 100%; } }
+
+/* ── 3. טקסטורת נייר (grain) + עומק ── */
+.uc-hero::after, .uc-archive-hero::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+.dark-mode .uc-hero::after, .dark-mode .uc-archive-hero::after { mix-blend-mode: overlay; opacity: 0.2; }
+
+/* ── 4. עניין editorial: מספור סקשנים + kicker אישי ── */
+.achord-homepage { counter-reset: uc-sec; }
+.uc-section { counter-increment: uc-sec; }
+.uc-section__title::after {
+  content: "0" counter(uc-sec);
+  font-family: var(--uc-font-display);
+  font-weight: 400;
+  font-size: 0.6em;
+  color: var(--uc-gold);
+  opacity: 0.5;
+  margin-inline-start: 10px;
+  vertical-align: 0.18em;
+}
+.uc-kicker {
+  font-family: var(--uc-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.05rem;
+  color: var(--uc-ink-soft);
+  text-align: center;
+  margin: -22px 0 36px;
+}
+
+/* ── 5. עידון כרטיסים: פחות עיגול, קצה-נייר, פס accent ב-hover ── */
+.uc-card {
+  border-radius: 10px;
+  border-bottom: 2px solid var(--uc-border-strong);
+  position: relative;
+  overflow: hidden;
+}
+.uc-card::before {
+  content: "";
+  position: absolute;
+  inset-block: 0; inset-inline-start: 0;
+  width: 3px;
+  background: var(--uc-terracotta);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform var(--uc-t-base);
+}
+.uc-card:hover { transform: translateY(-3px); border-color: var(--uc-gold); box-shadow: var(--uc-shadow-md); }
+.uc-card:hover::before { transform: scaleY(1); }
+.uc-card:hover .uc-card__title { color: var(--uc-gold-deep); }
+
+/* תגיות: קו במקום גלולה מלאה (label, לא badge) */
+.uc-tag {
+  background: transparent;
+  border: 1px solid var(--uc-gold-tint);
+  border-radius: 4px;
+  color: var(--uc-gold-deep);
+  letter-spacing: 0.01em;
+}
+.uc-tag--easy { background: transparent; border-color: var(--uc-terracotta-soft); color: var(--uc-terracotta); }
+
+/* צ'יפים: hover עדין (tint, לא מילוי מלא אגרסיבי) */
+.uc-chip:hover { transform: translateY(-2px); border-color: var(--uc-gold); background: var(--uc-gold-tint); color: var(--uc-gold-deep); }
+.uc-chip:hover .uc-chip__count { background: var(--uc-white); color: var(--uc-gold-deep); }
+
+/* ── 6. נגיעות micro ── */
+.achord-homepage ::selection, .achord-archive ::selection { background: var(--uc-terracotta-soft); color: var(--uc-ink); }
+/* סוגרי אקורד [ ] סביב קישורי "כל ה..." — מוטיב מהדומיין, נקשר לנקודת ה-i */
+.uc-section__link::before { content: "["; color: var(--uc-gold); margin-inline-end: 2px; }
+.uc-section__link::after  { content: "]"; color: var(--uc-gold); margin-inline-start: 2px; }
+.uc-section__link {
+  background-image: linear-gradient(var(--uc-gold), var(--uc-gold));
+  background-size: 0% 1.5px;
+  background-position: right bottom;
+  background-repeat: no-repeat;
+  transition: background-size var(--uc-t-base), color var(--uc-t-fast);
+}
+.uc-section__link:hover { background-size: 100% 1.5px; }
+.achord-homepage :where(a, button, input):focus-visible,
+.achord-archive :where(a, button, input):focus-visible {
+  outline: 2px solid var(--uc-terracotta);
+  outline-offset: 3px;
+  border-radius: 5px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ארכיון ז'אנר / אמן / רמה
+   ══════════════════════════════════════════════════════════════════════ */
+.uc-archive-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--uc-r-lg);
+  margin: 18px 0 34px;
+  padding: clamp(28px, 7vw, 44px) 22px;
+  background: radial-gradient(120% 120% at 82% -20%, var(--uc-paper-hi) 0%, var(--uc-paper) 48%, var(--uc-bg) 100%);
+  border: 1px solid var(--uc-border);
+  border-bottom: 2px solid var(--uc-border-strong);
+  box-shadow: var(--uc-shadow-sm);
+  text-align: center;
+}
+.uc-archive-hero__inner { position: relative; z-index: 1; }
+.uc-archive-hero__back {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--uc-gold);
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: color var(--uc-t-fast);
+}
+.uc-archive-hero__back:hover { color: var(--uc-gold-deep); }
+.uc-archive-hero__kind {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--uc-terracotta);
+  margin-bottom: 4px;
+}
+.uc-archive-hero__title { font-size: clamp(1.7rem, 6vw, 2.4rem); font-weight: 900; color: var(--uc-ink); margin: 0; line-height: 1.15; }
+.uc-archive-hero__count { font-size: 0.95rem; color: var(--uc-ink-soft); margin: 8px 0 0; }
+.uc-archive-hero__desc  { font-size: 0.95rem; color: var(--uc-ink-soft); margin: 10px auto 0; max-width: 52ch; line-height: 1.6; }
+
+.uc-cards--archive { margin-bottom: 34px; }
+
+.uc-archive-empty { text-align: center; color: var(--uc-ink-soft); padding: 40px 0; }
+
+/* עימוד */
+.uc-pagination { margin: 8px 0 48px; }
+.uc-pagination .page-numbers {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0; padding: 0;
+}
+.uc-pagination .page-numbers li { margin: 0; }
+.uc-pagination a.page-numbers,
+.uc-pagination span.page-numbers {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  background: var(--uc-white);
+  color: var(--uc-ink);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--uc-shadow-sm);
+  transition: border-color var(--uc-t-fast), background var(--uc-t-fast), transform var(--uc-t-fast);
+}
+.uc-pagination a.page-numbers:hover { border-color: var(--uc-gold); color: var(--uc-gold-deep); transform: translateY(-1px); }
+.uc-pagination .page-numbers.current { background: var(--uc-gold); border-color: var(--uc-gold); color: #fff; }
+.uc-pagination .page-numbers.dots { background: transparent; border: none; box-shadow: none; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   עמוד תווים — הסרת ספירות WP המכוערות
+   ══════════════════════════════════════════════════════════════════════ */
+.ams-tl-count { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-card::before, .uc-section__link, .uc-underline::after { transition: none !important; animation: none !important; }
+  .uc-underline::after { background-size: 100% 100% !important; }
+}
+
+/* ╔══════════════════════════════════════════════════════════════════════╗
+   ║  unichord — עמודי תוכן/שיווק (אודות · מדריך · באנרי שיתוף-פעולה)      ║
+   ║  משתמש בטוקני --uc-* בלבד → מצב כהה עובד אוטומטית                      ║
+   ╚══════════════════════════════════════════════════════════════════════╝ */
+
+.uc-page { max-width: 860px; margin-inline: auto; padding: 6px 4px 56px; }
+
+/* ── Hero של עמוד תוכן (קומפקטי מהבית) ── */
+.uc-phero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--uc-r-lg);
+  margin: 14px 0 34px;
+  padding: clamp(30px, 7vw, 50px) 24px clamp(26px, 6vw, 40px);
+  background: radial-gradient(125% 120% at 80% -20%, var(--uc-paper-hi) 0%, var(--uc-paper) 50%, var(--uc-bg) 100%);
+  border: 1px solid var(--uc-border);
+  box-shadow: var(--uc-shadow-md);
+  text-align: center;
+}
+.uc-phero__bg {
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, var(--uc-border-strong) 0 1px, transparent 1px 38px),
+    repeating-linear-gradient(0deg,  var(--uc-border-strong) 0 1px, transparent 1px 28px);
+  opacity: 0.12;
+  -webkit-mask-image: radial-gradient(72% 84% at 50% 24%, #000 26%, transparent 78%);
+          mask-image: radial-gradient(72% 84% at 50% 24%, #000 26%, transparent 78%);
+  pointer-events: none;
+}
+.uc-phero__inner { position: relative; z-index: 1; max-width: 620px; margin-inline: auto; }
+.uc-phero__eyebrow {
+  display: inline-block;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em;
+  color: var(--uc-gold);
+  background: var(--uc-gold-tint);
+  border: 1px solid var(--uc-border-strong);
+  padding: 5px 16px;
+  border-radius: var(--uc-r-pill);
+  margin-bottom: 16px;
+}
+.uc-phero__title {
+  font-family: var(--uc-font-display);
+  font-size: var(--uc-fs-h1); font-weight: 900;
+  letter-spacing: -0.01em; line-height: 1.14;
+  color: var(--uc-ink);
+  margin: 0 0 12px;
+}
+.uc-phero__title span { color: var(--uc-gold); }
+.uc-phero__sub {
+  font-size: 1.05rem; color: var(--uc-ink-soft);
+  line-height: 1.65; margin: 0 auto; max-width: 48ch;
+}
+
+/* ── טקסט גוף (prose) ── */
+.uc-prose { color: var(--uc-ink); }
+.uc-prose h2 {
+  font-family: var(--uc-font-display);
+  font-size: var(--uc-fs-h2); font-weight: 800;
+  color: var(--uc-ink);
+  margin: 38px 0 14px;
+  position: relative; padding-inline-start: 14px;
+}
+.uc-prose h2::before {
+  content: ""; position: absolute;
+  inline-size: 4px; block-size: 0.9em;
+  inset-inline-start: 0; inset-block-start: 0.16em;
+  background: var(--uc-terracotta); border-radius: 4px;
+}
+.uc-prose h3 {
+  font-family: var(--uc-font-display);
+  font-size: 1.18rem; font-weight: 700;
+  color: var(--uc-gold-deep);
+  margin: 26px 0 8px;
+}
+.uc-prose p { font-size: 1.04rem; line-height: 1.75; color: var(--uc-ink-soft); margin: 0 0 14px; }
+.uc-prose strong { color: var(--uc-ink); font-weight: 700; }
+.uc-prose a { color: var(--uc-gold-deep); text-decoration: underline; text-underline-offset: 3px; }
+.uc-prose ul { margin: 0 0 16px; padding-inline-start: 0; list-style: none; }
+.uc-prose ul li {
+  position: relative; padding-inline-start: 26px;
+  margin-bottom: 9px; line-height: 1.65; color: var(--uc-ink-soft); font-size: 1.02rem;
+}
+.uc-prose ul li::before {
+  content: ""; position: absolute;
+  inset-inline-start: 4px; inset-block-start: 0.6em;
+  inline-size: 7px; block-size: 7px;
+  background: var(--uc-gold); border-radius: 50%;
+}
+
+/* ── רשת פיצ'רים (איקון + כותרת + תיאור) ── */
+.uc-feature-grid {
+  display: grid; grid-template-columns: 1fr; gap: 14px;
+  margin: 22px 0;
+}
+@media (min-width: 600px) { .uc-feature-grid { grid-template-columns: repeat(2, 1fr); } }
+.uc-feature {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 18px 20px;
+  box-shadow: var(--uc-shadow-sm);
+  transition: transform var(--uc-t-base), box-shadow var(--uc-t-base), border-color var(--uc-t-base);
+}
+.uc-feature:hover { transform: translateY(-3px); box-shadow: var(--uc-shadow-md); border-color: var(--uc-border-strong); }
+.uc-feature__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  inline-size: 42px; block-size: 42px;
+  border-radius: var(--uc-r-md);
+  background: var(--uc-gold-tint); color: var(--uc-gold-deep);
+  font-size: 1.35rem;
+}
+.uc-feature__icon svg { width: 24px; height: 24px; }
+.uc-feature__title { font-family: var(--uc-font-display); font-size: 1.1rem; font-weight: 700; color: var(--uc-ink); }
+.uc-feature__desc  { font-size: 0.95rem; color: var(--uc-ink-soft); line-height: 1.55; }
+
+/* ── גלריית וידאו "רואים את זה בפעולה" (הדגמות אמת מהאתר, אנכיות כמו בנייד) ── */
+.uc-demos {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 16px;
+  margin: 22px 0 8px;
+}
+@media (min-width: 760px) { .uc-demos { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 380px) { .uc-demos { grid-template-columns: 1fr; } }
+.uc-demo { display: flex; flex-direction: column; align-items: center; gap: 11px; text-align: center; }
+.uc-demo__frame {
+  position: relative; width: 100%; max-width: 232px; aspect-ratio: 9 / 16;
+  border-radius: 26px; overflow: hidden;
+  background: var(--uc-ink); border: 3px solid var(--uc-ink);
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  box-shadow: var(--uc-shadow-lg);
+  transition: transform var(--uc-t-base), box-shadow var(--uc-t-base);
+}
+.uc-demo:hover .uc-demo__frame { transform: translateY(-4px); box-shadow: 0 20px 46px rgba(80,55,25,0.22); }
+/* רקע שקוף: עד שיש פריים אמיתי, הפוסטר (background של המסגרת) נשאר גלוי — בלי אריח לבן */
+.uc-demo__frame video { width: 100%; height: 100%; object-fit: cover; display: block; background: transparent; }
+/* חיווי "בטעינה/מושהה" עדין עד שהסרטון מתנגן בגלילה לתצוגה */
+.uc-demo__frame::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, transparent 62%, rgba(31,24,16,0.28) 100%);
+  opacity: 1; transition: opacity var(--uc-t-base);
+}
+.uc-demo__frame.is-playing::after { opacity: 0; }
+.uc-demo__cap {
+  display: inline-flex; align-items: center; gap: 0.42em;
+  font-family: var(--uc-font-display); font-weight: 700; font-size: 0.98rem; color: var(--uc-ink);
+}
+.uc-demo__cap .e { font-size: 1.15rem; line-height: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .uc-demo:hover .uc-demo__frame { transform: none; }
+}
+
+/* ── שלבים ממוספרים ── */
+.uc-steps { display: flex; flex-direction: column; gap: 14px; margin: 22px 0; counter-reset: ucstep; }
+.uc-step {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 16px 18px;
+  box-shadow: var(--uc-shadow-sm);
+}
+.uc-step__num {
+  counter-increment: ucstep;
+  flex: 0 0 38px; block-size: 38px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--uc-gold); color: #fff;
+  font-family: var(--uc-font-display); font-weight: 800; font-size: 1.05rem;
+}
+.uc-step__num::before { content: counter(ucstep); }
+.uc-step__body { min-width: 0; }
+.uc-step__title { font-family: var(--uc-font-display); font-size: 1.08rem; font-weight: 700; color: var(--uc-ink); margin-bottom: 3px; }
+.uc-step__desc  { font-size: 0.98rem; color: var(--uc-ink-soft); line-height: 1.6; }
+.uc-step__desc a { color: var(--uc-gold-deep); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── כפתורי פעולה ── */
+.uc-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 26px;
+  border-radius: var(--uc-r-pill);
+  font-weight: 700; font-size: 1rem; text-decoration: none;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: transform var(--uc-t-fast), box-shadow var(--uc-t-fast), background var(--uc-t-fast), color var(--uc-t-fast), border-color var(--uc-t-fast);
+}
+.uc-btn--primary { background: var(--uc-gold); color: #fff; box-shadow: var(--uc-shadow-sm); }
+.uc-btn--primary:hover { background: var(--uc-gold-deep); transform: translateY(-2px); box-shadow: var(--uc-shadow-md); }
+.uc-btn--ghost { background: transparent; color: var(--uc-gold-deep); border-color: var(--uc-border-strong); }
+.uc-btn--ghost:hover { background: var(--uc-gold-tint); border-color: var(--uc-gold); transform: translateY(-2px); }
+.uc-btn-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 8px; }
+
+/* ── באנר שיתוף-פעולה / קריאה לפעולה ── */
+.uc-cta-band {
+  position: relative; overflow: hidden;
+  border-radius: var(--uc-r-lg);
+  margin: 40px 0;
+  padding: clamp(30px, 6vw, 46px) clamp(22px, 5vw, 40px);
+  background: linear-gradient(135deg, var(--uc-gold-deep) 0%, var(--uc-gold) 55%, var(--uc-terracotta) 130%);
+  color: #fff;
+  text-align: right;
+  box-shadow: var(--uc-shadow-md);
+  /* יישור התוכן לימין (RTL): flex-start בעמודת flex = צד ימין בכיוון rtl */
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+.uc-cta-band__bg {
+  position: absolute; inset: 0; opacity: 0.16; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(0deg,  #fff 0 1px, transparent 1px 30px);
+  -webkit-mask-image: radial-gradient(80% 90% at 50% 0%, #000 30%, transparent 80%);
+          mask-image: radial-gradient(80% 90% at 50% 0%, #000 30%, transparent 80%);
+}
+.uc-cta-band__inner { position: relative; z-index: 1; max-width: 600px; margin-inline: 0; }
+.uc-cta-band__title {
+  font-family: var(--uc-font-display); font-weight: 900;
+  font-size: clamp(1.4rem, 4.5vw, 2rem); line-height: 1.2;
+  margin: 0 0 12px; color: #fff;
+}
+.uc-cta-band__sub { font-size: 1.05rem; line-height: 1.65; margin: 0 0 22px; max-width: 46ch; color: rgba(255,255,255,0.92); }
+.uc-cta-band .uc-btn--primary { background: #fff; color: var(--uc-gold-deep); }
+.uc-cta-band .uc-btn--primary:hover { background: var(--uc-paper-hi); color: var(--uc-gold-deep); }
+.uc-cta-band .uc-btn--ghost { color: #fff; border-color: rgba(255,255,255,0.6); }
+.uc-cta-band .uc-btn--ghost:hover { background: rgba(255,255,255,0.14); border-color: #fff; }
+/* כפתורים צמודים לימין (RTL): flex-start בשורת flex = מתחילים מימין */
+.uc-cta-band .uc-btn-row { justify-content: flex-start; }
+/* גובר על typography של .uc-prose כשהבאנר מוטמע בעמוד תוכן */
+.uc-prose .uc-cta-band__title { color: #fff; padding-inline-start: 0; }
+.uc-prose .uc-cta-band__title::before { content: none; }
+.uc-prose .uc-cta-band__sub { color: rgba(255,255,255,0.92); font-size: 1.05rem; }
+
+/* ══ טופס "צור קשר" ══ */
+.uc-contact {
+  margin: 40px 0;
+  padding: clamp(22px, 4vw, 34px);
+  background: var(--uc-paper-hi);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-lg);
+  box-shadow: var(--uc-shadow-sm);
+  max-width: 640px;
+}
+.uc-contact > h2 { margin-top: 0; }
+.uc-contact__form { display: flex; flex-direction: column; gap: 16px; }
+.uc-contact__field { display: flex; flex-direction: column; gap: 6px; }
+.uc-contact__field label {
+  font-weight: 700; font-size: 0.95rem; color: var(--uc-ink);
+}
+.uc-contact__req { color: var(--uc-terracotta); }
+.uc-contact__field input,
+.uc-contact__field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit; font-size: 1rem; color: var(--uc-ink);
+  background: var(--uc-white);
+  border: 1.5px solid var(--uc-border-strong);
+  border-radius: var(--uc-r-sm);
+  transition: border-color var(--uc-t-fast), box-shadow var(--uc-t-fast);
+}
+.uc-contact__field textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
+.uc-contact__field input:focus,
+.uc-contact__field textarea:focus {
+  outline: none;
+  border-color: var(--uc-gold);
+  box-shadow: 0 0 0 3px var(--uc-gold-tint);
+}
+.uc-contact__submit { align-self: flex-start; margin-top: 4px; }
+.uc-contact__note { margin: 0; font-size: 0.85rem; color: var(--uc-muted); }
+
+/* Honeypot — מוסתר מבני אדם אך נשאר ב-DOM כדי שבוטים ימלאו אותו */
+.uc-contact__hp {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px; height: 1px; overflow: hidden;
+}
+
+/* הודעות סטטוס */
+.uc-contact__alert {
+  margin: 0 0 18px;
+  padding: 13px 16px;
+  border-radius: var(--uc-r-md);
+  font-size: 0.97rem; line-height: 1.55;
+}
+.uc-contact__alert--ok {
+  background: var(--uc-gold-tint);
+  border: 1px solid var(--uc-border-strong);
+  color: var(--uc-ink);
+}
+.uc-contact__alert--err {
+  background: var(--uc-terracotta-soft);
+  border: 1px solid var(--uc-terracotta);
+  color: #7a2e16;
+}
+.uc-contact__alert ul { margin: 6px 0 0; padding-inline-start: 18px; list-style: disc; }
+.uc-contact__alert li { margin: 2px 0; }
+
+/* ── רצועת אמון / מספרים ── */
+.uc-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin: 26px 0; text-align: center;
+}
+.uc-stat {
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 18px 10px;
+  box-shadow: var(--uc-shadow-sm);
+}
+.uc-stat__num { font-family: var(--uc-font-display); font-size: clamp(1.5rem, 5vw, 2.1rem); font-weight: 900; color: var(--uc-gold-deep); line-height: 1; }
+.uc-stat__label { font-size: 0.85rem; color: var(--uc-ink-soft); margin-top: 6px; }
+
+/* ── רצועת ערכים / בידול (חינם · קוד פתוח · מהספר · קהילה) ── */
+.uc-values { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 0 38px; }
+@media (min-width: 700px) { .uc-values { grid-template-columns: repeat(4, 1fr); } }
+.uc-value {
+  display: flex; flex-direction: column; gap: 5px; align-items: center; text-align: center;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 16px 12px;
+  box-shadow: var(--uc-shadow-sm);
+  transition: transform var(--uc-t-base), box-shadow var(--uc-t-base), border-color var(--uc-t-base);
+}
+.uc-value:hover { transform: translateY(-2px); box-shadow: var(--uc-shadow-md); border-color: var(--uc-border-strong); }
+.uc-value__icon { font-size: 1.5rem; line-height: 1; }
+.uc-value__title { font-family: var(--uc-font-display); font-weight: 700; color: var(--uc-ink); font-size: 1rem; }
+.uc-value__desc { font-size: 0.82rem; color: var(--uc-ink-soft); line-height: 1.4; }
+@media (prefers-reduced-motion: reduce) { .uc-value { transition: none !important; } .uc-value:hover { transform: none !important; } }
+
+/* ── FAQ ── */
+.uc-faq { display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
+.uc-faq details {
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 4px 18px;
+  box-shadow: var(--uc-shadow-sm);
+}
+.uc-faq summary {
+  cursor: pointer; list-style: none;
+  padding: 14px 0; font-weight: 700; color: var(--uc-ink);
+  font-size: 1.02rem; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.uc-faq summary::-webkit-details-marker { display: none; }
+.uc-faq summary::after { content: "+"; color: var(--uc-gold); font-size: 1.4rem; font-weight: 400; transition: transform var(--uc-t-base); }
+.uc-faq details[open] summary::after { transform: rotate(45deg); }
+.uc-faq details p { margin: 0 0 14px; color: var(--uc-ink-soft); line-height: 1.7; }
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-feature, .uc-btn, .uc-faq summary::after { transition: none !important; }
+  .uc-feature:hover, .uc-btn:hover { transform: none !important; }
+}
+
+/* ╔══════════════════════════════════════════════════════════════════════╗
+   ║  unichord — הכרה בתורמים: קרדיט בעמוד שיר + עמוד "תורמים"             ║
+   ╚══════════════════════════════════════════════════════════════════════╝ */
+
+/* ── שורת קרדיט עדינה בתחתית עמוד שיר ── */
+.achord-credit {
+  max-width: 760px;
+  margin: 22px auto 8px;
+  padding: 14px 18px;
+  background: var(--uc-paper-hi);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  box-shadow: var(--uc-shadow-sm);
+}
+.achord-credit__title {
+  display: block;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--uc-ink-soft);
+  margin-bottom: 10px;
+}
+.achord-credit__list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 10px 18px;
+}
+.achord-credit__person { display: flex; align-items: center; gap: 9px; }
+.achord-credit__avatar {
+  flex: 0 0 32px; block-size: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--uc-gold); color: #fff;
+  font-family: var(--uc-font-display); font-weight: 800; font-size: 0.95rem;
+}
+.achord-credit__meta { display: flex; flex-direction: column; line-height: 1.25; }
+.achord-credit__name { font-weight: 700; color: var(--uc-ink); font-size: 0.95rem; }
+.achord-credit__roles { font-size: 0.78rem; color: var(--uc-ink-soft); }
+
+/* ── עמוד "תורמים" ── */
+.uc-contrib-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  margin: 22px 0;
+}
+@media (min-width: 640px) { .uc-contrib-grid { grid-template-columns: repeat(3, 1fr); } }
+.uc-contrib {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 20px 14px;
+  box-shadow: var(--uc-shadow-sm);
+  transition: transform var(--uc-t-base), box-shadow var(--uc-t-base), border-color var(--uc-t-base);
+}
+.uc-contrib:hover { transform: translateY(-3px); box-shadow: var(--uc-shadow-md); border-color: var(--uc-border-strong); }
+.uc-contrib__avatar {
+  inline-size: 52px; block-size: 52px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--uc-gold); color: #fff;
+  font-family: var(--uc-font-display); font-weight: 800; font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+.uc-contrib__name { font-family: var(--uc-font-display); font-weight: 700; color: var(--uc-ink); font-size: 1.05rem; }
+.uc-contrib__count { font-size: 0.85rem; color: var(--uc-gold-deep); font-weight: 600; }
+.uc-contrib__tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 4px; }
+.uc-contrib__tag {
+  font-size: 0.72rem; font-weight: 600;
+  padding: 2px 9px; border-radius: var(--uc-r-pill);
+  background: var(--uc-gold-tint); color: var(--uc-gold-deep);
+}
+.uc-contrib-empty {
+  text-align: center;
+  background: var(--uc-white);
+  border: 1px dashed var(--uc-border-strong);
+  border-radius: var(--uc-r-md);
+  padding: 36px 22px; margin: 22px 0;
+}
+.uc-contrib-empty__title { font-family: var(--uc-font-display); font-weight: 800; font-size: 1.3rem; color: var(--uc-ink); margin: 0 0 8px; }
+.uc-contrib-empty__sub { color: var(--uc-ink-soft); line-height: 1.6; margin: 0 auto 18px; max-width: 44ch; }
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-contrib { transition: none !important; }
+  .uc-contrib:hover { transform: none !important; }
+}
+
+/* ╔══════════════════════════════════════════════════════════════════════╗
+   ║  unichord — "בקש שיר חסר": כפתור בחיפוש + טופס + רשימת בקשות שירים   ║
+   ╚══════════════════════════════════════════════════════════════════════╝ */
+
+/* ── כפתור בתוצאות חיפוש ריקות ── */
+.achord-search-request-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 6px auto 4px;
+  padding: 9px 18px;
+  border-radius: var(--uc-r-pill);
+  background: var(--uc-gold-tint);
+  color: var(--uc-gold-deep);
+  border: 1px solid var(--uc-border-strong);
+  font-weight: 700; font-size: 0.92rem; text-decoration: none;
+  transition: background var(--uc-t-fast), transform var(--uc-t-fast), color var(--uc-t-fast);
+}
+.achord-search-request-cta:hover { background: var(--uc-gold); color: #fff; transform: translateY(-1px); }
+
+/* ── טופס בקשה ── */
+.uc-reqform {
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 20px;
+  box-shadow: var(--uc-shadow-sm);
+  margin: 4px 0 30px;
+}
+.uc-reqform__row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 560px) { .uc-reqform__row { grid-template-columns: 1fr 1fr; } }
+.uc-reqform__field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.uc-reqform__label { font-size: 0.85rem; font-weight: 700; color: var(--uc-ink-soft); }
+.uc-reqform input[type="text"],
+.uc-reqform input[type="email"] {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--uc-border-strong);
+  border-radius: var(--uc-r-sm);
+  background: var(--uc-paper-hi);
+  color: var(--uc-ink);
+  font: inherit;
+  transition: border-color var(--uc-t-fast), box-shadow var(--uc-t-fast);
+}
+.uc-reqform input:focus {
+  outline: none;
+  border-color: var(--uc-gold);
+  box-shadow: 0 0 0 3px var(--uc-gold-tint);
+}
+.uc-reqform__hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; opacity: 0; }
+.uc-reqform__actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+.uc-reqform__msg { font-size: 0.92rem; font-weight: 600; }
+.uc-reqform__msg.is-ok    { color: #2e7d4f; }
+.uc-reqform__msg.is-error { color: var(--uc-terracotta); }
+.dark-mode .uc-reqform__msg.is-ok { color: #6fcf97; }
+
+/* ── רשימת בקשות שירים ── */
+.uc-req-listtitle {
+  font-family: var(--uc-font-display); font-weight: 800;
+  font-size: var(--uc-fs-h2); color: var(--uc-ink);
+  margin: 30px 0 14px; padding-inline-start: 14px;
+  position: relative;
+}
+.uc-req-listtitle::before {
+  content: ""; position: absolute;
+  inline-size: 4px; block-size: 0.9em;
+  inset-inline-start: 0; inset-block-start: 0.16em;
+  background: var(--uc-terracotta); border-radius: 4px;
+}
+.uc-req-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.uc-req {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--uc-white);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  padding: 14px 18px;
+  box-shadow: var(--uc-shadow-sm);
+}
+.uc-req__main { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; }
+.uc-req__title { font-family: var(--uc-font-display); font-weight: 700; color: var(--uc-ink); font-size: 1.05rem; }
+.uc-req__artist { font-size: 0.88rem; color: var(--uc-ink-soft); }
+.uc-req__demand {
+  flex: 0 0 auto;
+  font-size: 0.78rem; font-weight: 700;
+  padding: 3px 11px; border-radius: var(--uc-r-pill);
+  background: var(--uc-terracotta-soft); color: var(--uc-terracotta);
+}
+.uc-req__add {
+  flex: 0 0 auto;
+  font-size: 0.9rem; font-weight: 700; text-decoration: none;
+  color: var(--uc-gold-deep);
+  padding: 7px 14px; border-radius: var(--uc-r-pill);
+  border: 1px solid var(--uc-border-strong);
+  transition: background var(--uc-t-fast), color var(--uc-t-fast), transform var(--uc-t-fast);
+}
+.uc-req__add:hover { background: var(--uc-gold); color: #fff; transform: translateY(-1px); }
+.uc-req-empty {
+  text-align: center; color: var(--uc-ink-soft);
+  background: var(--uc-white);
+  border: 1px dashed var(--uc-border-strong);
+  border-radius: var(--uc-r-md);
+  padding: 30px 20px; margin: 10px 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .achord-search-request-cta, .uc-req__add { transition: none !important; }
+}
+
+/* ── כפתור שיתוף בעמוד שיר ── */
+.uc-share {
+  max-width: 760px;
+  margin: 18px auto 8px;
+  padding: 16px 18px;
+  background: var(--uc-paper-hi);
+  border: 1px solid var(--uc-border);
+  border-radius: var(--uc-r-md);
+  box-shadow: var(--uc-shadow-sm);
+  text-align: center;
+}
+.uc-share__label {
+  display: block;
+  font-family: var(--uc-font-display);
+  font-weight: 700; font-size: 1.02rem;
+  color: var(--uc-ink);
+  margin-bottom: 12px;
+}
+.uc-share__btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+/* `.uc-share` קידומת + !important — גובר על איפוס כפתורי GeneratePress (button מקונן עמוק
+   ב-.inside-article .entry-content). ה-vars עדיין מתאימים אוטומטית למצב כהה. */
+.uc-share .uc-share__btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 18px;
+  border-radius: var(--uc-r-pill);
+  font: inherit; font-weight: 700; font-size: 0.92rem;
+  text-decoration: none; cursor: pointer;
+  border: 1px solid var(--uc-border-strong) !important;
+  background: var(--uc-white) !important;
+  color: var(--uc-ink) !important;
+  transition: transform var(--uc-t-fast), background var(--uc-t-fast), color var(--uc-t-fast), border-color var(--uc-t-fast);
+}
+.uc-share .uc-share__btn:hover { transform: translateY(-2px); }
+.uc-share .uc-share__btn--wa { background: #25D366 !important; border-color: #25D366 !important; color: #fff !important; }
+.uc-share .uc-share__btn--wa:hover { background: #1eb858 !important; border-color: #1eb858 !important; }
+.uc-share .uc-share__btn--fb { background: #1877F2 !important; border-color: #1877F2 !important; color: #fff !important; }
+.uc-share .uc-share__btn--fb:hover { background: #1465d1 !important; border-color: #1465d1 !important; }
+.uc-share .uc-share__btn--copy:hover,
+.uc-share .uc-share__btn--native:hover { background: var(--uc-gold-tint) !important; border-color: var(--uc-gold) !important; color: var(--uc-gold-deep) !important; }
+.uc-share .uc-share__btn--copy.is-done { background: var(--uc-gold) !important; border-color: var(--uc-gold) !important; color: #fff !important; }
+@media (prefers-reduced-motion: reduce) {
+  .uc-share__btn { transition: none !important; }
+  .uc-share__btn:hover { transform: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   שכבת ניגודיות — ת"י 5568 / WCAG 2.0 AA                            29.7.2026
+   ────────────────────────────────────────────────────────────────────────────
+   הרקע האמיתי של העמוד הוא ‎#F1DAC4‎ (‎--bg-song‎ של ‎.theme-conductor‎ בתוסף),
+   ולא ‎--uc-paper‎ הבהיר. מול הרקע הזה הזהב ‎#A9743F‎ נותן 2.96:1 — מתחת אפילו
+   לסף 3:1 של טקסט־תצוגה גדול. נמדד חי בדף הבית: 470 כשלים, מהם 420 באלמנט
+   אחד שחוזר — ‎.achord-accordion-header .arrow‎, חץ אחד בכל שורת שיר.
+
+   העיקרון: הגוון נשמר, יורדת רק הבהירות. הזהב לא מוחלף בצבע אחר.
+
+     --uc-gold        #A9743F → #A26E3A   ‎-3% בהירות ⇒ 3.22:1 מול החול.
+                                          קישוט, מסגרות, אייקונים וטקסט
+                                          תצוגה גדול (סף 3:1).
+     --uc-gold-text   חדש      #825931    4.55:1 מול החול · 6.14 מול לבן.
+                                          כל טקסט בגודל רגיל (סף 4.5:1).
+     --uc-gold-deep   #8A5C30 (ללא שינוי) רקע שנושא טקסט לבן (5.75:1).
+     --uc-terracotta  #C75B39 → #9E482D   שימושי־הרקע היחידים הם פסים של
+                                          3–4px ונקודה של 0.17em ⇒ ההכהיה
+                                          בהם לא נראית, והטקסט עולה ל-6.12.
+
+   למה גם ‎.theme-conductor‎ ולא רק ‎:root‎: התוסף מגדיר את הטוקנים על ה-class
+   הזה, שיושב על ‎<body>‎ — אב קרוב יותר מ-‎<html>‎, ולכן גובר על ‎:root‎ לכל
+   הצאצאים. ‎achord-child.css‎ נטען אחרי ‎main.css‎, ולכן בתיקו־ספציפיות הוא
+   מנצח. (אומת חי: ‎.ams-filter-toggle-label‎ קיבל ‎#B68C64‎ מהתוסף למרות
+   גשר ה-‎:root‎ שכבר היה קיים למעלה.)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+:root,
+.theme-conductor {
+  --uc-gold:          #A26E3A;
+  --uc-gold-text:     #825931;
+  --uc-terracotta:    #9E482D;
+  --text-secondary:   #4F5867;   /* היה #5A6475. נמדד: הרקע הכהה ביותר שנושא אותו הוא סרגל הפקדים #E4D4C1 (--bg-control), לא החול */
+  --accent-primary:   #825931;   /* משמש גם כטקסט וגם כרקע לטקסט לבן */
+  --accent:           #A26E3A;
+  --text-dark-blue:   #A26E3A;
+}
+
+/* ── טקסט בגודל רגיל שצבוע זהב — סף 4.5:1 ─────────────────────────────────── */
+.achord-site-title,
+.achord-panel .current_page_item > a,
+.achord-accordion-section-title,
+.achord-accordion-header .arrow,
+.uc-slogan,
+.uc-hero__slogan,
+.uc-hero__sub b,
+.uc-section__link,
+.uc-section__title::after,
+.uc-chip__count,
+.uc-archive-hero__back,
+.uc-phero__eyebrow,
+.uc-btn--ghost,
+.ams-filter-toggle-label,
+.screen-reader-text.skip-link { color: var(--uc-gold-text); }
+
+/* ── רקע זהב שנושא טקסט לבן ────────────────────────────────────────────────
+   הזהב המעודכן נותן ללבן 4.35:1 בלבד — עדיין מתחת ל-4.5. לכן הרקעים האלה
+   עוברים לגוון העמוק, שנותן 5.75:1. */
+.achord-panel a.achord-menu-button,
+.achord-404__btn,
+.achord-404__search-btn,
+.uc-chip:hover,
+.uc-step__num,
+.uc-btn--primary,
+.uc-pagination .page-numbers.current,
+.achord-accordion-header.active,
+.achord-btn--register {
+  background: var(--uc-gold-deep);
+  border-color: var(--uc-gold-deep);
+}
+.achord-btn--register { color: #FFFFFF; }
+
+/* ‎.achord-panel .achord-btn--register‎ (0,2,0) גובר על הבורר הקצר שלמעלה —
+   ‎#B5936A‎ עם ‎#FFF8EE‎ נותן 2.71:1. נדרשת אותה ספציפיות. */
+.achord-panel .achord-btn--register {
+  background: var(--uc-gold-deep);
+  border-color: var(--uc-gold-deep);
+  color: #FFFFFF;
+}
+
+/* ── שני ליקויים שקדמו לשכבה הזו, שנחשפו במדידה על ‎/madrich/‎ ────────────── */
+
+/* קישורים בגוף טקסט צבועים ‎--uc-gold-deep‎ — 4.26:1 מול החול, החטאה של 0.24 */
+.uc-prose a,
+.uc-step__desc a { color: var(--uc-gold-text); }
+
+/* ‎.ams-filter-toggle‎ לא מקבל רקע משלו, ולכן מחוץ לדף הבית הוא נופל
+   לכפתור־ברירת־המחדל האפור של GeneratePress (‎#55555E‎) — ועליו טקסט הזהב
+   נותן 1.20:1, כלומר כמעט בלתי־נראה. הרקע השקוף הוא מה שכבר מוצג בדף
+   הבית, כך שזה משחזר את המראה המכוון במקום להמציא חדש. */
+.ams-filter-toggle { background: transparent; }
+
+/* ── מצב לילה ────────────────────────────────────────────────────────────────
+   ‎--uc-gold-text‎ הוכהה כדי לעבור על רקעים בהירים. על רקע הלילה (‎#1F2937‎)
+   הכהיה עושה את ההפך — 2.39:1. לכן אותו גוון בדיוק, מוּבהר במקום מוכהה:
+   ‎#C89A5B‎ = 5.75:1. הבורר ‎body.dark-mode.theme-conductor‎ (0,2,1) גובר על
+   הגדרת הטוקן למעלה (0,1,0), ולכן מצב יום לא מושפע. */
+body.dark-mode,
+body.dark-mode.theme-conductor {
+  --uc-gold-text: #D8A86E;   /* היה #C89A5B; הובהר ב-30.7 כדי לעבור סלוגן/eyebrow (4.41→5.1) על רקע כהה בהיר */
+}
+
+/* ==========================================================================
+   שכבת טיפוגרפיה — גרסה 2 (29.7.2026)
+   מילים = Assistant 500 · כותרות = Frank Ruhl Libre · אקורדים = Roboto
+   ניתן להסיר את כל הבלוק הזה כדי לחזור למצב הבסיס (הכל Assistant-Regular 24px/400).
+   רישיונות: assets/fonts/ — Assistant ו-Frank Ruhl Libre = SIL OFL 1.1, Roboto = Apache 2.0
+   ========================================================================== */
+
+/* Assistant המקורי באתר הוא קובץ Regular סטטי אחד ⇒ משקל 500 היה יוצא faux-bold
+   מסונתז. הגרסה המשתנה נותנת 500 אמיתי. */
+@font-face {
+    font-family: 'UCAssistant';
+    src: url('../fonts/assistant-hebrew.woff2') format('woff2');
+    font-weight: 200 800;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
+/* כותרות בלבד. עברית בלבד — כותרת לטינית נדירה ותיפול ל-UCRoboto,
+   הלטינית של FRL שוקלת 44KB ואינה מצדיקה את עצמה. */
+@font-face {
+    font-family: 'UCFrankRuhl';
+    src: url('../fonts/frl-hebrew.woff2') format('woff2');
+    font-weight: 300 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
+@font-face {
+    font-family: 'UCRoboto';
+    src: url('../fonts/roboto-latin.woff2') format('woff2');
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ‎--font-body ו-‎--font-chord מחושבים ב-‎:root מתוך ה-‎*-default. דריסת ה-default
+   בלבד לא הייתה משנה כלום, כי הערך כבר חושב על html ומשם רק יורש — ולכן
+   דורסים כאן את שני הצדדים. ‎--font-header מוגדר ישירות ⇒ מספיקה דריסה אחת. */
+:root,
+.theme-conductor {
+    --font-header:        'UCFrankRuhl', 'UCRoboto', 'Assistant-Regular', serif;
+    --font-body-default:  'UCAssistant', 'UCRoboto', 'Assistant-Regular', sans-serif;
+    --font-chord-default: 'UCRoboto', 'Assistant-Regular', sans-serif;
+    --font-body:          'UCAssistant', 'UCRoboto', 'Assistant-Regular', sans-serif;
+    --font-chord:         'UCRoboto', 'Assistant-Regular', sans-serif;
+}
+
+/* גופני "אות חיים" (oot-haim-active) ממשיכים לדרוס את ‎--font-body על העוטף — לא נגענו. */
+
+.achord-lyrics {
+    font-weight: 500;
+}
+
+/* 0.85em הציב את האקורד גבוה ב-11% מגובה האות העברית (רישיות לטיניות גבוהות
+   יותר מאותיות עבריות). 0.77em מיישר אותם אופטית ומצמצם רוחב. */
+.achord-chord {
+    font-size: 0.77em;
+}
+
+/* Eb מול E6 — ספרות ברוחב אחיד */
+.achord-chord,
+.achord-editor__chord {
+    font-variant-numeric: tabular-nums;
+}
+
+/* מובייל: המילים 24px→26px, ובמקביל מרווח הצד מצטמצם מ-46px ל-30px לכל צד
+   (‎.site-content 30+‎.achord-song 16 ⇒ 10+20). נמדד על 500 שורות אמיתיות
+   מהמאגר: Assistant 26/500 ברוחב 315px = 38.2% שורות נשברות, מול 43.2%
+   במצב הישן (24/400 ברוחב 283px). */
+@media (max-width: 768px) {
+    body.single-achord_song_cpt #content.site-content {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    body.single-achord_song_cpt .achord-song {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .achord-content {
+        --base-font-size: clamp(26px, 1.8vw + 0.8rem, 30px);
+    }
+}
+
+/* ╔══════════════════════════════════════════════════════════════════════╗
+   ║  תפריט הצד — סידור מצב מחובר (29.7.2026)                             ║
+   ║  כרטיס זהות בראש · קבוצות עם שם במקום קווים · יציאה כפעולת-שוליים    ║
+   ║  הבוררים מקדימים ‎.achord-panel‎ כדי לגבור על ‎.achord-panel a‎        ║
+   ║  הגנרי (0,1,1) שקובע ריפוד/גופן לכל קישור בתוך המגירה.               ║
+   ╚══════════════════════════════════════════════════════════════════════╝ */
+
+/* ── כרטיס זהות ───────────────────────────────────────────────────────── */
+.achord-panel .uc-me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 12px 2px;
+  padding: 12px 14px;
+  background: #FFFDF8;
+  border: 1px solid #E6D9C2;
+  border-radius: 14px;
+  text-decoration: none;
+  font-size: 16px;
+}
+.achord-panel .uc-me:hover { background: #F5EDDF; border-color: #DBCBAD; }
+.achord-panel .uc-me:focus-visible {
+  outline: 2px solid #B5936A;
+  outline-offset: 2px;
+}
+.uc-me__avatar {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--uc-gold-deep, #8A5C30);
+  color: #FFFFFF;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+}
+/* ‎min-width:0‎ הוא מה שמאפשר ל-ellipsis לפעול בתוך flex — בלעדיו התיבה
+   מתרחבת לרוחב המייל ודוחפת את תג-התפקיד מחוץ למסך. */
+.uc-me__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.uc-me__name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0D1B33;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.uc-me__mail {
+  font-size: 12.5px;
+  color: var(--uc-ink-soft, #6B5D49);
+  line-height: 1.3;
+  direction: ltr;
+  unicode-bidi: embed;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.uc-me__role {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--uc-gold-text, #825931);
+  background: rgba(181, 147, 106, .16);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+/* ── כותרת קבוצה ──────────────────────────────────────────────────────── */
+.achord-panel .uc-navgroup {
+  margin: 14px 22px 2px;
+  padding: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  /* #8B7C64 נתן 3.62:1 מול נייר התפריט — נכשל ב-AA לטקסט קטן. הטוקן הזה: 5.68:1 */
+  color: var(--uc-ink-soft, #6B5D49);
+  line-height: 1.2;
+}
+
+/* ── שורות ניווט: בלי קו בין כל שתי שורות ─────────────────────────────── */
+/* הריפוד נשאר 13px: שורה של 48px היא יעד-מגע תקני. הקו התחתון לכל שורה
+   יורד — הקבוצות הן מה שמפריד עכשיו, ולא קו בין כל שתי שורות. */
+.achord-panel__nav-list { padding: 2px 8px; }
+.achord-panel__nav-list li { border-bottom: 0; }
+.achord-panel__nav-list a[aria-current="page"] {
+  background: rgba(181, 147, 106, .14);
+  box-shadow: inset -4px 0 0 0 #B5936A;
+  font-weight: 700;
+}
+
+/* ── תגים בפלטת האתר (היו כחולים — הצבע היחיד שלא שייך לזהות) ─────────── */
+.achord-badge {
+  background: rgba(181, 147, 106, .18);
+  color: var(--uc-gold-text, #825931);
+}
+.achord-badge--alert {
+  background: rgba(158, 72, 45, .14);
+  /* ‎--uc-terracotta‎ עצמו נותן 4.49:1 על הרקע הזה — החטאה של 0.01. גוון עמוק יותר: 5.60:1 */
+  color: #8A3D24;
+}
+
+/* ── שורת קישורי המשנה — מופרדת בקו במקום ב-divider נפרד ──────────────── */
+.achord-panel__links-row {
+  margin: 12px 12px 0;
+  padding: 12px 10px 4px;
+  border-top: 1px solid #E6D9C2;
+}
+
+/* ── שוליים: התנתקות. פעולה סופית, ולכן לא באותו משקל של יעדי ניווט ───── */
+.uc-panel-foot {
+  margin: 4px 12px 20px;
+  padding-top: 8px;
+}
+.achord-panel .uc-logout {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--uc-ink-soft, #6B5D49);
+}
+.achord-panel .uc-logout:hover {
+  background: rgba(158, 72, 45, .08);
+  color: var(--uc-terracotta, #9E482D);
+}
+.achord-panel .uc-logout .achord-menu-icon,
+.achord-panel .uc-logout .achord-menu-icon svg { width: 19px; height: 19px; }
+.achord-panel .uc-logout .achord-menu-icon svg { stroke: currentColor; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   מצב לילה — סבב ניגודיות (30.7.2026)
+   נמדד חי מול WCAG AA (4.5 רגיל · 3.0 גדול) על 4 עמודים, עם כפיית recalc
+   מלאה (display-toggle) — חלונית־הדפדפן אינה מרעננת color אחרי הוספת
+   .dark-mode ע"י ה-JS, ולכן מדידה נאיבית החזירה מאות "כשלים" מזויפים שנפתרים
+   מעצמם. הכשלים האמיתיים: בית 34 · שיר 12 · מדריך 46 · נגישות 25.
+   ניתן להסיר את הבלוק כדי לחזור למצב הקודם. אין נגיעה במצב היום.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* צ'יפ מונה־השירים: זהב זעיר על תג בהיר (#43494F) ⇒ זהב בהיר יותר מהטקסט הכללי */
+body.dark-mode .uc-chip__count { color: #E8BC83; }
+
+/* תג "קל לנגן": --uc-terracotta הכהה (#9E482D) נכשל (1.89) ⇒ טרהקוטה בהיר לרקע לילה */
+body.dark-mode .uc-tag--easy { color: #EE9E7A; }
+
+/* הערת ה-hero: --uc-muted (rgba .45) חלש מדי (3.19) על רקע כהה */
+body.dark-mode .uc-hero__note { color: rgba(237,230,216,0.78); }
+
+/* כפתור primary בתוך רצועת ה-CTA יושב על רקע לבן קבוע ⇒ טקסט זהב עמוק (מצב־יום) */
+body.dark-mode .uc-cta-band .uc-btn--primary { color: #8A5C30; }
+
+/* טאב לא־פעיל בעמוד השיר: אפור בהיר יותר (#9CA3AF=4.21 ⇒ 5.15) */
+body.dark-mode .tab-btn:not(.active) { color: #AEB4BF; }
+
+/* המגירה (achord-panel) נשארת בהירה במצב לילה (כמו בחלק מהאתרים), אך טוקני
+   מצב־הלילה הפכו את הטקסט בה לבהיר על בהיר (2.41 / 1.76). אין בה אף רכיב
+   עם רקע כהה (אומת חי), ולכן היא מקבלת בבטחה את מלוא טוקני מצב־היום.
+   כולל את כרטיס הזהות (.uc-me), כותרות הקבוצה (.uc-navgroup) וההתנתקות. */
+body.dark-mode .achord-panel {
+  --uc-ink:        #1F1810;
+  --uc-ink-soft:   #6B5D49;
+  --uc-muted:      rgba(31,24,16,0.45);
+  --uc-gold:       #A26E3A;
+  --uc-gold-text:  #825931;
+  --uc-gold-deep:  #8A5C30;
+  --uc-terracotta: #9E482D;
+}
+
+/* הפוטר: הרקע הופך כהה (#1f2937) אך טקסט הקרדיטים/הניווט/המותג נשאר
+   --text-primary (#0D1B33) = כהה־על־כהה (1.17). מוארים לאפור בהיר; ל-copy
+   מוגברת השקיפות כי 0.5 על רקע כהה אינו יכול לעבור 4.5 בשום צבע. */
+body.dark-mode .achord-footer__tagline,
+body.dark-mode .achord-footer__tagline span,
+body.dark-mode .achord-footer__nav a,
+body.dark-mode .achord-footer__credit,
+body.dark-mode .achord-footer__copy,
+body.dark-mode .achord-footer__copy span { color: #E5E7EB; }
+body.dark-mode .achord-footer__copy { opacity: 0.75; }

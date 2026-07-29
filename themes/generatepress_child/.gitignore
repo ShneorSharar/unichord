@@ -1,0 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Node
+node_modules/
+npm-debug.log
+
+# Build
+*.min.css
+*.min.js
+_backup_*
+chord-editor-tests.js
+assets/js/chord-editor-tests.js

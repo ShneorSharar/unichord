@@ -1,0 +1,159 @@
+<!doctype html><html lang="he" dir="rtl"><head>
+<meta charset="utf-8">
+<title>unichord · בקשת שיר חסר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../studio.css">
+<style>
+  .scene{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .phone{ width:330px; height:650px; }
+  .a-9x16 .phone{ transform:scale(1.25); } .a-16x9 .phone{ transform:scale(.96); }
+  .phone__screen{ position:absolute; inset:10px; border-radius:30px; overflow:hidden; background:var(--uc-paper); }
+  .app-top{ display:flex; align-items:center; gap:10px; padding:30px 16px 12px; background:var(--uc-paper-hi); border-bottom:1px solid var(--uc-border); }
+  .app-top .uc-mark{ font-size:22px; }
+  .app-burger{ width:30px; display:flex; flex-direction:column; gap:5px; margin-inline-start:auto; }
+  .app-burger i{ height:3px; background:var(--uc-gold); border-radius:2px; display:block; }
+  .app-body{ padding:18px 16px; position:relative; }
+  .app-hello{ font-weight:800; font-size:21px; color:var(--uc-ink); margin-bottom:14px; }
+  .app-search{ display:flex; align-items:center; gap:8px; background:var(--uc-white); border:2px solid var(--uc-gold); border-radius:var(--uc-r-pill); padding:11px 16px; box-shadow:var(--uc-shadow-md); }
+  .app-search svg{ width:20px; height:20px; fill:var(--uc-gold); flex:0 0 20px; }
+  .app-search .q{ font-size:17px; color:var(--uc-ink); min-height:21px; }
+  .app-search .q:empty::before{ content:"חפשו שיר…"; color:var(--uc-muted); }
+  .caret{ display:inline-block; width:2px; height:18px; background:var(--uc-gold); vertical-align:-3px; margin-inline-start:1px; }
+
+  /* empty state */
+  .empty{ margin-top:26px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; }
+  .empty__icon{ width:74px; height:74px; border-radius:50%; background:var(--uc-gold-tint); display:flex; align-items:center; justify-content:center; }
+  .empty__icon svg{ width:38px; height:38px; fill:none; stroke:var(--uc-gold); stroke-width:1.8; }
+  .empty__t{ font-weight:800; font-size:18px; color:var(--uc-ink); }
+  .empty__s{ font-size:13px; color:var(--uc-ink-soft); margin-top:-6px; }
+  .req-btn{ margin-top:6px; display:inline-flex; align-items:center; gap:8px; background:var(--uc-gold); color:#fff; font-weight:800; border:none; border-radius:var(--uc-r-pill); padding:13px 26px; font-size:18px; box-shadow:var(--uc-shadow-md); }
+  .req-btn svg{ width:20px; height:20px; fill:#fff; }
+
+  /* request form card */
+  .form{ position:absolute; left:16px; right:16px; bottom:16px; background:var(--uc-white); border:1px solid var(--uc-border); border-radius:var(--uc-r-lg); box-shadow:var(--uc-shadow-lg); padding:18px 18px 20px; }
+  .form__h{ font-weight:800; font-size:18px; color:var(--uc-ink); margin-bottom:4px; }
+  .form__lbl{ font-size:13px; color:var(--uc-ink-soft); margin:10px 2px 6px; }
+  .form__in{ display:flex; align-items:center; background:var(--uc-paper); border:2px solid var(--uc-gold); border-radius:var(--uc-r-md); padding:11px 14px; }
+  .form__in .fq{ font-size:16px; color:var(--uc-ink); min-height:20px; }
+  .send-btn{ margin-top:14px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--uc-gold); color:#fff; font-weight:800; border:none; border-radius:var(--uc-r-pill); padding:13px 22px; font-size:18px; box-shadow:var(--uc-shadow-md); }
+
+  /* success state */
+  .success{ position:absolute; left:16px; right:16px; bottom:16px; background:var(--uc-white); border:1px solid var(--uc-border); border-radius:var(--uc-r-lg); box-shadow:var(--uc-shadow-lg); padding:26px 20px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; }
+  .success__check{ width:64px; height:64px; border-radius:50%; background:#E4F1E1; display:flex; align-items:center; justify-content:center; }
+  .success__check svg{ width:34px; height:34px; fill:none; stroke:#2E8B3D; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .success__t{ font-weight:800; font-size:18px; color:var(--uc-ink); }
+
+  .brandchip{ position:absolute; top:22px; right:26px; font-family:var(--uc-font-mark); font-weight:700; font-size:22px; color:var(--uc-ink); z-index:50; }
+  .brandchip b{ color:var(--uc-gold); } .brandchip .d{ color:var(--uc-terracotta); }
+</style></head>
+<body>
+<div class="stage">
+  <div class="brandchip" id="brand">uni<b>chord</b><span class="d">.</span></div>
+  <div class="scene">
+    <div class="ui-phone phone" id="phone">
+      <div class="ui-phone__notch"></div>
+      <div class="phone__screen">
+        <div class="app-top">
+          <span class="uc-mark">uni<b>chord</b></span>
+          <span class="app-burger"><i></i><i></i><i></i></span>
+        </div>
+        <div class="app-body">
+          <div class="app-hello">מה מנגנים היום?</div>
+          <div class="app-search" id="searchbox">
+            <svg viewBox="0 0 24 24"><path d="M21 20l-5.6-5.6a7 7 0 10-1.4 1.4L20 21zM5 10a5 5 0 1110 0 5 5 0 01-10 0z"/></svg>
+            <span class="q" id="q"></span><span class="caret" id="caret"></span>
+          </div>
+
+          <!-- empty state -->
+          <div class="empty" id="empty">
+            <div class="empty__icon">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+            </div>
+            <div class="empty__t">לא נמצאו תוצאות</div>
+            <div class="empty__s">השיר עוד לא במאגר — אבל אפשר לבקש אותו</div>
+            <button class="req-btn" id="reqBtn">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+              בקשו שיר חסר
+            </button>
+          </div>
+
+          <!-- request form -->
+          <div class="form" id="form">
+            <div class="form__h">בקשת שיר חסר</div>
+            <div class="form__lbl">שם השיר</div>
+            <div class="form__in"><span class="fq" id="fq"></span></div>
+            <button class="send-btn" id="sendBtn">שלחו בקשה</button>
+          </div>
+
+          <!-- success -->
+          <div class="success" id="success">
+            <div class="success__check">
+              <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="success__t">הבקשה נשלחה! נוסיף אותו בקרוב</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../studio.js"></script>
+<script>
+  // aspect from query (renderer passes ?aspect=)
+  const aspect = (new URLSearchParams(location.search).get('aspect')) || '16x9';
+  document.querySelector('.stage').classList.add('a-' + aspect);
+
+  const S = Studio.create({ fps: 30, aspect });
+
+  const SONG = 'שיר נדיר במיוחד';
+
+  // hide elements that animate in
+  ['empty','form','success','caret'].forEach(id=>document.getElementById(id).classList.add('anim-init'));
+  document.getElementById('form').style.opacity = 0;
+  document.getElementById('success').style.opacity = 0;
+  document.getElementById('form').style.transform = 'translateY(40px)';
+  document.getElementById('success').style.transform = 'translateY(40px)';
+
+  // 1 — phone enters
+  S.track('#phone', { from: 0, to: 700, ease:'outBack', y:[50,0], opacity:[0,1] });
+  S.track('#brand', { from: 200, to: 900, y:[-12,0], opacity:[0,1] });
+  S.caption('לא מצאתם שיר?', 250, 2600);
+
+  // 2 — type an obscure query
+  S.track('#caret', { from: 850, to: 950, opacity:[0,1] });
+  S.type('#q', SONG, 1000, 2400);
+
+  // 3 — empty state + pulsing gold button
+  S.track('#empty', { from: 2500, to: 2900, ease:'outCubic', y:[16,0], opacity:[0,1] });
+  S.track('#reqBtn', { from: 3000, to: 3400, ease:'inOutQuad', scale:[1,1.06] });
+  S.track('#reqBtn', { from: 3400, to: 3800, ease:'inOutQuad', scale:[1.06,1] });
+  S.caption('בקשו אותו בלחיצה אחת', 2800, 4300);
+
+  // 4 — cursor follows whole path (single declaration, two taps)
+  S.cursor([
+    { x: 999, y: 999, at: 0 },
+    { sel:'#searchbox', at: 900 },
+    { sel:'#searchbox', at: 2400 },
+    { sel:'#reqBtn', at: 4100, click: true },
+    { sel:'#form', at: 5400 },
+    { sel:'#sendBtn', at: 6200, click: true },
+  ]);
+
+  // 5 — form slides up, prefilled with the same name
+  S.track('#empty', { from: 4200, to: 4500, opacity:[1,0] });
+  S.track('#form', { from: 4350, to: 4900, ease:'outCubic', y:[40,0], opacity:[0,1] });
+  S.type('#fq', SONG, 4900, 5900);
+  S.caption('בקשו אותו בלחיצה אחת', 4300, 5900);
+
+  // 6 — form replaced by success
+  S.track('#form', { from: 6300, to: 6700, ease:'inOutQuad', y:[0,30], opacity:[1,0] });
+  S.track('#success', { from: 6600, to: 7100, ease:'outBack', y:[40,0], opacity:[0,1] });
+  S.track('.success__check', { from: 6900, to: 7400, ease:'outBack', scale:[.4,1] });
+  S.caption('נוסיף אותו — והשם שלכם יופיע כתורם', 7100, 8500);
+  S.track('#brand', { from: 8000, to: 8500, opacity:[1,1] }); // hold
+
+  S.ready();
+</script>
+</body></html>

@@ -1,0 +1,182 @@
+<!doctype html><html lang="he" dir="rtl"><head>
+<meta charset="utf-8">
+<title>unichord · לימוד חליל</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../studio.css">
+<style>
+  .scene{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .phone{ width:330px; height:650px; }
+  .a-9x16 .phone{ transform:scale(1.25); } .a-16x9 .phone{ transform:scale(.96); }
+  .phone__screen{ position:absolute; inset:10px; border-radius:30px; overflow:hidden; background:var(--uc-paper); }
+  .app-top{ display:flex; align-items:center; gap:10px; padding:30px 16px 12px; background:var(--uc-paper-hi); border-bottom:1px solid var(--uc-border); }
+  .app-top .uc-mark{ font-size:22px; }
+  .app-burger{ width:30px; display:flex; flex-direction:column; gap:5px; margin-inline-start:auto; }
+  .app-burger i{ height:3px; background:var(--uc-gold); border-radius:2px; display:block; }
+  .app-body{ padding:18px 16px; }
+  .app-title{ font-weight:800; font-size:21px; color:var(--uc-ink); margin-bottom:12px; }
+
+  /* tab row */
+  .tabs{ display:flex; gap:8px; margin-bottom:18px; }
+  .tab{ font-size:14px; font-weight:700; padding:7px 14px; border-radius:var(--uc-r-pill); border:1px solid var(--uc-border); color:var(--uc-ink-soft); background:var(--uc-white); }
+  .tab--on{ background:var(--uc-gold-tint); color:var(--uc-gold-deep); border-color:var(--uc-border-strong); }
+
+  /* note display */
+  .note-card{ background:var(--uc-white); border:1px solid var(--uc-border); border-radius:var(--uc-r-md); box-shadow:var(--uc-shadow-md); padding:16px 18px; display:flex; align-items:center; gap:16px; }
+  .note-name{ position:relative; }
+  .note-layer{ position:absolute; top:0; right:0; white-space:nowrap; }
+  .note-layer:first-child{ position:relative; }
+  .note-heb{ font-weight:800; font-size:40px; color:var(--uc-ink); line-height:1; }
+  .note-lat{ font-family:var(--uc-font-mark); font-weight:700; font-size:22px; color:var(--uc-gold); margin-top:4px; }
+  .staff{ margin-inline-start:auto; }
+
+  /* pulse highlight on the sounding note */
+  .pulse{ position:absolute; inset:-10px -14px; border-radius:var(--uc-r-md); border:2px solid var(--uc-gold); box-shadow:0 0 0 0 rgba(169,116,63,.4); opacity:0; }
+
+  /* fingering diagram */
+  .finger-wrap{ display:flex; justify-content:center; margin-top:22px; position:relative; height:230px; }
+  .finger{ position:absolute; top:0; left:50%; transform:translateX(-50%); width:64px; }
+  .recorder{ display:block; }
+</style></head>
+<body>
+<div class="stage">
+  <div class="brandchip" id="brand" style="position:absolute;top:22px;right:26px;font-family:var(--uc-font-mark);font-weight:700;font-size:22px;color:var(--uc-ink);z-index:50">uni<b style="color:var(--uc-gold)">chord</b><span style="color:var(--uc-terracotta)">.</span></div>
+  <div class="scene">
+    <div class="ui-phone phone" id="phone">
+      <div class="ui-phone__notch"></div>
+      <div class="phone__screen">
+        <div class="app-top">
+          <span class="uc-mark">uni<b>chord</b></span>
+          <span class="app-burger"><i></i><i></i><i></i></span>
+        </div>
+        <div class="app-body">
+          <div class="app-title" id="title">לימוד חליל</div>
+          <div class="tabs" id="tabs">
+            <span class="tab tab--on">חלילית C</span>
+            <span class="tab">חליל אירי D</span>
+          </div>
+
+          <!-- NOTE DISPLAY -->
+          <div class="note-card" id="notecard">
+            <div class="pulse" id="pulse"></div>
+            <div class="note-name">
+              <!-- note label layers (opacity swapped) -->
+              <div class="note-layer" id="labelC">
+                <div class="note-heb">דוֹ</div><div class="note-lat">C</div>
+              </div>
+              <div class="note-layer" id="labelD">
+                <div class="note-heb">רֵה</div><div class="note-lat">D</div>
+              </div>
+              <div class="note-layer" id="labelE">
+                <div class="note-heb">מִי</div><div class="note-lat">E</div>
+              </div>
+            </div>
+            <!-- tiny staff w/ one note head -->
+            <svg class="staff" width="92" height="64" viewBox="0 0 92 64">
+              <g stroke="var(--uc-border-strong)" stroke-width="1.4">
+                <line x1="6" y1="12" x2="86" y2="12"/><line x1="6" y1="24" x2="86" y2="24"/>
+                <line x1="6" y1="36" x2="86" y2="36"/><line x1="6" y1="48" x2="86" y2="48"/>
+                <line x1="6" y1="60" x2="86" y2="60"/>
+              </g>
+              <!-- note head layers (opacity swapped) -->
+              <ellipse id="headC" cx="58" cy="66" rx="8" ry="6" fill="var(--uc-gold)" transform="rotate(-18 58 66)"/>
+              <ellipse id="headD" cx="58" cy="60" rx="8" ry="6" fill="var(--uc-gold)" transform="rotate(-18 58 60)"/>
+              <ellipse id="headE" cx="58" cy="54" rx="8" ry="6" fill="var(--uc-gold)" transform="rotate(-18 58 54)"/>
+            </svg>
+          </div>
+
+          <!-- FINGERING DIAGRAM (3 pattern layers stacked, opacity swapped) -->
+          <div class="finger-wrap">
+            <!-- pattern C: all 7 holes closed -->
+            <svg class="finger recorder" id="fingerC" width="64" height="230" viewBox="0 0 64 230">
+              <rect x="20" y="2" width="24" height="226" rx="12" fill="var(--uc-paper-hi)" stroke="var(--uc-border-strong)" stroke-width="2"/>
+              <circle cx="32" cy="34"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="62"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="90"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="118" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="146" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="174" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="202" r="7" fill="var(--uc-ink)"/>
+            </svg>
+            <!-- pattern D: bottom hole open -->
+            <svg class="finger recorder" id="fingerD" width="64" height="230" viewBox="0 0 64 230">
+              <rect x="20" y="2" width="24" height="226" rx="12" fill="var(--uc-paper-hi)" stroke="var(--uc-border-strong)" stroke-width="2"/>
+              <circle cx="32" cy="34"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="62"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="90"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="118" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="146" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="174" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="202" r="7" fill="none" stroke="var(--uc-ink)" stroke-width="2"/>
+            </svg>
+            <!-- pattern E: two bottom holes open -->
+            <svg class="finger recorder" id="fingerE" width="64" height="230" viewBox="0 0 64 230">
+              <rect x="20" y="2" width="24" height="226" rx="12" fill="var(--uc-paper-hi)" stroke="var(--uc-border-strong)" stroke-width="2"/>
+              <circle cx="32" cy="34"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="62"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="90"  r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="118" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="146" r="7" fill="var(--uc-ink)"/>
+              <circle cx="32" cy="174" r="7" fill="none" stroke="var(--uc-ink)" stroke-width="2"/>
+              <circle cx="32" cy="202" r="7" fill="none" stroke="var(--uc-ink)" stroke-width="2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../studio.js"></script>
+<script>
+  // aspect from query (renderer passes ?aspect=)
+  const aspect = (new URLSearchParams(location.search).get('aspect')) || '16x9';
+  document.querySelector('.stage').classList.add('a-' + aspect);
+
+  const S = Studio.create({ fps: 30, aspect });
+
+  // anim-in elements
+  ['tabs','notecard'].forEach(id=>document.getElementById(id).classList.add('anim-init'));
+
+  // note/finger layers are absolutely-stacked → start hidden, we drive opacity
+  ['labelC','labelD','labelE','headC','headD','headE','fingerC','fingerD','fingerE','pulse']
+    .forEach(id=>document.getElementById(id).style.opacity = 0);
+
+  // 1 — phone + header in
+  S.track('#phone',    { from: 0,   to: 700, ease:'outBack', y:[50,0], opacity:[0,1] });
+  S.track('#brand',    { from: 200, to: 900, y:[-12,0], opacity:[0,1] });
+  S.track('#tabs',     { from: 350, to: 800, y:[10,0], opacity:[0,1] });
+  S.track('#notecard', { from: 500, to: 950, y:[14,0], opacity:[0,1] });
+  S.caption('לכל תו — תרשים אצבוע ברור', 300, 2400);
+
+  // helper: show one note step (label + staff head + fingering + pulse)
+  function step(letter, t){
+    S.track('#label'+letter,  { from: t,     to: t+220, opacity:[0,1] });
+    S.track('#head'+letter,   { from: t,     to: t+220, opacity:[0,1] });
+    S.track('#finger'+letter, { from: t,     to: t+260, ease:'outBack', opacity:[0,1], scale:[.92,1] });
+    // soft highlight pulse on the currently-sounding note
+    S.track('#pulse', { from: t,     to: t+200, opacity:[0,.9] });
+    S.track('#pulse', { from: t+200, to: t+650, opacity:[.9,0], scale:[1,1.04] });
+  }
+  function hide(letter, t){
+    S.track('#label'+letter,  { from: t, to: t+200, opacity:[1,0] });
+    S.track('#head'+letter,   { from: t, to: t+200, opacity:[1,0] });
+    S.track('#finger'+letter, { from: t, to: t+200, opacity:[1,0] });
+  }
+
+  // 2 — SEQUENCE C → D → E
+  step('C', 1100);
+  S.caption('עוקבים אחרי האצבעות, תו אחרי תו', 2500, 4400);
+
+  hide('C', 3000);  step('D', 3050);
+  hide('D', 4900);  step('E', 4950);
+
+  S.caption('חלילית או חליל אירי D — לומדים צעד אחר צעד', 4600, 7400);
+
+  // 3 — gentle hold
+  S.track('#brand',    { from: 7000, to: 7500, opacity:[1,1] });
+  S.track('#notecard', { from: 7000, to: 7500, opacity:[1,1] });
+
+  S.ready();
+</script>
+</body></html>
