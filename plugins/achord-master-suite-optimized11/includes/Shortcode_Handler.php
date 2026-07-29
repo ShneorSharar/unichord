@@ -393,7 +393,7 @@ public function render_song_shortcode($atts, $content = '') {
                 try {
                     var t = localStorage.getItem('achordTheme');
                     w.classList.add(t === 'theme-studio' ? 'theme-studio' : 'theme-conductor');
-                    if (localStorage.getItem('achordDarkMode') === 'enabled') w.classList.add('dark-mode');
+                    var s = localStorage.getItem('achordDarkMode'); if (s === 'enabled' || (s === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) w.classList.add('dark-mode');
                 } catch(e) { w.classList.add('theme-conductor'); }
             })();
             </script>
