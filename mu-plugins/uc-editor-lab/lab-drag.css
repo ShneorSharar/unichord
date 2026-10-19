@@ -1,0 +1,72 @@
+/* UC Editor Lab — גרירת אקורדים (Round 6, בעלים: G). טוקנים --uc-* (יום + לילה) עם ברירות-מחדל.
+ * ידית = תווית-האקורד בלבד. רוח/סמן מחוברים ל-body (position:fixed, pointer-events:none). */
+
+/* לחיצה-ארוכה בלי תפריט iOS ובלי בחירת-טקסט */
+.lab-chordstep .lab-cs-chord {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+@media (pointer: fine) {
+  .lab-chordstep[data-drag] .lab-cs-word.has-chord .lab-cs-chord { cursor: grab; }
+}
+html.lab-drag-active, html.lab-drag-active * { cursor: grabbing !important; }
+html.lab-drag-active body { -webkit-user-select: none; user-select: none; }
+
+/* בזמן גרירה: הדף לא נגלל מתחת לאצבע */
+.lab-chordstep.lab-dragging { touch-action: none; }
+.lab-chordstep.lab-dragging .lab-cs-word { touch-action: none; }
+.lab-chordstep.lab-dragging .lab-cs-word:hover .lab-cs-text { background: none; }
+
+/* המקור: מעומעם */
+.lab-cs-word.lab-drag-src .lab-cs-chord { opacity: .35; }
+
+/* יעד = מילה */
+.lab-cs-word.lab-drag-over {
+  background: var(--uc-gold-tint, #F0E6D8);
+  box-shadow: inset 0 0 0 2px var(--uc-gold, #A9743F);
+}
+
+/* יעד = בין מילים: רווח אמיתי נפתח לפני המילה שאחרי */
+.lab-cs-word.lab-drag-gap { margin-inline-start: 12px; }
+
+/* סמן: מלא = בתוך המילה, מקווקו = בין מילים */
+.lab-drag-marker {
+  position: fixed; z-index: 2147483000; pointer-events: none;
+  width: 0; margin-left: -1.5px;
+  border-left: 3px solid var(--uc-gold-deep, #8A5C30);
+  border-radius: 2px;
+}
+.lab-drag-marker--insert {
+  border-left-style: dashed;
+  border-left-color: var(--uc-gold, #A9743F);
+}
+.lab-drag-marker[hidden] { display: none; }
+
+/* הרוח: שם האקורד, מעל הסמן/האצבע */
+.lab-drag-ghost {
+  position: fixed; z-index: 2147483001; pointer-events: none;
+  transform: translate(-50%, -100%);
+  padding: 4px 12px; min-width: 28px; text-align: center;
+  border-radius: 999px;
+  border: 2px solid var(--uc-gold, #A9743F);
+  background: var(--uc-paper-hi, var(--uc-surface, #FCF8F1));
+  color: var(--uc-gold-deep, #8A5C30);
+  font: 700 18px/1.2 var(--lab-chord-font, Roboto, "Segoe UI", sans-serif);
+  font-variant-numeric: tabular-nums;
+  direction: ltr; unicode-bidi: isolate; white-space: nowrap;
+  box-shadow: var(--uc-shadow-lg, 0 14px 38px rgba(80,55,25,.22));
+  animation: labDragLift .14s ease-out;
+}
+.lab-drag-ghost--touch { font-size: 22px; padding: 6px 16px; }
+@keyframes labDragLift { from { transform: translate(-50%, -100%) scale(.7); opacity: .4; } to { transform: translate(-50%, -100%); opacity: 1; } }
+.lab-drag-ghost.is-still { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-drag-ghost { animation: none; }
+}
+@media (forced-colors: active) {
+  .lab-drag-marker { border-left-color: Highlight; }
+  .lab-drag-ghost { border-color: Highlight; }
+  .lab-cs-word.lab-drag-over { outline: 2px solid Highlight; }
+}

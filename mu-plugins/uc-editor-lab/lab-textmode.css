@@ -1,0 +1,67 @@
+/* UC Editor Lab — מצב טקסט (F1). בעלים: סוכן T.
+ * הכל תחת body.uc-editor-lab .uc-lab-textmode. טוקנים --uc-* (מצב-לילה אוטומטי). */
+
+body.uc-editor-lab .uc-lab-textmode {
+  display: block; box-sizing: border-box; width: 100%; max-width: 100%;
+  margin: 0 0 16px; direction: rtl; text-align: right;
+  font-family: var(--lab-lyric-font, Assistant, "Segoe UI", sans-serif);
+  color: var(--uc-ink, #1F1810);
+}
+body.uc-editor-lab .uc-lab-textmode *, body.uc-editor-lab .uc-lab-textmode *::before, body.uc-editor-lab .uc-lab-textmode *::after { box-sizing: border-box; }
+
+body.uc-editor-lab .uc-lab-textmode .lab-tm-help {
+  margin: 0 0 10px; font-size: 16px; line-height: 1.5; color: var(--uc-ink-soft, #6B5D49);
+  overflow-wrap: anywhere;
+}
+
+/* התיבה: 16px+ (בלי zoom ב-iOS), גבוהה, גלישת-שורות (אין גלילה אופקית) */
+body.uc-editor-lab .uc-lab-textmode .lab-tm-input {
+  display: block; width: 100%; max-width: 100%; min-height: 52vh; margin: 0; padding: 12px;
+  font: 17px/1.7 var(--lab-lyric-font, Assistant, "Segoe UI", sans-serif);
+  font-variant-numeric: tabular-nums;
+  color: var(--uc-ink, #1F1810); background: var(--uc-white, #fff);
+  border: 1px solid var(--uc-border-strong, #C9BBA2); border-radius: var(--uc-r-sm, 8px);
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; overflow-x: hidden; overflow-y: auto;
+  resize: vertical; tab-size: 4; -webkit-text-size-adjust: 100%;
+}
+body.uc-editor-lab .uc-lab-textmode .lab-tm-input:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-input[aria-invalid="true"] { border-color: var(--uc-terracotta, #C75B39); border-width: 2px; }
+
+/* שגיאות — מתחת לתיבה, כל שורה היא כפתור שקופץ לשורה */
+body.uc-editor-lab .uc-lab-textmode .lab-tm-errors {
+  margin: 10px 0 0; padding: 10px 12px; border-radius: var(--uc-r-sm, 8px);
+  background: var(--uc-terracotta-soft, #F0DACF); color: var(--uc-ink, #1F1810);
+  border-inline-start: 4px solid var(--uc-terracotta, #C75B39);
+  font-size: 15px; font-weight: 600; line-height: 1.45;
+}
+body.uc-editor-lab .uc-lab-textmode .lab-tm-errors[hidden] { display: none !important; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-errhead { margin: 0 0 6px; color: var(--uc-terracotta, #C75B39); font-weight: 700; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-errlist { margin: 0; padding: 0; list-style: none; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-errlist li { margin: 0; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-err {
+  display: block; width: 100%; min-height: 44px; margin: 0; padding: 6px 4px;
+  background: transparent; border: 0; border-top: 1px solid var(--uc-border, #DED4C2); border-radius: 0;
+  font: inherit; color: inherit; text-align: right; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+body.uc-editor-lab .uc-lab-textmode .lab-tm-err:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: -3px; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-errmsg { display: block; overflow-wrap: anywhere; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-errline {
+  display: block; margin-top: 2px; font-weight: 400; font-size: 14px; color: var(--uc-ink-soft, #6B5D49);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+body.uc-editor-lab .uc-lab-textmode .lab-tm-more { margin: 4px 0 0; font-weight: 400; font-size: 14px; color: var(--uc-ink-soft, #6B5D49); }
+
+/* כפתורים: "החילו" עיקרי, "בטל" שקט; ≥44px */
+body.uc-editor-lab .uc-lab-textmode .lab-tm-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 0; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-actions .lab-btn { min-height: 48px; min-width: 44px; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-apply { flex: 1 1 140px; }
+body.uc-editor-lab .uc-lab-textmode .lab-tm-cancel { flex: 0 0 auto; }
+
+@media (max-width: 420px) {
+  body.uc-editor-lab .uc-lab-textmode .lab-tm-input { min-height: 46vh; padding: 10px; }
+}
+
+/* כפתור "חזרה למעלה" של התמה מכסה את תיבת-השגיאות בתחתית */
+/* בעמוד-השיר האמיתי (uc-ne--song) העמוד עצמו לא משתנה: מוסתר רק כשהעורך פתוח */
+body.uc-editor-lab:not(.uc-ne--song) .generate-back-to-top,
+html.lab-edit-lock .generate-back-to-top { display: none !important; }

@@ -1,0 +1,209 @@
+/* lab-add.css (Builder A). Everything is under body.uc-editor-lab .uc-lab-add, except the CTA (.lab-add-cta, attached to body). */
+
+/* lab.css sets display on small/.lab-btn/.uc-lab-steps, which overrides the hidden attribute. Here hidden always wins. */
+body.uc-editor-lab .uc-lab-add [hidden], body.uc-editor-lab .lab-add-cta [hidden] { display: none !important; }
+/* the one-time hint's "הבנתי" button: 44px tap target (in this scenario's scope) */
+body.uc-editor-lab .uc-lab-add .uc-lab-hint button { min-height: 44px; }
+
+/* ── stepper: a completed step is a button back to it (≥44px) ── */
+body.uc-editor-lab .uc-lab-add .lab-add-steps li { padding-top: 0; }
+body.uc-editor-lab .uc-lab-add .lab-add-stepbtn {
+  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 44px;
+  border: 0; background: none; padding: 0 2px; color: inherit; font: inherit; line-height: 1.2;
+}
+body.uc-editor-lab .uc-lab-add button.lab-add-stepbtn { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+body.uc-editor-lab .uc-lab-add h2.lab-title:focus { outline: none; }
+
+/* ── resume from a draft ── */
+body.uc-editor-lab .uc-lab-add .lab-add-resume {
+  margin: 0 0 14px; padding: 12px 14px; border-radius: var(--uc-r-md, 14px);
+  background: var(--uc-paper-hi, #FCF8F1); border: 1px solid var(--uc-gold, #A9743F);
+}
+body.uc-editor-lab .uc-lab-add .lab-add-resume p { margin: 0 0 10px; }
+body.uc-editor-lab .uc-lab-add .lab-add-resume-row { display: flex; gap: 8px; }
+body.uc-editor-lab .uc-lab-add .lab-add-resume-row .lab-btn { flex: 1; }
+
+/* ── step 1 ── */
+body.uc-editor-lab .uc-lab-add .lab-add-accepts { margin: -6px 0 12px; }
+body.uc-editor-lab .uc-lab-add .lab-add-accepts summary {
+  min-height: 44px; display: flex; align-items: center; cursor: pointer;
+  color: var(--uc-gold-deep, #8A5C30); font-weight: 600; list-style: none;
+  background: transparent; -webkit-tap-highlight-color: transparent;
+}
+body.uc-editor-lab .uc-lab-add summary:focus { background: transparent; outline: none; }
+body.uc-editor-lab .uc-lab-add summary:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+body.uc-editor-lab .uc-lab-add .lab-add-accepts summary::-webkit-details-marker { display: none; }
+body.uc-editor-lab .uc-lab-add .lab-add-accepts ul { margin: 0 0 4px; padding-inline-start: 20px; font-size: 15px; }
+body.uc-editor-lab .uc-lab-add .lab-add-accepts li { margin-bottom: 8px; }
+body.uc-editor-lab .uc-lab-add .lab-add-example,
+body.uc-editor-lab .uc-lab-add .lab-add-accepts code {
+  display: block; margin: 6px 0 0; padding: 8px 10px; border-radius: 8px;
+  background: var(--uc-bg, #EDE8DF); color: var(--uc-ink, #1F1810);
+  font: 15px/1.5 ui-monospace, Consolas, "Courier New", monospace; white-space: pre; overflow-x: auto;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-accepts code { display: inline-block; margin: 4px 0 0; }
+body.uc-editor-lab .uc-lab-add #lab-add-lyrics {
+  min-height: 34vh; font-size: 17px; line-height: 1.6;
+  /* columns matter when pasting "chords above the line", so the monospace look stays honest */
+  font-variant-ligatures: none;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-status { margin: -6px 0 8px; font-weight: 600; color: var(--uc-ink-soft, #6B5D49); }
+body.uc-editor-lab .uc-lab-add .lab-add-status:empty { display: none; }
+body.uc-editor-lab .uc-lab-add .lab-add-status.is-ok { color: var(--uc-success, #3F7D4E); }
+body.uc-editor-lab .uc-lab-add .lab-add-flip { padding: 0 4px; min-height: 44px; text-align: start; white-space: normal; }
+body.uc-editor-lab .uc-lab-add .lab-add-mini {
+  margin: 4px 0 8px; padding: 10px 12px; border-radius: var(--uc-r-md, 14px);
+  border: 1px dashed var(--uc-border-strong, #C9BBA2); background: var(--uc-paper-hi, #FCF8F1);
+}
+body.uc-editor-lab .uc-lab-add .lab-add-mini:empty { display: none; }
+body.uc-editor-lab .uc-lab-add .lab-add-mini-cap { font-size: 14px; color: var(--uc-ink-soft, #6B5D49); margin-bottom: 2px; }
+body.uc-editor-lab .uc-lab-add .lab-add-mini .lab-cs-word { cursor: default; min-height: 0; }
+
+/* ── step 2 ── */
+body.uc-editor-lab .uc-lab-add .lab-add-toolbar { display: flex; gap: 8px; margin: 0 0 12px; }
+body.uc-editor-lab .uc-lab-add .lab-add-tool { flex: 1; padding: 0 10px; font-size: 15px; }
+body.uc-editor-lab .uc-lab-add .lab-add-tool[aria-pressed="true"] { border-color: var(--uc-gold, #A9743F); background: var(--uc-gold-tint, #F0E6D8); }
+body.uc-editor-lab .uc-lab-add .lab-add-cshost { font-size: 19px; }
+/* the first word "pulses" while the one-time hint is showing */
+body.uc-editor-lab .uc-lab-add .lab-add-cshost.is-hinting .lab-add-pulse .lab-cs-text {
+  border-radius: 6px; animation: labAddPulse 1.6s ease-in-out 3;
+}
+@keyframes labAddPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(169,116,63,0); }
+  50% { box-shadow: 0 0 0 6px rgba(169,116,63,.28); background: var(--uc-gold-tint, #F0E6D8); }
+}
+body.uc-editor-lab .uc-lab-add .lab-add-preview {
+  border: 1px solid var(--uc-border, #DED4C2); border-radius: var(--uc-r-md, 14px);
+  padding: 10px; background: var(--uc-white, #fff); overflow-x: auto;
+}
+
+/* ── step 3 ── */
+body.uc-editor-lab .uc-lab-add .lab-field > label > span { display: block; font-weight: 700; margin-bottom: 6px; }
+body.uc-editor-lab .uc-lab-add .lab-field small.lab-add-pre { margin: -2px 0 8px; }
+body.uc-editor-lab .uc-lab-add .lab-add-suggest {
+  margin-top: 4px; border: 1px solid var(--uc-border-strong, #C9BBA2); border-radius: var(--uc-r-sm, 8px);
+  background: var(--uc-white, #fff); overflow: hidden; box-shadow: 0 6px 18px rgba(80,55,25,.10);
+}
+body.uc-editor-lab .uc-lab-add .lab-add-suggest-item {
+  display: block; width: 100%; min-height: 48px; padding: 0 14px; text-align: start;
+  border: 0; border-bottom: 1px solid var(--uc-border, #DED4C2); background: none;
+  color: var(--uc-ink, #1F1810); font: 16px var(--lab-lyric-font, Assistant, sans-serif); cursor: pointer;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-suggest-item:last-child { border-bottom: 0; }
+body.uc-editor-lab .uc-lab-add .lab-add-suggest-item:active,
+body.uc-editor-lab .uc-lab-add .lab-add-suggest-item:focus-visible { background: var(--uc-gold-tint, #F0E6D8); }
+body.uc-editor-lab .uc-lab-add .lab-add-newartist { color: var(--uc-gold-deep, #8A5C30); font-weight: 600; }
+
+body.uc-editor-lab .uc-lab-add .lab-add-more {
+  margin: 4px 0 18px; border: 1px solid var(--uc-border, #DED4C2); border-radius: var(--uc-r-md, 14px);
+  background: var(--uc-paper-hi, #FCF8F1);
+}
+body.uc-editor-lab .uc-lab-add .lab-add-more-sum {
+  min-height: 52px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; font-weight: 700; list-style: none; background: transparent; -webkit-tap-highlight-color: transparent;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-more-sum::-webkit-details-marker { display: none; }
+body.uc-editor-lab .uc-lab-add .lab-add-chev { font-size: 22px; transition: transform .2s; color: var(--uc-ink-soft, #6B5D49); }
+body.uc-editor-lab .uc-lab-add .lab-add-more[open] .lab-add-chev { transform: rotate(-90deg); }
+body.uc-editor-lab .uc-lab-add .lab-add-more-body { padding: 4px 14px 2px; }
+body.uc-editor-lab .uc-lab-add .lab-add-chip { font-family: var(--lab-lyric-font, Assistant, sans-serif); font-size: 16px; direction: rtl; min-width: 48px; }
+body.uc-editor-lab .uc-lab-add .lab-add-capo .lab-chip { flex: 0 0 auto; }
+
+body.uc-editor-lab .uc-lab-add .lab-add-h3 { font-size: 18px; margin: 8px 0 8px; }
+body.uc-editor-lab .uc-lab-add .lab-add-consent {
+  display: flex; gap: 12px; align-items: flex-start; min-height: 48px; padding: 12px 14px;
+  border: 1px solid var(--uc-border-strong, #C9BBA2); border-radius: var(--uc-r-md, 14px);
+  background: var(--uc-white, #fff); cursor: pointer; font-size: 16px; line-height: 1.5;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-consent input {
+  flex: 0 0 auto; width: 24px; height: 24px; margin: 1px 0 0; accent-color: var(--uc-gold, #A9743F);
+}
+body.uc-editor-lab .uc-lab-add .lab-add-consent:has(input:checked) { border-color: var(--uc-gold, #A9743F); background: var(--uc-gold-tint, #F0E6D8); }
+body.uc-editor-lab .uc-lab-add .lab-add-note { margin: 12px 0 0; font-size: 15px; color: var(--uc-ink-soft, #6B5D49); }
+
+body.uc-editor-lab .uc-lab-add .lab-add-done { text-align: center; padding: 24px 0; }
+body.uc-editor-lab .uc-lab-add .lab-add-done-ico { font-size: 44px; }
+
+/* ── the CTA ── */
+body.uc-editor-lab .lab-add-cta { transition: bottom .15s; direction: rtl; }
+body.uc-editor-lab .lab-add-cta .lab-btn { padding: 0 14px; white-space: nowrap; }
+body.uc-editor-lab .lab-add-cta .lab-add-secondary { flex: 0 1 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  body.uc-editor-lab .uc-lab-add .lab-add-cshost.is-hinting .lab-add-pulse .lab-cs-text { animation: none; }
+  body.uc-editor-lab .lab-add-cta { transition: none; }
+}
+
+/* copy-sign note: calm, informational. Not an error, blocks nothing */
+body.uc-editor-lab .uc-lab-add .lab-add-copynote {
+  margin: 14px 0 0; padding: 10px 14px; font-size: 15px; line-height: 1.55;
+  color: var(--uc-ink-soft, #6B5D49);
+  background: var(--uc-gold-tint, #F0E6D8);
+  border-inline-start: 3px solid var(--uc-gold, #B8893A); border-radius: 8px;
+}
+
+/* ── F5a: explanation collapses to one tappable line ── */
+body.uc-editor-lab .uc-lab-add .lab-add-explain p.lab-sub { margin-bottom: 10px; }
+body.uc-editor-lab .uc-lab-add .lab-add-howto {
+  display: flex; align-items: center; gap: 6px; min-height: 44px; margin: -6px 0 2px; padding: 0 2px;
+  border: 0; background: none; cursor: pointer; font: 600 15px/1.2 var(--lab-lyric-font, Assistant, sans-serif);
+  color: var(--uc-gold-deep, #8A5C30); -webkit-tap-highlight-color: transparent;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-howto:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+body.uc-editor-lab .uc-lab-add .lab-add-howto .lab-add-chev { font-size: 20px; transition: transform .2s; }
+body.uc-editor-lab .uc-lab-add .lab-add-howto.is-open .lab-add-chev { transform: rotate(-90deg); }
+
+/* ── F1: quiet "text editing" button next to undo / preview ── */
+body.uc-editor-lab .uc-lab-add .lab-add-toolbar { flex-wrap: wrap; }
+body.uc-editor-lab .uc-lab-add .lab-add-tool--quiet {
+  flex: 0 0 auto; padding: 0 8px; font-size: 14px; font-weight: 500; color: var(--uc-ink-soft, #6B5D49);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-tmhost { margin: 0 0 12px; }
+@media (prefers-reduced-motion: reduce) {
+  body.uc-editor-lab .uc-lab-add .lab-add-howto .lab-add-chev { transition: none; }
+}
+
+/* ── undo + redo share one toolbar cell. While redo is visible both go icon-only (labels stay in aria-label), so the toolbar keeps ONE row ── */
+body.uc-editor-lab .uc-lab-add .lab-add-undogrp { flex: 1 1 0; min-width: 0; display: flex; gap: 6px; }
+body.uc-editor-lab .uc-lab-add .lab-add-undogrp .lab-add-tool { min-width: 0; }
+body.uc-editor-lab .uc-lab-add .lab-add-undogrp:has(.lab-add-redo:not([hidden])) { flex: 0 0 auto; }
+body.uc-editor-lab .uc-lab-add .lab-add-undogrp:has(.lab-add-redo:not([hidden])) .lab-add-tool {
+  flex: 0 0 48px; width: 48px; padding: 0; font-size: 0; line-height: 0;
+}
+body.uc-editor-lab .uc-lab-add .lab-add-undogrp:has(.lab-add-redo:not([hidden])) .lab-add-undo::before { content: '↶'; font-size: 22px; line-height: 1; }
+body.uc-editor-lab .uc-lab-add .lab-add-undogrp:has(.lab-add-redo:not([hidden])) .lab-add-redo > span { font-size: 22px; line-height: 1; }
+
+/* ═══ Round 5 (A5): real send, notebook, easy version ═══ */
+/* notebook: one calm line saying it is private */
+body.uc-editor-lab .uc-lab-add .lab-add-nbbar {
+  margin: 0 0 12px; padding: 10px 14px; font-size: 15px; line-height: 1.5; color: var(--uc-ink-soft, #6B5D49);
+  background: var(--uc-paper-hi, #FCF8F1); border: 1px solid var(--uc-border, #DED4C2); border-radius: var(--uc-r-md, 14px);
+}
+body.uc-editor-lab .uc-lab-add .lab-add-nbbar--warn { color: var(--uc-ink, #1F1810); background: var(--uc-gold-tint, #F0E6D8); border-color: var(--uc-gold, #A9743F); }
+
+/* easy version: a collapsed box inside "more details" */
+body.uc-editor-lab .uc-lab-add .lab-add-easy {
+  margin: 4px 0 14px; border: 1px solid var(--uc-border, #DED4C2); border-radius: var(--uc-r-md, 14px); background: var(--uc-white, #fff);
+}
+body.uc-editor-lab .uc-lab-add .lab-add-easy[open] .lab-add-chev { transform: rotate(-90deg); }
+body.uc-editor-lab .uc-lab-add .lab-add-easy-body { padding: 4px 14px 2px; }
+body.uc-editor-lab .uc-lab-add #lab-add-easy { min-height: 140px; font-size: 17px; line-height: 1.6; font-variant-ligatures: none; }
+body.uc-editor-lab .uc-lab-add .lab-add-select { appearance: auto; font-size: 16px; }
+
+/* the thank-you message is the server's own words: keep it readable, centred */
+body.uc-editor-lab .uc-lab-add .lab-add-done-msg { color: var(--uc-ink, #1F1810); font-weight: 600; }
+body.uc-editor-lab .uc-lab-add .lab-add-done .lab-sub { margin-bottom: 8px; }
+
+/* links that look like buttons in the CTA (the notebook link after a save) */
+body.uc-editor-lab .lab-add-cta a.lab-btn { text-decoration: none; }
+body.uc-editor-lab .lab-add-cta .lab-notice-act { white-space: nowrap; }
+body.uc-editor-lab .uc-lab-add .lab-add-noticehost { scroll-margin-bottom: 110px; margin-bottom: 96px; }
+body.uc-editor-lab .uc-lab-add .lab-add-noticehost:empty { margin-bottom: 0; }
+body.uc-editor-lab .uc-lab-add .lab-add-easy > summary { padding-top: 8px; padding-bottom: 8px; }
+
+/* ── round 7: on the real pages (body.uc-ne, printed by uc-new-editor.php) ── */
+/* the site's floating accessibility button (z 1200, bottom-left) would sit on the sticky bar: lift it above the bar. The footer also gets room below the bar. */
+body.uc-ne .uc-a11y-toggle { bottom: calc(var(--lab-cta-h, 0px) + 12px); }
+body.uc-ne { padding-bottom: var(--lab-cta-h, 0px); }

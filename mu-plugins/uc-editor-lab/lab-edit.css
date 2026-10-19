@@ -1,0 +1,299 @@
+/* UC Editor Lab — תרחיש "עריכת שיר" (בעלים: Builder B). הכל תחת body.uc-editor-lab .uc-lab-edit,
+   חוץ מה-CTA (שהוא על body, מחלקה lab-edit-cta) ומנעילת-הגלילה (html.lab-edit-lock). */
+
+/* ══ כניסה — מדמה את עמוד-השיר ══ */
+body.uc-editor-lab .uc-lab-edit .lab-edit-songhead { margin: 4px 0 12px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-kicker {
+  margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: .02em;
+  color: var(--uc-ink-soft, #6B5D49);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-meta { margin-bottom: 0; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-action {
+  margin: 0 0 20px; padding: 14px;
+  background: var(--uc-paper-hi, #FCF8F1); border: 1px solid var(--uc-border, #DED4C2);
+  border-radius: var(--uc-r-md, 14px);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-openbtn { font-size: 18px; min-height: 52px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-explain { margin: 10px 0 0; font-size: 15px; color: var(--uc-ink-soft, #6B5D49); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-guestline,
+body.uc-editor-lab .uc-lab-edit .lab-edit-draftline {
+  display: flex; align-items: center; gap: 8px;
+  margin: 8px 0 0; font-size: 15px; color: var(--uc-ink, #1F1810);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-draftline { color: var(--uc-gold-deep, #8A5C30); font-weight: 600; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-saved {
+  display: flex; flex-direction: column; gap: 2px; margin: 0 0 12px; padding: 10px 14px;
+  border-radius: var(--uc-r-md, 14px); border-inline-start: 4px solid var(--uc-gold, #A9743F);
+  background: var(--uc-gold-tint, #F0E6D8); font-size: 15px;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-saved strong { font-size: 16px; }
+
+/* אות G של גוגל (מוק, ללא לוגו) */
+.lab-edit-g {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid #DADCE0;
+  font: 700 14px/1 Roboto, Arial, sans-serif; color: #4285F4;
+}
+.uc-lab-sheet .lab-edit-google { background: #fff; color: #1F1F1F; border-color: #DADCE0; gap: 10px; width: 100%; }
+.uc-lab-sheet .lab-edit-sheetbody p { margin: 0 0 12px; line-height: 1.5; }
+.uc-lab-sheet .lab-edit-sheetbody .lab-edit-fine { font-size: 14px; color: var(--uc-ink-soft, #6B5D49); margin: 10px 0 0; }
+.uc-lab-sheet .lab-edit-sheetbody hr { border: 0; border-top: 1px solid var(--uc-border, #DED4C2); margin: 14px 0 6px; }
+.uc-lab-sheet .lab-edit-sheetbody .lab-btn--ghost { width: 100%; background: transparent; border-color: transparent; color: var(--uc-gold-deep, #8A5C30); }
+
+/* גוף השיר (קריאה-בלבד) */
+body.uc-editor-lab .uc-lab-edit .lab-edit-songbody { direction: rtl; margin-bottom: 24px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-rline {
+  display: flex; flex-wrap: wrap; align-items: flex-end; min-height: 2.6em; margin: 0 0 2px;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-rline:empty { min-height: 1em; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-rword { display: inline-flex; flex-direction: column; align-items: flex-start; }
+
+/* ══ שכבת העורך — מסך מלא, גלילה אחת ══ */
+html.lab-edit-lock, html.lab-edit-lock body { overflow: hidden; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-layer {
+  position: fixed; inset: 0; z-index: 800;
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  background: var(--uc-paper, #F7F3EC); color: var(--uc-ink, #1F1810);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-inner {
+  max-width: 640px; margin: 0 auto; padding: 0 var(--lab-pad, 16px) calc(140px + env(safe-area-inset-bottom));
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-bar {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 calc(-1 * var(--lab-pad, 16px)); padding: calc(6px + env(safe-area-inset-top)) 8px 6px;
+  background: var(--uc-paper-hi, #FCF8F1); border-bottom: 1px solid var(--uc-border, #DED4C2);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-x {
+  flex: 0 0 auto; width: 48px; height: 48px; border: 0; border-radius: 50%; background: none;
+  font-size: 22px; color: var(--uc-ink-soft, #6B5D49); cursor: pointer;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-bartitle { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-bartitle strong { font-size: 17px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-bartitle span {
+  font-size: 14px; color: var(--uc-ink-soft, #6B5D49); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-undo {
+  flex: 0 0 auto; min-height: 44px; min-width: 64px; padding: 0 12px;
+  border: 1px solid var(--uc-border-strong, #C9BBA2); border-radius: var(--uc-r-pill, 999px);
+  background: var(--uc-white, #fff); color: var(--uc-ink, #1F1810);
+  font: 600 15px var(--lab-lyric-font, Assistant, sans-serif); cursor: pointer;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-undo:disabled { opacity: .4; cursor: default; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-x:focus-visible,
+body.uc-editor-lab .uc-lab-edit .lab-edit-undo:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+
+body.uc-editor-lab .uc-lab-edit .lab-edit-status {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px;
+  margin: 10px 0 12px; font-size: 14px; color: var(--uc-ink-soft, #6B5D49);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-count.is-some { color: var(--uc-ink, #1F1810); font-weight: 700; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-legend { display: inline-flex; align-items: center; gap: 6px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-statusmain { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-width: 0; }
+
+/* "חזור" (redo) — צר, ליד "בטל" */
+body.uc-editor-lab .uc-lab-edit .lab-edit-redo { min-width: 44px; padding: 0 10px; font-size: 18px; }
+
+/* F1: כפתור שקט "עריכת טקסט" */
+body.uc-editor-lab .uc-lab-edit .lab-edit-textbtn {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 0 12px; margin-inline-start: auto;
+  background: transparent; border: 1px solid transparent; border-radius: var(--uc-r-pill, 999px);
+  color: var(--uc-gold-deep, #8A5C30); font: 600 15px var(--lab-lyric-font, Assistant, sans-serif);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-textbtn:hover { border-color: var(--uc-border, #DED4C2); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-textbtn:focus-visible,
+body.uc-editor-lab .uc-lab-edit .lab-edit-tipbtn:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-tmhost { margin: 12px 0 0; }
+
+/* F5a: הסבר בשורה אחת + "עוד" */
+body.uc-editor-lab .uc-lab-edit .lab-edit-tip { margin: 0 0 8px; font-size: 15px; color: var(--uc-ink-soft, #6B5D49); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-tipline { display: flex; align-items: center; gap: 6px; margin: 0; min-height: 44px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-tipbtn {
+  min-height: 44px; min-width: 44px; padding: 0 8px; margin-inline-start: 2px;
+  background: none; border: 0; border-radius: 8px; cursor: pointer;
+  color: var(--uc-gold-deep, #8A5C30); font: 700 15px var(--lab-lyric-font, Assistant, sans-serif);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-tipmore { margin: 0 0 4px; line-height: 1.5; }
+
+/* שורה ששונו בה מילים (או שפוצלה אחרת) — פס בצד ההתחלה */
+body.uc-editor-lab .uc-lab-edit .lab-cs-line.lab-edit-linechg { position: relative; }
+body.uc-editor-lab .uc-lab-edit .lab-cs-line.lab-edit-linechg::before {
+  content: ""; position: absolute; inset-inline-start: -10px; top: 4px; bottom: 4px; width: 3px;
+  border-radius: 2px; background: var(--uc-terracotta, #C75B39);
+}
+.lab-edit-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--uc-terracotta, #C75B39);
+}
+
+/* סימון מה ששונה בתוך ChordStep */
+body.uc-editor-lab .uc-lab-edit .lab-cs-word.lab-edit-changed .lab-cs-chord { position: relative; }
+body.uc-editor-lab .uc-lab-edit .lab-cs-word.lab-edit-changed .lab-cs-chord::before {
+  content: ""; position: absolute; top: -3px; right: -5px;   /* LTR span → פינה ימנית-עליונה */
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--uc-terracotta, #C75B39); box-shadow: 0 0 0 2px var(--uc-paper, #F7F3EC);
+}
+body.uc-editor-lab .uc-lab-edit .lab-cs-word.lab-edit-removed .lab-cs-chord::after {
+  content: attr(data-old);
+  text-decoration: line-through; opacity: .5; font-weight: 500;
+}
+
+/* ══ "למי התיקון?" ══ */
+body.uc-editor-lab .uc-lab-edit .lab-edit-choose { padding-top: 16px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-summary { margin: 0 0 16px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-summary summary {
+  min-height: 44px; display: flex; align-items: center; cursor: pointer; list-style: none;
+  font-weight: 700; color: var(--uc-gold-deep, #8A5C30);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-summary summary::-webkit-details-marker { display: none; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-changes {
+  margin: 4px 0 0; padding: 8px 12px; list-style: none;
+  background: var(--uc-paper-hi, #FCF8F1); border: 1px solid var(--uc-border, #DED4C2); border-radius: 12px;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-changes li { padding: 6px 0; font-size: 16px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-changes li + li { border-top: 1px solid var(--uc-border, #DED4C2); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-cw { font-weight: 700; margin-inline-end: 8px; }
+.lab-edit-ch { font: 600 16px var(--lab-chord-font, Roboto, sans-serif); unicode-bidi: isolate; }
+.lab-edit-ch.is-old { text-decoration: line-through; opacity: .6; }
+.lab-edit-ch.is-new { color: var(--uc-gold-deep, #8A5C30); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-more { color: var(--uc-ink-soft, #6B5D49); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-lyrrow { overflow-wrap: anywhere; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-lyr { unicode-bidi: isolate; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-lyr.is-old { text-decoration: line-through; opacity: .6; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-lyr.is-new { color: var(--uc-gold-deep, #8A5C30); font-weight: 600; }
+
+body.uc-editor-lab .uc-lab-edit .lab-edit-cards { display: flex; flex-direction: column; gap: 12px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-card {
+  width: 100%; min-height: 88px; padding: 14px; text-align: start;
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--uc-white, #fff); color: var(--uc-ink, #1F1810);
+  border: 2px solid var(--uc-border-strong, #C9BBA2); border-radius: 16px;
+  font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-card.is-on {
+  border-color: var(--uc-gold, #A9743F); background: var(--uc-gold-tint, #F0E6D8);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-card:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-cardico { font-size: 26px; line-height: 1.2; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-cardtxt { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: 15px; line-height: 1.45; color: var(--uc-ink-soft, #6B5D49); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-cardtxt strong { font-size: 18px; color: var(--uc-ink, #1F1810); margin-bottom: 2px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-radio {
+  flex: 0 0 auto; width: 24px; height: 24px; margin-top: 2px; border-radius: 50%;
+  border: 2px solid var(--uc-border-strong, #C9BBA2); box-sizing: border-box; background: var(--uc-white, #fff);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-card.is-on .lab-edit-radio {
+  border-color: var(--uc-gold, #A9743F); box-shadow: inset 0 0 0 5px var(--uc-white, #fff); background: var(--uc-gold, #A9743F);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-cardwrap { display: flex; flex-direction: column; gap: 10px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-note { margin: 0 4px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-note textarea { min-height: 96px; }
+
+/* ══ סבב 5: שרת אמיתי ══ */
+/* שורת-רישיון פסיבית + "כבר שלחתם הצעה" — מתחת לכרטיס "להציע לכולם" */
+body.uc-editor-lab .uc-lab-edit .lab-edit-license {
+  margin: -4px 6px 0; font-size: 13px; line-height: 1.4; color: var(--uc-ink-soft, #6B5D49);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-pending {
+  display: flex; align-items: flex-start; gap: 6px; margin: 0 6px; font-size: 14px; line-height: 1.4;
+  color: var(--uc-gold-deep, #8A5C30);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-minenote {
+  flex: 1 0 100%; margin: 0; font-size: 13px; color: var(--uc-gold-deep, #8A5C30); font-weight: 600;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-card:disabled { cursor: default; opacity: .75; }
+
+/* שורת-ההודעה: בדף, מעל הכפתורים. scroll-margin → scrollIntoView לא משאיר אותה מתחת ל-CTA הדביק */
+.lab-edit-notice:empty { display: none; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-choose > .lab-edit-notice { margin: 16px 0 0; scroll-margin-bottom: calc(96px + env(safe-area-inset-bottom)); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-choose > .lab-edit-notice > * { scroll-margin-bottom: calc(96px + env(safe-area-inset-bottom)); }
+.lab-edit-msg {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+  padding: 8px 12px; border-radius: 12px; font-size: 15px; line-height: 1.45;
+  background: var(--uc-gold-tint, #F0E6D8); color: var(--uc-ink, #1F1810);
+}
+.lab-edit-msg > span { flex: 1 1 200px; }
+.lab-edit-note-error { background: var(--uc-terracotta-soft, #F0DACF); border-inline-start: 4px solid var(--uc-terracotta, #C75B39); }
+.lab-edit-note-ok { border-inline-start: 4px solid var(--uc-gold, #A9743F); }
+.lab-edit-msg .lab-btn { flex: 0 0 auto; min-height: 44px; }
+
+/* "חזרה למקור" + אישור בתוך הדף */
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine { margin: 10px 0 0; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-mineline {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px;
+  margin: 0; font-size: 15px; color: var(--uc-ink-soft, #6B5D49);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-resetbtn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px;
+  background: transparent; border: 1px solid var(--uc-border-strong, #C9BBA2); border-radius: var(--uc-r-pill, 999px);
+  color: var(--uc-ink, #1F1810); font: 600 15px var(--lab-lyric-font, Assistant, sans-serif); cursor: pointer;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-resetbtn:disabled { opacity: .5; cursor: default; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-resetbtn:focus-visible { outline: 3px solid var(--uc-gold, #A9743F); outline-offset: 2px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-confirm {
+  margin: 10px 0 0; padding: 12px; border-radius: 12px;
+  background: var(--uc-terracotta-soft, #F0DACF); border: 1px solid var(--uc-terracotta, #C75B39);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-confirm p { margin: 0 0 10px; font-weight: 700; color: var(--uc-ink, #1F1810); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-confirmrow { display: flex; gap: 8px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-confirmrow .lab-btn { flex: 1; min-height: 48px; }
+/* פעולה הרסנית אחת וברורה: כפתור מלא (ניגודיות טובה גם בלילה) */
+body.uc-editor-lab .uc-lab-edit .lab-edit-confirmrow #lab-edit-reset-yes {
+  background: #A9442A; border-color: #A9442A; color: #fff; font-weight: 700;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-action > .lab-edit-notice { margin-top: 10px; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-reloading { font-weight: 600; color: var(--uc-gold-deep, #8A5C30); }
+
+/* ══ סבב 7: עמוד-השיר האמיתי (UCLab.mount embedded). הכל תחת .uc-ne-overlay / html.uc-ne-lock /
+   .lab-edit-cta--ne, כך שעמוד הבדיקה לא מושפע. ══ */
+/* מעל כפתורי-העמוד (אשכול-תחתון 1000, נגישות 1200), מתחת לגיליון (9990) ול-toast (9995) */
+body.uc-editor-lab .uc-lab-edit.uc-ne-overlay .lab-edit-layer { z-index: 9000; }
+.uc-lab-cta.lab-edit-cta--ne { z-index: 9100; }
+html.lab-edit-lock.uc-ne-lock .achord-bottom-controls-cluster,
+html.lab-edit-lock.uc-ne-lock .uc-a11y-toggle { display: none !important; }
+/* סרגל-הניהול של וורדפרס (z 99999) מכסה את "סגירה"/"בטל" בראש השכבה: מוסתר כל עוד העורך פתוח */
+html.lab-edit-lock.uc-ne-lock #wpadminbar { display: none !important; }
+html.lab-edit-lock.uc-ne-lock { margin-top: 0 !important; }
+
+/* "✕ סגירה" — כפתור סגירה ברור */
+body.uc-editor-lab .uc-lab-edit .lab-edit-x.lab-edit-x--text {
+  width: auto; min-width: 48px; height: 44px; padding: 0 12px 0 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--uc-border-strong, #C9BBA2); border-radius: var(--uc-r-pill, 999px);
+  background: var(--uc-white, #fff); color: var(--uc-ink, #1F1810);
+  font: 600 15px var(--lab-lyric-font, Assistant, sans-serif);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-x.lab-edit-x--text > span[aria-hidden] { font-size: 16px; color: var(--uc-ink-soft, #6B5D49); }
+
+/* צ'יפ-מנהלים: קטן ושקט */
+body.uc-editor-lab .uc-lab-edit .lab-edit-nechip {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 8px;
+  margin: 4px 0 0; font-size: 13px; line-height: 1.3; color: var(--uc-ink-soft, #6B5D49);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-nechip a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px;
+  color: var(--uc-gold-deep, #8A5C30); font-weight: 600; text-decoration: underline; text-underline-offset: 3px;
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-inner > .lab-edit-notice { margin: 10px 0 0; }
+
+/* "כבר שלחתם הצעה" בראש העורך */
+body.uc-editor-lab .uc-lab-edit .lab-edit-pending.lab-edit-pending--top { flex: 1 0 100%; margin: 0; }
+
+/* "חזרה לגרסת האתר" — כפתור-רפאים בתחתית העורך */
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine.lab-edit-mine--emb {
+  margin: 28px 0 0; padding-top: 12px; border-top: 1px dashed var(--uc-border, #DED4C2);
+}
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine--emb .lab-edit-mineline { justify-content: center; }
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine--emb .lab-edit-resetbtn { border-color: transparent; color: var(--uc-gold-deep, #8A5C30); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine--emb .lab-edit-resetbtn:hover { border-color: var(--uc-border, #DED4C2); }
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine--emb > .lab-edit-notice { margin: 10px 0 0; }
+/* scrollIntoView של האישור/ההודעה לא משאיר אותם מתחת ל-CTA הדביק */
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine--emb .lab-edit-confirm,
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine--emb > .lab-edit-notice,
+body.uc-editor-lab .uc-lab-edit .lab-edit-mine--emb > .lab-edit-notice > * { scroll-margin-bottom: calc(96px + env(safe-area-inset-bottom)); }
+
+@media (prefers-reduced-motion: reduce) {
+  body.uc-editor-lab .uc-lab-edit * { scroll-behavior: auto !important; }
+}

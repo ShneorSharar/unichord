@@ -1,0 +1,350 @@
+/* uc-display.css (WP4, round 1). Every rule is scoped under body.uc-display-v2,
+   so nothing applies when the layer is off. SPEC-round1.md decisions 6-12. */
+
+/* ── 1. Tokens (decision 6) ──
+   Declared on every element that carries the theme classes, so var() resolves
+   against the right theme even where <body> is not mirrored. */
+body.uc-display-v2,
+body.uc-display-v2 .theme-conductor,
+body.uc-display-v2 .theme-studio,
+body.uc-display-v2 .dark-mode,
+body.uc-display-v2 .achord-song-wrapper,
+body.uc-display-v2 .ucd-s-bar {
+    --ucd-font: "UCRoboto", Roboto, system-ui, sans-serif;
+    --ucd-ink: var(--text-primary, #0D1B33);
+    --ucd-grid: color-mix(in srgb, var(--text-primary, #0D1B33) 55%, transparent);
+    --ucd-dot: var(--text-chord, #00509D);
+    --ucd-dot-ink: var(--bg-song, #F1DAC4);
+    --ucd-bass: var(--accent-primary, #825931);
+    --ucd-muted-text: var(--text-secondary, #4F5867);
+    --ucd-surface: var(--bg-song, #F1DAC4);
+    --ucd-line: color-mix(in srgb, var(--text-primary, #0D1B33) 18%, transparent);
+    --ucd-focus: var(--text-chord, #00509D);
+    /* piano keys, light: white keys lighter than the song paper, black keys = ink */
+    --ucd-key-white: color-mix(in srgb, #ffffff 82%, var(--bg-song, #F1DAC4));
+    --ucd-key-black: var(--text-primary, #0D1B33);
+    --ucd-key-border: color-mix(in srgb, var(--text-primary, #0D1B33) 45%, transparent);
+    /* names read by uc-diagram-piano.js */
+    --ucd-p-white: var(--ucd-key-white);
+    --ucd-p-black: var(--ucd-key-black);
+    --ucd-p-edge: var(--ucd-key-border);
+}
+/* piano keys, dark: keep the keyboard dark but never inverted, with a visible border */
+body.uc-display-v2.dark-mode,
+body.uc-display-v2 .dark-mode,
+body.uc-display-v2 .ucd-s-bar.dark-mode {
+    --ucd-key-white: color-mix(in srgb, var(--text-primary, #E5E7EB) 20%, var(--bg-song, #1f2937));
+    --ucd-key-black: color-mix(in srgb, #000000 50%, var(--bg-song, #1f2937));
+    --ucd-key-border: color-mix(in srgb, var(--text-primary, #E5E7EB) 50%, transparent);
+}
+
+/* Dark-mode accent fix: the theme sets --accent-primary:#825931 on .theme-conductor
+   (1.68:1 on #374151). #D9A86C gives 4.79:1 there; text on accent fills becomes dark (6.83:1). */
+body.uc-display-v2 .dark-mode.theme-conductor,
+body.uc-display-v2.dark-mode.theme-conductor,
+body.uc-display-v2 .ucd-s-bar.dark-mode.theme-conductor {
+    --accent-primary: #D9A86C;
+    --accent-primary-text: #1f2937;
+}
+
+/* Slash bass: a hue clearly apart from the dot color in every theme (lead, round 1). */
+body.uc-display-v2 .theme-studio,
+body.uc-display-v2.theme-studio,
+body.uc-display-v2 .ucd-s-bar.theme-studio { --ucd-bass: #B4531A; }
+body.uc-display-v2 .dark-mode.theme-studio,
+body.uc-display-v2.dark-mode.theme-studio,
+body.uc-display-v2 .ucd-s-bar.dark-mode.theme-studio { --ucd-bass: #F59E0B; }
+body.uc-display-v2 .dark-mode.theme-conductor,
+body.uc-display-v2.dark-mode.theme-conductor,
+body.uc-display-v2 .ucd-s-bar.dark-mode.theme-conductor { --ucd-bass: #F28B82; }
+
+/* ── 2. Utilities ── */
+body.uc-display-v2 .ucd-sr {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* ── 3. Chord tokens (decision 12) ── */
+body.uc-display-v2 #achord-content-area .achord-chord:focus { outline: none; }
+body.uc-display-v2 #achord-content-area .achord-chord:focus-visible {
+    outline: 2px solid var(--ucd-focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+/* chord font under אות חיים: chords keep Roboto + tabular digits */
+body.uc-display-v2 .achord-song-wrapper.oot-haim-active .achord-chord {
+    font-family: var(--font-chord-default, "UCRoboto"), Roboto, sans-serif;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── 4. Toolbar (decision 12) ── */
+body.uc-display-v2 #achord-capo-info.ucd-capo-zero { display: none !important; }
+body.uc-display-v2 #achord-chord-strip-toggle.active {
+    background-color: var(--accent-primary);
+    color: var(--accent-primary-text);
+    border-color: var(--accent-primary);
+}
+
+/* ── 5. Popup (decision 11) ── */
+body.uc-display-v2 .achord-popup .achord-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    top: 0.25rem;
+    left: 0.25rem;
+    border-radius: 50%;
+    line-height: 1;
+}
+body.uc-display-v2 .achord-popup .achord-close:hover { color: var(--ucd-ink); }
+body.uc-display-v2 .achord-popup .achord-close:focus { outline: none; }
+body.uc-display-v2 .achord-popup .achord-close:focus-visible {
+    outline: 2px solid var(--ucd-focus);
+    outline-offset: 0;
+}
+body.uc-display-v2 .achord-popup-content { padding-top: 2.75rem; }
+body.uc-display-v2 #achord-diagram {
+    direction: ltr;
+    width: min(200px, 70vw);
+    margin-inline: auto;
+}
+body.uc-display-v2 .achord-popup[data-instrument="piano"] #achord-diagram,
+body.uc-display-v2 #achord-diagram:has(.ucd-p) {
+    width: min(420px, calc(90vw - 3rem));
+}
+body.uc-display-v2 #achord-diagram svg.ucd-g,
+body.uc-display-v2 #achord-diagram .ucd-p,
+body.uc-display-v2 #achord-diagram svg.ucd-p-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-inline: auto;
+}
+body.uc-display-v2 #achord-diagram svg.ucd-g { max-width: 200px; }
+body.uc-display-v2 #achord-diagram .ucd-p { max-width: 420px; }
+/* old renderers (before WP2/WP3 land): fixed-size SVG / 560px piano div */
+body.uc-display-v2 #achord-diagram > svg:not(.ucd-g) { display: block; margin-inline: auto; }
+body.uc-display-v2 .achord-popup[data-instrument="piano"] #achord-diagram:not(:has(.ucd-p)) { width: auto; max-width: 80vw; overflow-x: auto; }
+
+/* ── 6. Diagram defaults (WP2 ucd-g-*, WP3 ucd-p-*). Renderers may also set inline fallbacks. ── */
+body.uc-display-v2 svg.ucd-g,
+body.uc-display-v2 svg.ucd-p-svg { font-family: var(--ucd-font); overflow: visible; }
+body.uc-display-v2 svg.ucd-g text,
+body.uc-display-v2 svg.ucd-p-svg text { font-family: var(--ucd-font); }
+/* guitar */
+body.uc-display-v2 .ucd-g-string,
+body.uc-display-v2 .ucd-g-nut,
+body.uc-display-v2 .ucd-g-mute,
+body.uc-display-v2 .ucd-g-x { stroke: var(--ucd-ink); }
+body.uc-display-v2 .ucd-g-open { stroke: var(--ucd-ink); fill: none; }
+body.uc-display-v2 .ucd-g-fret { stroke: var(--ucd-grid); }
+body.uc-display-v2 .ucd-g-dot,
+body.uc-display-v2 .ucd-g-barre { fill: var(--ucd-dot); stroke: none; }
+body.uc-display-v2 .ucd-g-finger { fill: var(--ucd-dot-ink); font-weight: 700; }
+body.uc-display-v2 .ucd-g-name,
+body.uc-display-v2 .ucd-g-title { fill: var(--ucd-ink); font-weight: 700; }
+body.uc-display-v2 .ucd-g-pos,
+body.uc-display-v2 .ucd-g-bassnote,
+body.uc-display-v2 .ucd-g-sub { fill: var(--ucd-muted-text); }
+body.uc-display-v2 .ucd-g-bass { fill: var(--ucd-bass); }
+/* piano */
+body.uc-display-v2 .ucd-p-white { fill: var(--ucd-key-white); stroke: var(--ucd-key-border); }
+body.uc-display-v2 .ucd-p-black { fill: var(--ucd-key-black); stroke: var(--ucd-key-border); }
+body.uc-display-v2 .ucd-p-white.ucd-p-on,
+body.uc-display-v2 .ucd-p-black.ucd-p-on,
+body.uc-display-v2 .ucd-p-on { fill: var(--ucd-dot); }
+body.uc-display-v2 .ucd-p-white.ucd-p-bass,
+body.uc-display-v2 .ucd-p-black.ucd-p-bass,
+body.uc-display-v2 .ucd-p-bass { fill: var(--ucd-bass); }
+body.uc-display-v2 .ucd-p-label,
+body.uc-display-v2 .ucd-p-note { fill: var(--ucd-dot-ink); font-weight: 700; }
+body.uc-display-v2 .ucd-p-name,
+body.uc-display-v2 .ucd-p-title { fill: var(--ucd-ink); font-weight: 700; }
+body.uc-display-v2 .ucd-p-sub { fill: var(--ucd-muted-text); }
+
+/* not-found card (decision 7) */
+body.uc-display-v2 .ucd-nf {
+    box-sizing: border-box;
+    padding: 0.75rem 0.5rem;
+    border: 1px dashed var(--ucd-line);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ucd-muted-text);
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    direction: rtl;
+}
+body.uc-display-v2 .ucd-nf bdi,
+body.uc-display-v2 .ucd-nf [dir="ltr"],
+body.uc-display-v2 .ucd-nf .ucd-nf-name {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--ucd-ink);
+    font-family: var(--ucd-font);
+    font-weight: 700;
+    font-size: 1.05rem;
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+body.uc-display-v2 .ucd-s-card .ucd-nf { font-size: 0.75rem; padding: 0.5rem 0.25rem; }
+body.uc-display-v2 .ucd-s-card .ucd-nf bdi,
+body.uc-display-v2 .ucd-s-card .ucd-nf [dir="ltr"],
+body.uc-display-v2 .ucd-s-card .ucd-nf .ucd-nf-name { display: none; } /* the card shows the name already */
+
+/* ── 7. Chord strip (decision 10) ── */
+body.uc-display-v2 .ucd-s-bar {
+    --ucd-s-dh: min(118px, calc(30vh - 66px));   /* diagram height */
+    position: fixed;
+    top: var(--wp-admin--admin-bar--height, 0px);
+    left: 0;
+    right: 0;
+    z-index: 9990;
+    box-sizing: border-box;
+    max-height: 30vh;
+    background: var(--ucd-surface);
+    color: var(--ucd-ink);
+    border-bottom: 2px solid var(--accent-primary, #825931);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    font-family: var(--ucd-font);
+    direction: rtl;
+    display: flex;
+    align-items: flex-start;
+}
+body.uc-display-v2 .ucd-s-row {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px 12px;
+    max-height: 30vh;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+}
+body.uc-display-v2 .ucd-s-close {
+    order: 2;                     /* RTL row: last item sits on the left edge */
+    flex: 0 0 auto;
+    margin: 4px 4px 4px 6px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--ucd-line);
+    border-radius: 50%;
+    background: var(--ucd-surface);
+    color: var(--ucd-ink);
+    font: 700 24px/1 var(--ucd-font);
+    cursor: pointer;
+}
+body.uc-display-v2 .ucd-s-close:hover { background: color-mix(in srgb, var(--ucd-ink) 8%, var(--ucd-surface)); }
+body.uc-display-v2 .ucd-s-card {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 4px 6px;
+    min-width: 72px;
+    border: 1px solid var(--ucd-line);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ucd-ink);
+    font: inherit;
+    cursor: pointer;
+    scroll-snap-align: start;
+    -webkit-tap-highlight-color: transparent;
+}
+body.uc-display-v2 .ucd-s-card:hover { border-color: var(--ucd-dot); }
+body.uc-display-v2 .ucd-s-close:focus,
+body.uc-display-v2 .ucd-s-card:focus { outline: none; }
+body.uc-display-v2 .ucd-s-close:focus-visible,
+body.uc-display-v2 .ucd-s-card:focus-visible { outline: 2px solid var(--ucd-focus); outline-offset: 1px; }
+body.uc-display-v2 .ucd-s-name {
+    font: 700 15px/1.2 var(--ucd-font);
+    color: var(--ucd-ink);
+    direction: ltr;
+    unicode-bidi: isolate;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+/* the diagram prints the chord name itself; the HTML name stays for the not-found card and old renderers */
+body.uc-display-v2 .ucd-s-card:has(svg.ucd-g, .ucd-p) .ucd-s-name { display: none; }
+body.uc-display-v2 .ucd-s-count {
+    font: 500 11px/1.2 var(--ucd-font);
+    color: var(--ucd-muted-text);
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+body.uc-display-v2 .ucd-s-diagram {
+    display: block;
+    direction: ltr;
+    pointer-events: none;      /* the whole card is the button */
+}
+/* guitar card: height driven, the SVG keeps its viewBox ratio */
+body.uc-display-v2 .ucd-s-guitar .ucd-s-diagram svg {
+    display: block;
+    height: var(--ucd-s-dh) !important;
+    width: auto !important;
+    max-width: 120px !important;
+    margin-inline: auto;
+}
+/* piano card: wider, the full range scaled into the card */
+body.uc-display-v2 .ucd-s-piano .ucd-s-card { min-width: 150px; }
+body.uc-display-v2 .ucd-s-piano .ucd-s-diagram {
+    width: min(200px, 52vw);
+    max-height: var(--ucd-s-dh);
+    overflow: hidden;
+}
+body.uc-display-v2 .ucd-s-piano .ucd-s-diagram svg {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: var(--ucd-s-dh);
+}
+/* old piano renderer fallback (560px div): scale it down instead of clipping 3 keys */
+body.uc-display-v2 .ucd-s-piano .ucd-s-diagram > .achord-piano-diagram-wrapper,
+body.uc-display-v2 .ucd-s-piano .ucd-s-diagram > div:not(.ucd-nf):not(.ucd-p) {
+    zoom: 0.36;
+}
+body.uc-display-v2 .ucd-s-empty {
+    margin: 0;
+    padding: 12px 4px;
+    color: var(--ucd-muted-text);
+    font-size: 0.95rem;
+}
+@media (max-width: 480px) {
+    body.uc-display-v2 .ucd-s-row { gap: 6px; padding-inline: 8px 4px; }
+    body.uc-display-v2 .ucd-s-card { min-width: 64px; padding: 3px 4px; }
+    body.uc-display-v2 .ucd-s-name { font-size: 14px; }
+}
+@media print {
+    body.uc-display-v2 .ucd-s-bar { display: none !important; }
+    body.uc-display-v2.ucd-strip-open { padding-top: 0 !important; }
+}
+@media (prefers-reduced-motion: no-preference) {
+    body.uc-display-v2 .ucd-s-card { transition: border-color 0.15s ease; }
+}
+
+/* lead, round 1: never a sideways scrollbar inside the popup (Q #1, 2px rounding at 375px) */
+body.uc-display-v2 .achord-popup-content { overflow-x: hidden; }
+body.uc-display-v2 #achord-diagram .ucd-p,
+body.uc-display-v2 #achord-diagram svg { max-width: 100%; }
+
+/* Quick "hide chords" button in the scroll row (uc-page.js patchQuickLyrics) */
+body.uc-display-v2 .ucd-quick-lyrics { display: inline-flex; align-items: center; justify-content: center; }
+body.uc-display-v2 .ucd-quick-lyrics.is-on {
+    background-color: var(--accent-primary);
+    color: var(--accent-primary-text);
+    border-color: var(--accent-primary);
+}
