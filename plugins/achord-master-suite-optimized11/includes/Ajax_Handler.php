@@ -41,7 +41,15 @@ class AMS_Ajax_Handler {
         // AJAX לחיפוש שירים
         add_action('wp_ajax_achord_search_songs', [$this, 'handle_song_search']);
         add_action('wp_ajax_nopriv_achord_search_songs', [$this, 'handle_song_search']);
-        
+
+        // אינדקס-האמנים של החיפוש מתאפס בכל שינוי בטקסונומיית singer
+        add_action('created_singer', [$this, 'flush_singer_search_index']);
+        add_action('edited_singer',  [$this, 'flush_singer_search_index']);
+        add_action('delete_singer',  [$this, 'flush_singer_search_index']);
+        add_action('set_object_terms', function ($object_id, $terms, $tt_ids, $taxonomy) {
+            if ($taxonomy === 'singer') $this->flush_singer_search_index();
+        }, 10, 4);
+
         // AJAX לתצוגה מקדימה של אקורדים
         add_action('wp_ajax_achord_live_preview', [$this, 'handle_chords_live_preview']);
 add_action('wp_ajax_nopriv_achord_live_preview', [$this, 'handle_chords_live_preview']);
@@ -209,7 +217,7 @@ $chords_post_content .= "[/achord_song]";
             update_post_meta( $chords_post_id, 'lesson_video_piano', $lesson_video_piano );
         }
 
-        wp_send_json_success("✅ השיר הועלה בהצלחה ונשלח לבדיקה!");
+        wp_send_json_success(AMS_Icons::svg('check') . " השיר הועלה בהצלחה ונשלח לבדיקה!");
     }
 
     /**
@@ -251,6 +259,13 @@ $chords_post_content .= "[/achord_song]";
             'posts_per_page' => 40,
         ];
 
+        // "הצג עוד" — עמוד נוסף של 40 (תקרה סבירה נגד זחילה)
+        $page = isset($_POST['page']) ? max(1, min(50, intval($_POST['page']))) : 1;
+        $args['paged'] = $page;
+        $match_all = false;
+        // any=1: העמוד הראשון כבר נפל לתוצאות-קרובות — העמודים הבאים נשארים באותו מצב
+        $partial   = !empty($_POST['any']);
+
         // פילטרים טקסונומיים — באמצעות term_id (חסין לקידוד עברי)
         if ($singer > 0) $args['tax_query'][] = ['taxonomy' => 'singer', 'field' => 'term_id', 'terms' => $singer];
         if ($genre > 0)  $args['tax_query'][] = ['taxonomy' => 'genre', 'field' => 'term_id', 'terms' => $genre];
@@ -283,6 +298,8 @@ $chords_post_content .= "[/achord_song]";
             $normalized_query = Achord_Master_Suite::normalize_hebrew_for_search($query_string);
             $search_words = array_values(array_filter(explode(' ', $normalized_query)));
             $raw_words    = array_values(array_filter(explode(' ', trim($query_string))));
+            // רווח בסוף השאילתה = המשתמש סיים להקליד גם את המילה האחרונה
+            $last_complete = isset($_POST['query']) && preg_match('/\s$/u', wp_unslash($_POST['query']));
 
             if (!empty($search_words)) {
 
@@ -295,21 +312,41 @@ $chords_post_content .= "[/achord_song]";
                     return $join;
                 };
 
-                // OR סלחני: כל מילה יכולה להתאים בכל שדה — שדה כותרת, שדה אמן,
-                // אינדקס-העל (שכולל גם מילים), או post_title הגולמי (גיבוי לשירים-לא-מאונדקסים).
-                $where_filter = function($where) use ($wpdb, $search_words, $raw_words) {
+                // כל מילה מתאימה רק בתחילת מילה באינדקס-העל (כותרת+אמן+מילים), לא באמצע מילה:
+                // "תל" לא תופס "תלך" / "מתלה". מותרות עד 3 אותיות-שימוש לפני (ו/ה/ב/ל/מ/ש/כ — "בתל", "והאביב"),
+                // וסיומות מותרות ("אביב" → "אביבים") — חוץ ממילה קצרה (1–2 אותיות) שכבר הוקלדה עד הסוף,
+                // שחייבת להיות מילה שלמה. המילה האחרונה בהקלדה היא תמיד תחילית ("אבי" → "אביב").
+                // אותיות-שימוש בשאילתה עצמה מוסרות כחלופה: "בתל אביב" מוצא גם "תל אביב".
+                // כתיב מלא/חסר: ו/י שלא הוקלדו מותרות — "זהר" מוצא "זוהר", "ירושליים" מוצא "ירושלים".
+                // הכתיב המדויק מקבל ניקוד גבוה יותר (LIKE בניקוד למטה), כך שהוא תמיד מעל וריאציות-הכתיב.
+                // post_title הגולמי נשאר כגיבוי רק לשיר שעוד לא אונדקס.
+                // קודם דורשים שכל המילים יימצאו (AND); רק אם אין אף שיר כזה — נופלים ל-OR סלחני.
+                $match_all = count($search_words) > 1 && !$partial;
+                $where_filter = function($where) use ($wpdb, $search_words, $raw_words, $last_complete, &$match_all) {
                     $conditions = [];
+                    $last = count($search_words) - 1;
                     foreach ($search_words as $i => $word) {
-                        $like_norm = '%' . $wpdb->esc_like($word) . '%';
-                        $raw_word  = isset($raw_words[$i]) ? $raw_words[$i] : $word;
-                        $like_raw  = '%' . $wpdb->esc_like($raw_word) . '%';
+                        $typing  = ($i === $last && !$last_complete);
+                        $whole   = !$typing && mb_strlen($word) <= 2;
+                        $options = [' [והבלמשכ]{0,3}' . self::spelling_pattern($word) . ($whole ? '( |$)' : '')];
+                        // אותיות-שימוש שהמשתמש הקליד ("בתל", "והאהבה") — מקבלים גם את המילה בלעדיהן,
+                        // אבל רק כמילה מדויקת, בלי אותיות-שימוש אחרות במקומן: "בתל" → "תל" (לא "תלך"),
+                        // ו"הביתה" לא הופכת ל"היתה". הסרת 2 אותיות רק כשנשארות לפחות 3.
+                        for ($k = 1; $k <= 2; $k++) {
+                            if (mb_strlen($word) - $k < ($k === 1 ? 2 : 3)) break;
+                            if (!preg_match('/^[והבלמשכ]{' . $k . '}/u', $word)) break;
+                            $options[] = ' ' . self::spelling_pattern(mb_substr($word, $k)) . '( |$)';
+                        }
+                        $pattern = '(' . implode('|', $options) . ')';
+                        $raw_word = isset($raw_words[$i]) ? $raw_words[$i] : $word;
+                        $like_raw = '%' . $wpdb->esc_like($raw_word) . '%';
                         $conditions[] = $wpdb->prepare(
-                            "(pm_title.meta_value LIKE %s OR pm_artist.meta_value LIKE %s OR pm_search.meta_value LIKE %s OR {$wpdb->posts}.post_title LIKE %s)",
-                            $like_norm, $like_norm, $like_norm, $like_raw
+                            "(CONCAT(' ', pm_search.meta_value) REGEXP %s OR (pm_search.meta_value IS NULL AND {$wpdb->posts}.post_title LIKE %s))",
+                            $pattern, $like_raw
                         );
                     }
                     if (!empty($conditions)) {
-                        $where .= " AND (" . implode(' OR ', $conditions) . ") ";
+                        $where .= " AND (" . implode($match_all ? ' AND ' : ' OR ', $conditions) . ") ";
                     }
                     return $where;
                 };
@@ -322,8 +359,31 @@ $chords_post_content .= "[/achord_song]";
                 //   מילה באמן בלבד     : 10
                 //   מילה במילים        : 2
                 //   בונוס: מילה היא מילה שלמה בכותרת (גבולות) : +20
+                //   שם אמן זהה לשאילתה : 300  ·  שם אמן מתחיל בשאילתה : 120
+                //   כל מילות השאילתה נמצאות בכותרת/באמן : +100
+                //   (בלי שני האחרונים "אביב גפן" דירג את שיריו מתחת לכל שיר שיש בשמו "אביב")
                 $orderby_filter = function($orderby) use ($wpdb, $raw_words, $search_words, $normalized_query) {
                     $score_parts = [];
+
+                    $score_parts[] = $wpdb->prepare(
+                        "CASE WHEN pm_artist.meta_value = %s THEN 300 ELSE 0 END",
+                        $normalized_query
+                    );
+                    $score_parts[] = $wpdb->prepare(
+                        "CASE WHEN pm_artist.meta_value LIKE %s THEN 120 ELSE 0 END",
+                        $wpdb->esc_like($normalized_query) . '%'
+                    );
+                    // השאילתה מכילה את שם האמן כמילים שלמות ("שלכת אביב גפן") : +150
+                    $score_parts[] = $wpdb->prepare(
+                        "CASE WHEN CHAR_LENGTH(pm_artist.meta_value) >= 3 AND %s LIKE CONCAT('%% ', pm_artist.meta_value, ' %%') THEN 150 ELSE 0 END",
+                        ' ' . $normalized_query . ' '
+                    );
+                    $cover = [];
+                    foreach ($search_words as $nw) {
+                        $like = '%' . $wpdb->esc_like($nw) . '%';
+                        $cover[] = $wpdb->prepare("(pm_title.meta_value LIKE %s OR pm_artist.meta_value LIKE %s)", $like, $like);
+                    }
+                    $score_parts[] = "CASE WHEN (" . implode(' AND ', $cover) . ") THEN 100 ELSE 0 END";
 
                     // ניקוד-שאילתה-מלאה — מול אינדקס הכותרת המנורמל
                     $score_parts[] = $wpdb->prepare(
@@ -380,6 +440,14 @@ $chords_post_content .= "[/achord_song]";
 
         $loop = new WP_Query($args);
 
+        // אין שיר שמכיל את כל המילים — מציגים תוצאות קרובות (OR) ומסמנים partial
+        // (רק בעמוד 1: מעבר לטווח WP מחזיר found_posts=0 גם כשיש התאמות)
+        if ($match_all && $page === 1 && (int) $loop->found_posts === 0) {
+            $match_all = false;
+            $partial   = true;
+            $loop = new WP_Query($args);
+        }
+
         // הסרת פילטרים מיד לאחר הריצה
         if ($join_filter)    remove_filter('posts_join', $join_filter);
         if ($where_filter)   remove_filter('posts_where', $where_filter);
@@ -399,8 +467,29 @@ $chords_post_content .= "[/achord_song]";
                 $raw_flags = get_post_meta($post_id, '_achord_content_flags', true);
                 $flags = is_string($raw_flags) && $raw_flags !== '' ? json_decode($raw_flags, true) : [];
 
+                // לתצוגה: בלי הסיומת " – <אמן>" כשהיא זהה לתווית-האמן (אחרת השם מופיע פעמיים)
+                $title_plain  = html_entity_decode(get_the_title(), ENT_QUOTES, 'UTF-8');
+                $singer_plain = html_entity_decode($singer_name, ENT_QUOTES, 'UTF-8');
+                $display      = $title_plain;
+                if ($singer_plain !== '') {
+                    foreach ([' – ', ' - ', ' — '] as $sep) {
+                        $suffix = $sep . $singer_plain;
+                        if (mb_strlen($title_plain) > mb_strlen($suffix) && mb_substr($title_plain, -mb_strlen($suffix)) === $suffix) {
+                            $display = trim(mb_substr($title_plain, 0, mb_strlen($title_plain) - mb_strlen($suffix)));
+                            break;
+                        }
+                    }
+                }
+
+                // שורת-התוצאה: "שם שיר – שם אמן". אם האמן כבר בכותרת (רוב השירים, דואטים) — הכותרת כמו שהיא.
+                $line = ($singer_plain === '' || mb_strpos($title_plain, $singer_plain) !== false)
+                    ? $title_plain
+                    : $display . ' – ' . $singer_plain;
+
                 $results[] = [
-                    'title'      => get_the_title(),
+                    'title'         => get_the_title(),
+                    'display_title' => $display,
+                    'line'          => $line,
                     'url'        => get_permalink(),
                     'singer'     => $singer_name,
                     'difficulty' => $diff_label,
@@ -409,7 +498,179 @@ $chords_post_content .= "[/achord_song]";
             }
             wp_reset_postdata();
         }
-        wp_send_json_success(['results' => $results, 'count' => $loop->found_posts]);
+
+        // כרטיסי-אמן: רק בחיפוש טקסט חופשי בלי סינון-אמן פעיל
+        $artists = [];
+        if (!empty($query_string) && $singer === 0 && $page === 1) {
+            $artists = $this->match_singers(Achord_Master_Suite::normalize_hebrew_for_search($query_string));
+            // יוצרים (כותבים ומלחינים, mu-plugin uc-writers): רק שם מלא או תחילת שם, ולא כשיש כבר מבצע באותו שם
+            if (taxonomy_exists('writer') && count($artists) < 2) {
+                $taken = array_map(function ($a) { return Achord_Master_Suite::normalize_hebrew_for_search($a['name']); }, $artists);
+                foreach ($this->match_singers(Achord_Master_Suite::normalize_hebrew_for_search($query_string), 'writer') as $w) {
+                    if (count($artists) >= 2) break;
+                    if ($w['tier'] < 2) continue;
+                    if (in_array(Achord_Master_Suite::normalize_hebrew_for_search($w['name']), $taken, true)) continue;
+                    $artists[] = $w;
+                }
+            }
+        }
+
+        wp_send_json_success([
+            'results'     => $results,
+            'count'       => $loop->found_posts,
+            'page'        => $page,
+            'has_more'    => $page < (int) $loop->max_num_pages,
+            'partial'     => $partial,
+            'artists'     => $artists,
+            'artist_icon' => $artists ? AMS_Icons::svg('microphone') : '',
+            'writer_icon' => $artists ? AMS_Icons::svg('pencil-line') : '',
+        ]);
+    }
+
+    public function flush_singer_search_index() {
+        delete_transient('ams_singer_search_index');
+    }
+
+    /**
+     * שמות האמנים מנורמלים לחיפוש — ~400 שמות, נשמר ב-transient.
+     */
+    private function get_singer_search_index($tax = 'singer') {
+        $index = get_transient('ams_' . $tax . '_search_index');
+        if (is_array($index)) return $index;
+
+        $index = [];
+        $terms = get_terms(['taxonomy' => $tax, 'hide_empty' => true]);
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $t) {
+                $n = Achord_Master_Suite::normalize_hebrew_for_search($t->name);
+                if ($n !== '') $index[] = ['id' => (int) $t->term_id, 'n' => $n];
+            }
+        }
+        set_transient('ams_' . $tax . '_search_index', $index, DAY_IN_SECONDS);
+        return $index;
+    }
+
+    /**
+     * אמנים שתואמים לשאילתה, עד 2, עם דרגת-התאמה (tier) שקובעת איפה הכרטיס ישולב בתוצאות:
+     *   3 = השאילתה היא שם האמן במלואו ("אביב גפן")
+     *   2 = השם מתחיל בשאילתה ("אביב ג") או שהשאילתה מכילה את השם ("שלכת אביב גפן")
+     *   1 = כל מילה בשאילתה פותחת מילה בשם ("גפן", "אביב")
+     */
+    /**
+     * שלד-כתיב של מילה מנורמלת: מוסרות ו/י שאחרי האות הראשונה ("זוהר" ו"זהר" → "זהר").
+     */
+    private static function spelling_skeleton($s) {
+        $words = explode(' ', $s);
+        foreach ($words as &$w) {
+            if (mb_strlen($w) > 1) {
+                $w = mb_substr($w, 0, 1) . preg_replace('/[וי]/u', '', mb_substr($w, 1));
+            }
+        }
+        unset($w);
+        return implode(' ', $words);
+    }
+
+    /**
+     * תבנית REGEXP למילה מנורמלת שסולחת על ו/י שהמשתמש לא הקליד ("זהר" → "זוהר", "איל" → "אייל")
+     * ועל ו/י כפולה ("ירושליים" → "ירושלים"). אות שהמשתמש כן הקליד חייבת להופיע —
+     * אחרת "יורם" היה מתאים ל"ירים" ו"שלום" ל"שלמה", ובחיפוש של כמה מילים זה דוחק את השיר הנכון.
+     * רק כשבשלד נשארות לפחות 3 אותיות — "שיר"/"יום" נשארות מדויקות.
+     */
+    private static function spelling_pattern($word, $min_skeleton = 3) {
+        $sk = self::spelling_skeleton($word);
+        if (mb_strlen($sk) < $min_skeleton || !preg_match('/^[א-ת]+$/u', $word)) {
+            return preg_quote($word, '/');
+        }
+        $w     = preg_replace('/(?<=.)(ו|י)\1+/u', '$1', $word);
+        $chars = preg_split('//u', $w, -1, PREG_SPLIT_NO_EMPTY);
+        return implode('[וי]*', $chars) . '[וי]*';
+    }
+
+    private function match_singers($nq, $tax = 'singer') {
+        $qlen = mb_strlen(str_replace(' ', '', $nq));
+        if ($qlen < 2) return [];
+
+        $qwords  = explode(' ', $nq);
+        // שם האמן המלא בכתיב חסר יותר ("זהר ארגוב" → "זוהר ארגוב", "איל גולן" → "אייל גולן")
+        $spelled = '/^' . implode(' ', array_map(function ($w) { return self::spelling_pattern($w, 0); }, $qwords)) . '$/u';
+        $matches = [];
+        foreach ($this->get_singer_search_index($tax) as $s) {
+            $n = $s['n'];
+            $tier = 0;
+            if ($n === $nq || ($qlen >= 3 && preg_match($spelled, $n))) {
+                // שם מלא, גם בכתיב אחר ("זהר ארגוב" → "זוהר ארגוב")
+                $tier = 3;
+            } elseif ($qlen < 3) {
+                // שתי אותיות ראשונות של הקלדה — מוקדם מדי להציע אמנים
+            } elseif (mb_strpos($n, $nq) === 0
+                || (mb_strlen($n) >= 3 && mb_strpos(' ' . $nq . ' ', ' ' . $n . ' ') !== false)) {
+                $tier = 2;
+            } else {
+                $nwords = explode(' ', $n);
+                $tier = 1;
+                foreach ($qwords as $qw) {
+                    $hit = false;
+                    foreach ($nwords as $nw) {
+                        if (mb_strpos($nw, $qw) === 0) { $hit = true; break; }
+                    }
+                    if (!$hit) { $tier = 0; break; }
+                }
+            }
+            if ($tier > 0) $matches[] = ['id' => $s['id'], 'tier' => $tier];
+        }
+        if (!$matches) return [];
+
+        $easy = Achord_Master_Suite::easy_mode_on();
+        $out  = [];
+        foreach ($matches as &$m) {
+            $term = get_term($m['id'], $tax);
+            if (!$term || is_wp_error($term)) { $m['count'] = 0; continue; }
+            $m['term']  = $term;
+            $m['count'] = (int) $term->count;
+        }
+        unset($m);
+        usort($matches, function ($a, $b) {
+            return ($b['tier'] <=> $a['tier']) ?: ($b['count'] <=> $a['count']);
+        });
+
+        $top_tier = $matches[0]['tier'];
+        $picked   = [];
+        foreach ($matches as $m) {
+            if (count($out) >= 2) break;
+            if (empty($m['term'])) continue;
+            // רק אמנים מדרגת-ההתאמה הגבוהה ביותר — לא ערימת כרטיסים חלקיים
+            if ($m['tier'] < $top_tier) continue;
+            // דואטים ("אביב גפן ואריק איינשטיין") לא מוצגים ליד האמן הראשי
+            $nn = Achord_Master_Suite::normalize_hebrew_for_search($m['term']->name);
+            foreach ($picked as $p) {
+                if (mb_strpos($nn, $p . ' ') === 0) continue 2;
+            }
+            $count = $m['count'];
+            // במצב גרסה-קלה עמוד-האמן מציג רק שירים קלים — הספירה צריכה להתאים
+            if ($easy) {
+                $q = new WP_Query([
+                    'post_type'      => 'achord_song_cpt',
+                    'post_status'    => 'publish',
+                    'posts_per_page' => 1,
+                    'fields'         => 'ids',
+                    'tax_query'      => [['taxonomy' => $tax, 'field' => 'term_id', 'terms' => $m['id']]],
+                    'meta_query'     => [['key' => '_ams_is_easy', 'value' => '1', 'compare' => '=']],
+                ]);
+                $count = (int) $q->found_posts;
+            }
+            if ($count < 1) continue;
+            $link = get_term_link($m['term']);
+            if (is_wp_error($link)) continue;
+            $out[] = [
+                'name'  => $m['term']->name,
+                'url'   => $link,
+                'count' => $count,
+                'tier'  => $m['tier'],
+                'kind'  => $tax,
+            ];
+            $picked[] = $nn;
+        }
+        return $out;
     }
 
     /**

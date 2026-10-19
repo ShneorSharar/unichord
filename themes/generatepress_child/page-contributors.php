@@ -20,8 +20,8 @@ get_header();
       <span class="uc-phero__eyebrow">קהילה</span>
       <h1 class="uc-phero__title">האנשים ש<span>בונים</span> את unichord</h1>
       <p class="uc-phero__sub">
-        כל שיר, כל תיקון וכל שיעור כאן הם מתנה של מישהו לנגן הבא. אלה האנשים שמרחיבים את המאגר
-        החופשי — והשם של כל אחד מהם מופיע גם בעמודי השירים שתרמו להם.
+        כל שיר, תיקון או שיעור כאן הוא מתנה של מישהו לנגן הבא. אלה האנשים שמרחיבים את המאגר
+        החופשי, והשם של כל אחד מהם מופיע גם בעמודי השירים שתרמו להם.
       </p>
     </div>
   </header>
@@ -33,7 +33,7 @@ get_header();
       <div class="uc-cta-band__bg" aria-hidden="true"></div>
       <div class="uc-cta-band__inner">
         <h2 class="uc-cta-band__title">רוצים להופיע כאן?</h2>
-        <p class="uc-cta-band__sub">הוסיפו שיר, תקנו אקורד או העלו שיעור — והצטרפו לאנשים שבונים את המאגר החופשי לשירי ארץ ישראל.</p>
+        <p class="uc-cta-band__sub">הוסיפו שיר או תקנו אקורד, והצטרפו לאנשים שבונים את המאגר החופשי לשירי ארץ ישראל.</p>
         <div class="uc-btn-row">
           <a class="uc-btn uc-btn--primary" href="<?php echo esc_url( $uc_add ); ?>">הוסיפו שיר</a>
           <a class="uc-btn uc-btn--ghost" href="<?php echo esc_url( $uc_guide ); ?>">איך תורמים?</a>

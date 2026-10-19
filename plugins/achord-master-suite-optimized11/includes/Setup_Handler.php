@@ -21,6 +21,26 @@ class AMS_Setup_Handler {
         add_action('save_post', [$this, 'save_song_extras']); // חדש (עבור שירים)
         add_action('save_post_achord_song_cpt', [$this, 'index_song_data_on_save'], 10, 3);
         add_action('save_post_achord_song_cpt', [$this, 'set_is_easy_on_save'], 10, 3);
+        add_filter('template_include', [$this, 'fix_song_archive_title'], 20);
+    }
+
+    /**
+     * ארכיון השירים (/shirim/): התבנית (archive.php) מציגה את queried_object->name
+     * כ-h1 — עבור ארכיון CPT זהו ה-slug הפנימי ('achord_song_cpt'). רגע לפני טעינת
+     * התבנית מחליפים את ה-queried_object בעותק (clone) שבו name הוא התווית העברית,
+     * בלי לגעת ברישום ה-CPT הגלובלי עצמו.
+     */
+    public function fix_song_archive_title($template) {
+        if (is_post_type_archive('achord_song_cpt')) {
+            global $wp_query;
+            $obj = $wp_query->get_queried_object();
+            if ($obj instanceof WP_Post_Type) {
+                $display = clone $obj;
+                $display->name = !empty($obj->labels->archives) ? $obj->labels->archives : 'שירים';
+                $wp_query->queried_object = $display;
+            }
+        }
+        return $template;
     }
 
     /**
@@ -69,7 +89,7 @@ class AMS_Setup_Handler {
     private function register_post_types() {
         // CPT: שירים (מתוסף 1)
         register_post_type('achord_song_cpt', [
-            'labels' => ['name' => 'שירים', 'singular_name' => 'שיר'],
+            'labels' => ['name' => 'שירים', 'singular_name' => 'שיר', 'archives' => 'כל השירים', 'all_items' => 'כל השירים'],
             'public' => true, 'show_ui' => true, 'show_in_menu' => true,
             'rewrite' => ['slug' => 'shirim'], 'has_archive' => true,
             'menu_icon' => 'dashicons-format-audio', 'supports' => ['title', 'editor', 'author', 'revisions']
@@ -140,13 +160,13 @@ class AMS_Setup_Handler {
         
         // שיעור גיטרה
         echo '<div style="background:#f0f9ff; padding:15px; border:1px solid #bae6fd; border-radius:8px;">';
-        echo '<p style="margin-top:0;"><strong>🎸 שיעור גיטרה (YouTube):</strong></p>';
+        echo '<p style="margin-top:0;"><strong>' . AMS_Icons::svg('guitar') . ' שיעור גיטרה (YouTube):</strong></p>';
         echo '<input type="url" name="lesson_video_guitar" value="' . esc_attr($video_guitar) . '" style="width:100%;" placeholder="https://youtu.be/...">';
         echo '</div>';
 
         // שיעור פסנתר
         echo '<div style="background:#fdf4ff; padding:15px; border:1px solid #f5d0fe; border-radius:8px;">';
-        echo '<p style="margin-top:0;"><strong>🎹 שיעור פסנתר (YouTube):</strong></p>';
+        echo '<p style="margin-top:0;"><strong>' . AMS_Icons::svg('piano') . ' שיעור פסנתר (YouTube):</strong></p>';
         echo '<input type="url" name="lesson_video_piano" value="' . esc_attr($video_piano) . '" style="width:100%;" placeholder="https://youtu.be/...">';
         echo '</div>';
         
@@ -154,7 +174,7 @@ class AMS_Setup_Handler {
 
         // תווים
         echo '<div style="background:#f9f9f9; padding:15px; border:1px solid #ddd; border-radius:8px;">';
-        echo '<p style="margin-top:0;"><strong>🎼 קוד תווים (ABC Notation):</strong></p>';
+        echo '<p style="margin-top:0;"><strong>' . AMS_Icons::svg('music') . ' קוד תווים (ABC Notation):</strong></p>';
         echo '<textarea name="ams_abc_code" rows="6" style="width:100%; direction:ltr; font-family:monospace;" placeholder="X:1...">' . esc_textarea($abc) . '</textarea>';
         echo '</div>';
     }

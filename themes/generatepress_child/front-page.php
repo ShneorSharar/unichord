@@ -38,11 +38,11 @@ $uc_featured = new WP_Query( [
             <span class="uc-hero__slogan">החופש לנגן</span>
             <h1 class="uc-hero__title">אקורדים לשירי <span class="uc-underline">ארץ ישראל</span></h1>
             <p class="uc-hero__sub">
-                מצאו שיר, קחו גיטרה, תתחילו.
+                מצאו שיר וקחו את הגיטרה. תתחילו לנגן.
                 <?php if ( $uc_total > 100 ) : ?>
-                    <b><?php echo esc_html( number_format_i18n( $uc_total ) ); ?></b> שירים עם אקורדים, מילים, תווים ושיעורים — חינם לגמרי.
+                    <b><?php echo esc_html( number_format_i18n( $uc_total ) ); ?></b> שירים עם אקורדים, מילים, תווים ושיעורים. הכול חינם.
                 <?php else : ?>
-                    אקורדים, מילים, תווים ושיעורים לשירים שגדלנו עליהם — חינם לגמרי.
+                    אקורדים, מילים, תווים ושיעורים לשירים שגדלנו עליהם. הכול חינם.
                 <?php endif; ?>
             </p>
             <div class="uc-hero__search"><?php echo do_shortcode( '[achord_song_search]' ); ?></div>
@@ -53,28 +53,28 @@ $uc_featured = new WP_Query( [
     <!-- ══ ערכים / בידול ══ -->
     <section class="uc-values" aria-label="למה unichord">
         <div class="uc-value">
-            <span class="uc-value__icon" aria-hidden="true">🎁</span>
+            <span class="uc-value__icon" aria-hidden="true"><?php echo ams_icon( 'gift' ); ?></span>
             <span class="uc-value__title">חינם לתמיד</span>
-            <span class="uc-value__desc">בלי תשלום ובלי פרסומות. הכול פתוח לכולם.</span>
+            <span class="uc-value__desc">בלי תשלום ובלי פרסומות, פתוח לכולם.</span>
         </div>
         <div class="uc-value">
-            <span class="uc-value__icon" aria-hidden="true">📖</span>
-            <span class="uc-value__title">מספר האקורדים הישראלי</span>
-            <span class="uc-value__desc">מבוסס על מאות שירי מופת של ארץ ישראל.</span>
+            <span class="uc-value__icon" aria-hidden="true"><?php echo ams_icon( 'book-open' ); ?></span>
+            <span class="uc-value__title">אקורדים מדויקים</span>
+            <span class="uc-value__desc">מבוססים על ספר האקורדים של אורן מוסטקי, באישורו.</span>
         </div>
         <div class="uc-value">
-            <span class="uc-value__icon" aria-hidden="true">🎼</span>
-            <span class="uc-value__title">לא רק אקורדים</span>
-            <span class="uc-value__desc">אקורדים, תווים ושיעורי וידאו לאותו שיר.</span>
+            <span class="uc-value__icon" aria-hidden="true"><?php echo ams_icon( 'music' ); ?></span>
+            <span class="uc-value__title">הכול באותו מקום</span>
+            <span class="uc-value__desc">אקורדים, תווים ושיעורי וידאו, לאותו שיר.</span>
         </div>
         <div class="uc-value">
-            <span class="uc-value__icon" aria-hidden="true">🤝</span>
+            <span class="uc-value__icon" aria-hidden="true"><?php echo ams_icon( 'handshake' ); ?></span>
             <span class="uc-value__title">נבנה בידי קהילה</span>
-            <span class="uc-value__desc">המאגר גדל ומשתפר בכל יום — בזכותכם.</span>
+            <span class="uc-value__desc">המאגר גדל ומשתפר בכל יום, בזכותכם.</span>
         </div>
     </section>
 
-    <p class="uc-kicker">— בחרתם כלי, עכשיו רק נשאר לבחור מאיפה מתחילים</p>
+    <p class="uc-kicker">בחרתם כלי, עכשיו רק נשאר לבחור מאיפה מתחילים</p>
 
     <!-- ══ ז'אנרים מהירים ══ -->
     <?php if ( ! empty( $uc_genres ) && ! is_wp_error( $uc_genres ) ) : ?>
@@ -120,11 +120,11 @@ $uc_featured = new WP_Query( [
                     <span class="uc-door__desc">תווים מלאים לפסנתר, גיטרה וחליל</span>
                 </span>
             </a>
-            <a class="uc-door" href="<?php echo esc_url( home_url( '/level/' . rawurlencode( 'קל' ) . '/' ) ); ?>">
+            <a class="uc-door" href="<?php echo esc_url( home_url( '/chords/?easy=1' ) ); ?>">
                 <span class="uc-door__icon"><?php echo achord_menu_icon( 'music' ); ?></span>
                 <span class="uc-door__body">
                     <span class="uc-door__title">מתחילים כאן</span>
-                    <span class="uc-door__desc">שירים קלים לנגינה — מושלם לצעדים הראשונים</span>
+                    <span class="uc-door__desc">שירים קלים לנגינה, נהדר לצעדים הראשונים</span>
                 </span>
             </a>
         </div>
@@ -137,8 +137,8 @@ $uc_featured = new WP_Query( [
             <div class="uc-cta-band__inner">
                 <h2 class="uc-cta-band__title">המאגר הזה נבנה בזכותכם</h2>
                 <p class="uc-cta-band__sub">
-                    חסר שיר? מכירים את האקורדים? יש לכם שיעור להעלות? הוסיפו אותו —
-                    השם שלכם יופיע בעמוד השיר, והוא יישאר חופשי לכל מי שיבוא אחריכם.
+                    חסר שיר, אקורדים או שיעור שעוד אין לנו? הוסיפו אותו.
+                    השם שלכם יופיע בעמוד השיר, ויישאר שם לכל מי שיבוא אחריכם.
                 </p>
                 <div class="uc-btn-row">
                     <a class="uc-btn uc-btn--primary" href="<?php echo esc_url( home_url( '/add-song/' ) ); ?>">הוסיפו שיר</a>
@@ -151,7 +151,7 @@ $uc_featured = new WP_Query( [
     <!-- ══ אקורדיון ז'אנרים מלא ══ -->
     <section class="achord-home-section" id="section-shirim">
         <div class="achord-section-header">
-            <span class="achord-section-icon" aria-hidden="true">🎸</span>
+            <span class="achord-section-icon" aria-hidden="true"><?php echo ams_icon( 'guitar' ); ?></span>
             <h2 class="achord-section-title">כל השירים לפי קטגוריה</h2>
         </div>
         <div class="achord-section-body">

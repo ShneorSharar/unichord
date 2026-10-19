@@ -12,39 +12,64 @@
 (function () {
   'use strict';
 
+  /* ══════════════════════════════════════════════════════════
+     initAchordEditor(cfg) — מפעל של עורך-האקורדים.
+     קריאה ללא ארגומנטים = טופס העלאת-השיר המקורי (תאימות מלאה
+     לאחור). cfg.mode==='embed' משמש את מודאל העריכה-האישית/הצעת-
+     התיקון בעמוד השיר: מדלג על לוגיקת-השליחה של הטופס, ומחזיר API
+     ‏{ setContent, getContent, focus } ש-main.js קורא לו.
+     cfg.ids ממפה מזהי-DOM (ברירת-מחדל = מזהי auf-* של טופס ההעלאה);
+     cfg.data מחליף את window.ACHORD_UPLOAD_DATA.
+     ══════════════════════════════════════════════════════════ */
+  function initAchordEditor(cfg) {
+  cfg = cfg || {};
+  const embed = cfg.mode === 'embed';
+  const ids = Object.assign({
+    form:'achord-upload-form', editorNormal:'auf-editor-normal', tokenCanvas:'auf-token-canvas',
+    textMode:'auf-text-mode', chordMode:'auf-chord-mode', previewPanel:'auf-preview-panel',
+    songPreview:'auf-song-preview', modeText:'auf-mode-text', modeChords:'auf-mode-chords',
+    previewBtn:'auf-preview-btn', recBar:'auf-recommended-bar', editRecBtn:'auf-edit-rec-btn',
+    openLibBtn:'auf-open-library-btn', libraryModal:'auf-library-modal', librarySearch:'auf-library-search',
+    libraryGrid:'auf-library-grid', uploadMsg:'auf-upload-msg', submitBtn:'auf-submit-btn',
+    transposeRange:'auf-transpose-range', transposeOutput:'auf-transpose-output',
+    chordInput:'auf-chord-input', addChordBtn:'auf-add-chord-btn', abcPreview:'auf-abc-preview',
+    editorAbc:'auf-editor-abc', undoBtn:'auf-undo-btn', redoBtn:'auf-redo-btn', publishBtn:'auf-publish-btn'
+  }, cfg.ids || {});
+  const g = function (id) { return document.getElementById(id); };
+
   /* ─── נתונים מ-PHP ─────────────────────────────────────── */
-  const DATA = window.ACHORD_UPLOAD_DATA || {};
+  const DATA = cfg.data || window.ACHORD_UPLOAD_DATA || {};
   const fullChordLibrary = DATA.library || {};
   const ajaxUrl = DATA.ajaxUrl || '';
   const prefill = DATA.prefill || {};
 
   /* ─── אלמנטים ─────────────────────────────────────────── */
-  const form        = document.getElementById('achord-upload-form');
-  if (!form) return;
+  const form        = g(ids.form);
+  if (!form) return null;
 
-  const textareaEl      = document.getElementById('auf-editor-normal');
-  const tokenCanvas     = document.getElementById('auf-token-canvas');
-  const textPanel       = document.getElementById('auf-text-mode');
-  const chordPanel      = document.getElementById('auf-chord-mode');
-  const previewPanel    = document.getElementById('auf-preview-panel');
-  const previewEl       = document.getElementById('auf-song-preview');
-  const modeBtnText     = document.getElementById('auf-mode-text');
-  const modeBtnChords   = document.getElementById('auf-mode-chords');
-  const previewBtn      = document.getElementById('auf-preview-btn');
-  const recBar          = document.getElementById('auf-recommended-bar');
-  const editRecBtn      = document.getElementById('auf-edit-rec-btn');
-  const openLibBtn      = document.getElementById('auf-open-library-btn');
-  const modal           = document.getElementById('auf-library-modal');
-  const libSearch       = document.getElementById('auf-library-search');
-  const libGrid         = document.getElementById('auf-library-grid');
-  const msgEl           = document.getElementById('auf-upload-msg');
-  const submitBtn       = document.getElementById('auf-submit-btn');
-  const transposeRange  = document.getElementById('auf-transpose-range');
-  const transposeOutput = document.getElementById('auf-transpose-output');
-  const addChordInput   = document.getElementById('auf-chord-input');
-  const addChordBtn     = document.getElementById('auf-add-chord-btn');
-  const abcPreview      = document.getElementById('auf-abc-preview');
-  const abcTextarea     = document.getElementById('auf-editor-abc');
+  const textareaEl      = g(ids.editorNormal);
+  const tokenCanvas     = g(ids.tokenCanvas);
+  const textPanel       = g(ids.textMode);
+  const chordPanel      = g(ids.chordMode);
+  const previewPanel    = g(ids.previewPanel);
+  const previewEl       = g(ids.songPreview);
+  const modeBtnText     = g(ids.modeText);
+  const modeBtnChords   = g(ids.modeChords);
+  const previewBtn      = g(ids.previewBtn);
+  const recBar          = g(ids.recBar);
+  const editRecBtn      = g(ids.editRecBtn);
+  const openLibBtn      = g(ids.openLibBtn);
+  const modal           = g(ids.libraryModal);
+  const libSearch       = g(ids.librarySearch);
+  const libGrid         = g(ids.libraryGrid);
+  const msgEl           = g(ids.uploadMsg);
+  const submitBtn       = g(ids.submitBtn);
+  const transposeRange  = g(ids.transposeRange);
+  const transposeOutput = g(ids.transposeOutput);
+  const addChordInput   = g(ids.chordInput);
+  const addChordBtn     = g(ids.addChordBtn);
+  const abcPreview      = g(ids.abcPreview);
+  const abcTextarea     = g(ids.editorAbc);
 
   /* ─── עזרי a11y / utility ─────────────────────────────────
      אזור aria-live להכרזת שינויי אקורד לקוראי-מסך (WCAG 4.1.3),
@@ -634,19 +659,55 @@
   let touchDragSourceIdx  = null; // null = palette/rec copy; number = placed-token move
   let touchLastX          = null; // מיקום אחרון של האצבע — touchend לא נושא קואורדינטות
   let touchLastY          = null;
+  // גרירת אקורד-מוצמד במגע מתחילה רק אחרי לחיצה-ארוכה (בלי תזוזה) או תזוזה
+  // אופקית-בעיקר. החלקה אנכית = גלילת-דף רגילה (קודם החלקה שהתחילה על מילה
+  // עם אקורד הזיזה את האקורד ומנעה גלילה). כפתורי המאגר/מועדפים — ללא שינוי.
+  const TOUCH_HOLD_MS = 350;
+  const TOUCH_SLOP    = 10;
+  let touchPending    = null; // {chord, idx, x, y, btn, timer} — ממתין להחלטה
+
+  function clearTouchPending() {
+    if (touchPending) { clearTimeout(touchPending.timer); touchPending = null; }
+  }
+  function activateTouchDrag(p) {
+    touchDragChord     = p.chord;
+    touchDragSourceIdx = p.idx;
+    p.btn.classList.add('auf-dragging');
+  }
 
   document.addEventListener('touchstart', function (e) {
+    clearTouchPending();
     const btn = e.target.closest('.auf-quick-btn[data-chord], .auf-rec-btn[data-chord], .auf-token--has-chord[data-chord]');
     if (!btn || !isChordMode) return;
-    touchDragChord = btn.dataset.chord;
     // הבחן בין token מוצמד (יש data-index) לכפתור מאגר
-    touchDragSourceIdx = btn.hasAttribute('data-index')
-      ? parseInt(btn.dataset.index, 10)
-      : null;
-    btn.classList.add('auf-dragging');
+    const idx = btn.hasAttribute('data-index') ? parseInt(btn.dataset.index, 10) : null;
+    if (idx === null) {
+      activateTouchDrag({ chord: btn.dataset.chord, idx: null, btn: btn });
+      return;
+    }
+    if (e.touches.length > 1) return;
+    const t0 = e.touches[0];
+    const p = { chord: btn.dataset.chord, idx: idx, x: t0.clientX, y: t0.clientY, btn: btn, timer: null };
+    p.timer = setTimeout(function () {
+      if (touchPending !== p) return;
+      touchPending = null;
+      activateTouchDrag(p);
+    }, TOUCH_HOLD_MS);
+    touchPending = p;
   }, { passive: true });
 
   document.addEventListener('touchmove', function (e) {
+    if (touchPending) {
+      const tp = e.touches[0];
+      if (e.touches.length > 1 || !tp) { clearTouchPending(); return; }
+      const dx = tp.clientX - touchPending.x;
+      const dy = tp.clientY - touchPending.y;
+      if (Math.abs(dx) < TOUCH_SLOP && Math.abs(dy) < TOUCH_SLOP) return; // עדיין מחליטים
+      const p = touchPending;
+      clearTouchPending();
+      if (Math.abs(dx) <= Math.abs(dy)) return; // אנכי = גלילה, לא גרירה
+      activateTouchDrag(p);                     // אופקי = גרירה
+    }
     if (!touchDragChord) return;
     // מנע גלילת-דף במקביל לגרירה — אחרת התוכן זז מתחת לאצבע ו-drop נוחת ביעד שגוי
     e.preventDefault();
@@ -659,6 +720,7 @@
   }, { passive: false });
 
   document.addEventListener('touchend', function () {
+    clearTouchPending();
     if (!touchDragChord) return;
     clearDragOver();
     if (touchLastX !== null && touchLastY !== null) {
@@ -679,6 +741,7 @@
 
   // ניקוי במקרה של ביטול מגע (שיחה נכנסת, מחווה מערכת וכו')
   document.addEventListener('touchcancel', function () {
+    clearTouchPending();
     if (!touchDragChord) return;
     clearDragOver();
     touchHighlight = null;
@@ -737,8 +800,8 @@
   }
 
   function updateUndoRedoBtns() {
-    var u = document.getElementById('auf-undo-btn');
-    var r = document.getElementById('auf-redo-btn');
+    var u = g(ids.undoBtn);
+    var r = g(ids.redoBtn);
     if (u) u.disabled = !undoStack.length;
     if (r) r.disabled = !redoStack.length;
   }
@@ -994,11 +1057,11 @@
     // חכה עד שה-DOM מוכן; נוסיף ליד כפתורי mode
     var modeBar = modeBtnText && modeBtnText.parentElement;
     if (!modeBar) return;
-    if (document.getElementById('auf-undo-btn')) return; // כבר קיים
+    if (g(ids.undoBtn)) return; // כבר קיים
 
     var undoBtn = document.createElement('button');
     undoBtn.type = 'button';
-    undoBtn.id = 'auf-undo-btn';
+    undoBtn.id = ids.undoBtn;
     undoBtn.className = 'auf-mode-btn';
     undoBtn.title = 'ביטול (Ctrl+Z)';
     undoBtn.textContent = '↩';
@@ -1007,7 +1070,7 @@
 
     var redoBtn = document.createElement('button');
     redoBtn.type = 'button';
-    redoBtn.id = 'auf-redo-btn';
+    redoBtn.id = ids.redoBtn;
     redoBtn.className = 'auf-mode-btn';
     redoBtn.title = 'חזור (Ctrl+Y)';
     redoBtn.textContent = '↪';
@@ -1076,6 +1139,10 @@
   let pressChord = null;
   let pressLong  = false;
 
+  // האם היעד בתוך טבלת-הספרייה של *המופע הזה* (ids.libraryModal), ולא מזהה קשיח —
+  // אחרת במודאל-העריכה (pe-library-modal) הקשה בטבלה דרסה את אקורד המילה הנבחרת.
+  function inLibraryModal(t) { return !!(modal && t && modal.contains(t)); }
+
   function registerPressHandlers(container) {
     if (!container) return;
 
@@ -1121,7 +1188,7 @@
     container.addEventListener('mouseup', function (e) {
       const btn = e.target.closest('.auf-quick-btn, .auf-rec-btn');
       if (!btn) { cancelP(); return; }
-      endP(e, !!e.target.closest('#auf-library-modal'));
+      endP(e, inLibraryModal(e.target));
     });
     container.addEventListener('mouseleave', cancelP);
 
@@ -1136,7 +1203,7 @@
       const btn = e.target.closest('.auf-quick-btn, .auf-rec-btn');
       if (!btn) { cancelP(); return; }
       // כמו במאוס: לחיצה מתוך טבלת הספרייה רק מוסיפה למועדפים (לא מכניסה לשיר)
-      endP(e, !!e.target.closest('#auf-library-modal'));
+      endP(e, inLibraryModal(e.target));
     });
     container.addEventListener('touchcancel', cancelP);
   }
@@ -1202,7 +1269,7 @@
         btn.dataset.chord = chord;
         btn.innerHTML =
           '<span class="auf-quick-btn__label">' + chord + '</span>' +
-          '<span class="auf-quick-btn__star" aria-hidden="true">★</span>';
+          '<span class="auf-quick-btn__star" aria-hidden="true">' + UC_ICON('star') + '</span>';
 
         btn.addEventListener('mousedown', (function (c) {
           return function (e) {
@@ -1270,13 +1337,13 @@
 
     if (!previewPanel.hidden) {
       previewPanel.hidden = true;
-      previewBtn.textContent = '👁 תצוגה חיה';
+      previewBtn.innerHTML = UC_ICON('eye') + ' תצוגה חיה';
       return;
     }
 
     previewPanel.hidden = false;
     if (previewEl) previewEl.textContent = 'טוען...';
-    previewBtn.textContent = '✕ סגור תצוגה';
+    previewBtn.innerHTML = UC_ICON('x') + ' סגור תצוגה';
 
     const titleVal     = (document.getElementById('auf-title')     || {}).value || '';
     const performerVal = (document.getElementById('auf-performer') || {}).value || '';
@@ -1297,7 +1364,7 @@
   /* ══════════════════════════════════════════════════════════
      מודול 9: סקשנים מתכווצים
      ══════════════════════════════════════════════════════════ */
-  document.querySelectorAll('.auf-collapsible-trigger').forEach(function (trigger) {
+  form.querySelectorAll('.auf-collapsible-trigger').forEach(function (trigger) {
     trigger.addEventListener('click', function () {
       const expanded = trigger.getAttribute('aria-expanded') === 'true';
       const body = trigger.closest('.auf-section').querySelector('.auf-collapsible-body');
@@ -1416,7 +1483,7 @@
     const fd = new FormData(form);
     fd.set('action', opts.action || DATA.submitAction || 'achord_submit_song');
 
-    const okMsg = opts.okMsg || DATA.successMsg || '✓ השיר הועלה בהצלחה ונשלח לבדיקה!';
+    const okMsg = opts.okMsg || DATA.successMsg || 'השיר הועלה בהצלחה ונשלח לבדיקה!';
 
     fetch(ajaxUrl, { method: 'POST', body: fd })
       .then(function (r) { return r.json(); })
@@ -1437,18 +1504,21 @@
       });
   }
 
-  form.addEventListener('submit', function (e) {
+  // מצב embed (מודאל עריכה/הצעה): אין טופס-שליחה משלו; main.js קורא ל-getContent()
+  // ושולח דרך achord_save_personal_version / achord_submit_proposal. לכן מדלגים
+  // על חיווט השליחה + new FormData(form) (form הוא div בהקשר הזה).
+  if (!embed) form.addEventListener('submit', function (e) {
     e.preventDefault();
     submitForm();
   });
 
   // מצב-מחברת בלבד: "🌐 הצע לפרסום באתר" — שומר עותק אישי ושולח לאישור (דורש מבצע/ת)
-  var publishBtn = document.getElementById('auf-publish-btn');
-  if (publishBtn && DATA.publishAction) {
+  var publishBtn = g(ids.publishBtn);
+  if (!embed && publishBtn && DATA.publishAction) {
     publishBtn.addEventListener('click', function () {
       submitForm({
         action: DATA.publishAction,
-        okMsg: DATA.publishMsg || '✓ נשלח לאישור! הגרסה שלך שמורה במחברת.',
+        okMsg: DATA.publishMsg || 'נשלח לאישור! הגרסה שלך שמורה במחברת.',
         requirePerformer: true,
         btn: publishBtn,
         loadingMsg: 'שולח לאישור...'
@@ -1459,11 +1529,41 @@
   function showMsg(type, text) {
     if (!msgEl) return;
     msgEl.className = 'auf-msg auf-msg--' + type;
-    msgEl.textContent = text;
+    if (type === 'success') {
+      // אייקון וי מורכב כ-HTML; הטקסט עצמו תמיד מגיע מברירת-מחדל קבועה
+      // או מ-DATA.successMsg/DATA.publishMsg (מוגדרים ב-PHP, לא קלט משתמש)
+      msgEl.innerHTML = '';
+      msgEl.insertAdjacentHTML('afterbegin', UC_ICON('check') + ' ');
+      msgEl.appendChild(document.createTextNode(text));
+    } else {
+      msgEl.textContent = text;
+    }
     msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   /* ── אתחול ── */
   renderRecommended();
+
+  /* ── API למופע embed (main.js משתמש בו במודאל העריכה/הצעה) ── */
+  return {
+    // טוען טקסט-גלם (פורמט מילה[Am]) לעורך; אם במצב-אקורדים, מפענח ומצייר מחדש.
+    setContent: function (text) {
+      if (!textareaEl) return;
+      textareaEl.value = text || '';
+      if (isChordMode) { tokens = parseText(textareaEl.value); renderTokenCanvas(); }
+    },
+    // מחזיר את הטקסט המסודר; אם במצב-אקורדים, מסנכרן קודם קנבס→טקסט.
+    getContent: function () {
+      if (isChordMode) syncTextarea();
+      return textareaEl ? textareaEl.value : '';
+    },
+    focus: function () { if (textareaEl) textareaEl.focus(); },
+    inChordMode: function () { return isChordMode; }
+  };
+  } // end initAchordEditor
+
+  // חשיפה גלובלית + הפעלה אוטומטית לטופס-ההעלאה המקורי (תאימות לאחור).
+  window.initAchordEditor = initAchordEditor;
+  if (document.getElementById('achord-upload-form')) initAchordEditor();
 
 })();

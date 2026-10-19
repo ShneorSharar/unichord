@@ -34,7 +34,10 @@
         return !query && singer === '0' && genre === '0' && !difficulty && !contentType;
     }
 
-    function doSearch(form) {
+    // page=1: חיפוש חדש מהטופס. page>1: "הצג עוד" — אותה שאילתה שנשמרה, נוספת לסוף הרשימה.
+    function doSearch(form, page) {
+        page = page || 1;
+        const append = page > 1;
         // מציאת קונטיינר התוצאות שנמצא בדיוק אחרי הטופס הספציפי
         const wrapper = form.closest('.achord-search-wrapper') || form.closest('.ams-simple-search-wrapper');
         const resultsContainer = wrapper ? wrapper.querySelector('.achord-search-results-grid') : null;
@@ -43,14 +46,32 @@
         if (!resultsContainer) return;
 
         // אם הכל ריק — נקה תוצאות
-        if (isFormEmpty(form)) {
+        if (!append && isFormEmpty(form)) {
+            if (form._achordSearchAbort) form._achordSearchAbort.abort();
+            form._achordLastKey = null;
             resultsContainer.innerHTML = '';
             if (metaContainer) metaContainer.innerHTML = '';
             return;
         }
 
-        if (metaContainer) {
-            metaContainer.innerHTML = '<span class="achord-search-loading">מחפש שירים...</span>';
+        // אותו חיפוש בדיוק כבר רץ/הוצג — לא מריצים שוב. (blur מהשדה בלחיצה על "הצג עוד"
+        // יורה change, ובלי זה היה מתחיל חיפוש-מחדש שדורס את הטעינה הנוספת.)
+        let formFd = null;
+        if (!append) {
+            formFd = new FormData(form);
+            const key = JSON.stringify(Array.from(formFd.entries()));
+            if (key === form._achordLastKey) return;
+            form._achordLastKey = key;
+        }
+
+        const moreBtn = resultsContainer.querySelector('.achord-search-more');
+        if (append) {
+            if (!form._achordLastParams) return;
+            if (moreBtn) { moreBtn.disabled = true; moreBtn.textContent = 'טוען...'; }
+        } else {
+            // חיפוש חדש — הכפתור של הרשימה הקודמת כבר לא רלוונטי
+            if (moreBtn) moreBtn.remove();
+            if (metaContainer) metaContainer.innerHTML = '<span class="achord-search-loading">מחפש שירים...</span>';
         }
 
         // ביטול בקשת חיפוש קודמת שעדיין בתהליך — מונע מצב שבו תגובה ישנה דורסת חדשה (race condition)
@@ -58,9 +79,23 @@
         const abortController = new AbortController();
         form._achordSearchAbort = abortController;
 
-        const fd = new FormData(form);
-        fd.append('action', 'achord_search_songs');
-        fd.append('nonce', (window.ams_ajax_data && window.ams_ajax_data.search_nonce) || '');
+        let fd;
+        if (append) {
+            fd = new FormData();
+            form._achordLastParams.forEach(([k, v]) => fd.append(k, v));
+        } else {
+            fd = formFd;
+            fd.append('action', 'achord_search_songs');
+            fd.append('nonce', (window.ams_ajax_data && window.ams_ajax_data.search_nonce) || '');
+            form._achordLastParams = Array.from(fd.entries());
+        }
+        fd.set('page', String(page));
+
+        const onMore = () => doSearch(form, page + 1);
+        // עמוד 1 נפל לתוצאות-קרובות — "הצג עוד" ממשיך באותו מצב
+        const rememberPartial = (data) => {
+            if (!append && data && data.partial && form._achordLastParams) form._achordLastParams.push(['any', '1']);
+        };
 
         fetch((window.ams_ajax_data && window.ams_ajax_data.ajax_url) || '/wp-admin/admin-ajax.php', {
             method: 'POST',
@@ -73,8 +108,12 @@
             })
             .then(json => {
                 if (json.success) {
-                    renderResults(json.data, resultsContainer, metaContainer, (fd.get('query') || '').toString());
+                    rememberPartial(json.data);
+                    renderResults(json.data, resultsContainer, metaContainer, (fd.get('query') || '').toString(), append, onMore);
+                } else if (append) {
+                    if (moreBtn) { moreBtn.disabled = false; moreBtn.textContent = 'שגיאה בטעינה. נסו שוב'; }
                 } else {
+                    form._achordLastKey = null; // לאפשר ניסיון חוזר עם אותה שאילתה
                     resultsContainer.innerHTML = '<p class="achord-search-no-results">שגיאה בחיפוש. נסו שנית.</p>';
                     if (metaContainer) metaContainer.innerHTML = '';
                 }
@@ -82,13 +121,76 @@
             .catch(err => {
                 if (err.name === 'AbortError') return; // בקשה בוטלה במכוון לטובת חיפוש חדש — להתעלם
                 console.error('Search error:', err);
+                if (append) {
+                    if (moreBtn) { moreBtn.disabled = false; moreBtn.textContent = 'שגיאת רשת. נסו שוב'; }
+                    return;
+                }
+                form._achordLastKey = null;
                 resultsContainer.innerHTML = '<p class="achord-search-no-results">שגיאת רשת. אנא בדקו את החיבור לאינטרנט.</p>';
                 if (metaContainer) metaContainer.innerHTML = '';
             });
     }
 
-    function renderResults(data, container, metaContainer, query) {
-        if (!data.results || data.results.length === 0) {
+    // כרטיס-אמן שמשתלב בתוך רשימת השירים (לא בראש) — מיקומו לפי חוזק ההתאמה:
+    // שם מלא → אחרי 2 שירים; תחילת שם/שם בתוך השאילתה → אחרי 3; התאמה חלקית → אחרי 5.
+    function artistSlot(tier) {
+        return tier >= 3 ? 2 : (tier === 2 ? 3 : 5);
+    }
+
+    function renderArtistItem(artist, icon, writerIcon) {
+        const countLabel = artist.count === 1 ? 'שיר אחד' : `${artist.count} שירים`;
+        return `<li class="achord-search-result-item achord-search-artist-item"><a href="${escHtml(artist.url)}" class="result-link">
+                <span class="artist-avatar">${(artist.kind === 'writer' ? writerIcon : icon) || ''}</span>
+                <span class="artist-text">
+                    <span class="artist-kicker">${artist.kind === 'writer' ? 'יוצר' : 'אמן'} · ${escHtml(countLabel)}</span>
+                    <span class="result-title">${escHtml(artist.name)}</span>
+                </span>
+                <span class="artist-cta">לכל השירים ←</span>
+            </a></li>`;
+    }
+
+    function renderSongItem(song) {
+        // שורה אחת "שם שיר – שם אמן" (line נבנה בשרת), בלי תווית-אמן נפרדת
+        const text = song.line || song.display_title || song.title || '';
+        return `<li class="achord-search-result-item"><a href="${escHtml(song.url)}" class="result-link">
+                <span class="result-title">${escHtml(text)}</span>
+            </a></li>`;
+    }
+
+    // כפתור "הצג עוד" — מוצג כל עוד יש עמוד נוסף בשרת
+    function syncMoreButton(data, container, onMore) {
+        const old = container.querySelector('.achord-search-more');
+        if (old) old.remove();
+        if (!data.has_more) return;
+        const shown = container.querySelectorAll('.achord-search-result-item:not(.achord-search-artist-item)').length;
+        const left = Math.max(0, (data.count || 0) - shown);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'achord-search-more';
+        btn.textContent = left ? `הצג עוד שירים (${left})` : 'הצג עוד שירים';
+        btn.addEventListener('click', onMore);
+        container.appendChild(btn);
+    }
+
+    function renderResults(data, container, metaContainer, query, append, onMore) {
+        const artists = Array.isArray(data.artists) ? data.artists : [];
+        const results = Array.isArray(data.results) ? data.results : [];
+
+        if (append) {
+            const list = container.querySelector('.achord-search-results-list');
+            if (list) list.insertAdjacentHTML('beforeend', results.map(renderSongItem).join(''));
+            syncMoreButton(data, container, onMore);
+            return;
+        }
+
+        if (results.length === 0 && artists.length) {
+            container.innerHTML = '<ul class="achord-search-results-list" style="list-style:none;padding:0;margin:0;">' +
+                artists.map(a => renderArtistItem(a, data.artist_icon, data.writer_icon)).join('') + '</ul>';
+            if (metaContainer) metaContainer.innerHTML = '';
+            return;
+        }
+
+        if (results.length === 0) {
             var reqUrl = (window.ams_ajax_data && window.ams_ajax_data.requests_url) || '/requests/';
             var href = reqUrl + (reqUrl.indexOf('?') > -1 ? '&' : '?') + 'q=' + encodeURIComponent(query || '');
             container.innerHTML =
@@ -99,17 +201,21 @@
         }
 
         if (metaContainer) {
-            metaContainer.innerHTML = `<span class="achord-search-count">נמצאו ${data.count} שירים</span>`;
+            const n = data.count;
+            metaContainer.innerHTML = data.partial
+                ? `<span class="achord-search-count achord-search-partial">לא נמצא שיר עם כל המילים · ${n === 1 ? 'תוצאה קרובה אחת' : `${n} תוצאות קרובות`}</span>`
+                : `<span class="achord-search-count">${n === 1 ? 'נמצא שיר אחד' : `נמצאו ${n} שירים`}</span>`;
         }
 
-        let html = `<ul class="achord-search-results-list" style="list-style:none;padding:0;margin:0;">`;
-        data.results.forEach(song => {
-            html += `<li class="achord-search-result-item"><a href="${escHtml(song.url)}" class="result-link">
-                <span class="result-title">${escHtml(song.title)}</span>
-                ${song.singer ? `<span class="result-singer">${escHtml(song.singer)}</span>` : ''}
-            </a></li>`;
-        });
-        container.innerHTML = html + '</ul>';
+        const items = results.map(renderSongItem);
+
+        if (artists.length) {
+            const slot = Math.min(artistSlot(artists[0].tier), items.length);
+            items.splice(slot, 0, artists.map(a => renderArtistItem(a, data.artist_icon, data.writer_icon)).join(''));
+        }
+
+        container.innerHTML = `<ul class="achord-search-results-list" style="list-style:none;padding:0;margin:0;">` + items.join('') + '</ul>';
+        syncMoreButton(data, container, onMore);
     }
 
     // טוגל "מצב גרסה קלה" גלובלי — מדליק/מכבה cookie ומרענן את הדף כדי שהסינון
@@ -153,6 +259,8 @@
             if (resetBtn) {
                 resetBtn.addEventListener('click', () => {
                     form.reset();
+                    form._achordLastKey = null;
+                    if (form._achordSearchAbort) form._achordSearchAbort.abort();
                     const wrapper = form.closest('.achord-search-wrapper');
                     if (wrapper) {
                         const resultsContainer = wrapper.querySelector('.achord-search-results-grid');

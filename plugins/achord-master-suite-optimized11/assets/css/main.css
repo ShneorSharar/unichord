@@ -132,14 +132,32 @@
         color: #000 !important;
     }
 
-    /* הסרת עיצוב מהמעטפת */
-    .achord-wrapper {
-        background: transparent !important;
+    /* הסרת עיצוב מהמעטפת — כולל מצב לילה וכל ערכת-צבע.
+       הרקע/הריפוד מוגדרים על .achord-song / .achord-song-wrapper דרך
+       משתני CSS (ללא !important), לכן !important כאן גובר תמיד. */
+    .achord-wrapper,
+    .achord-song-wrapper,
+    .achord-song,
+    .achord-tab-content,
+    .achord-content {
+        background: #fff !important;
         box-shadow: none !important;
         border: none !important;
+        max-width: 100% !important;
+    }
+    .achord-song,
+    .achord-song-wrapper,
+    .achord-wrapper {
         padding: 0 !important;
         margin: 0 !important;
-        max-width: 100% !important;
+    }
+
+    /* טקסט השיר כהה לקריאה על נייר, גם אם מצב לילה פעיל */
+    .achord-content,
+    .achord-content * {
+        color: #000 !important;
+        background: transparent !important;
+        text-shadow: none !important;
     }
 
     /* הכותרת – ממורכזת ונקייה */
@@ -149,7 +167,7 @@
     }
     .achord-title { font-size: 22pt; margin: 0 0 4px; }
     .achord-performer { font-size: 14pt; margin: 0 0 4px; }
-    .achord-writer, .achord-song-details { font-size: 10pt; color: #444; }
+    .achord-writer, .achord-song-details { font-size: 10pt; color: #444 !important; }
 
     /* תוכן השיר */
     .achord-content {
@@ -157,10 +175,13 @@
         line-height: 2.2;
     }
 
-    /* אקורדים – צבע כהה שמודפס טוב */
+    /* אקורדים – כחול כהה שמודפס טוב; specificity גבוה כדי לגבור על
+       הכלל שמשחיר את כל הטקסט וגם על צבע ערכת-הצבע (זהב) */
+    .achord-content .achord-chord,
     .achord-chord {
         color: #003399 !important;
-        font-weight: bold;
+        font-weight: bold !important;
+        text-shadow: none !important;
     }
 
     /* הסתרת הגרסה הקלה אם קיימת */
@@ -500,9 +521,72 @@ p.achord-writer {
     color: var(--accent-primary);
 }
 
-/* כפתור-הכוכב (גרסה קלה) — מצב לחוץ: רק שינוי-צבע */
-#achord-toggle-version.active {
-    color: #f59e0b;
+/* כפתור "קל" (גרסה קלה): מתג קטן, באותם צבעים כמו המתג "שירים בגרסה קלה" בחיפוש */
+#achord-toggle-version .ams-easy-sw {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+#achord-toggle-version .ams-easy-sw__lbl {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-secondary);
+}
+#achord-toggle-version .ams-easy-sw__track {
+    position: relative;
+    width: 28px;
+    height: 16px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text-secondary, #6b7280) 55%, transparent);
+    transition: background 0.2s;
+}
+#achord-toggle-version .ams-easy-sw__track::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s;
+}
+#achord-toggle-version.active .ams-easy-sw__track {
+    background: var(--accent-primary, #3b82f6);
+}
+#achord-toggle-version.active .ams-easy-sw__track::after {
+    transform: translateX(-12px);
+}
+#achord-toggle-version.active .ams-easy-sw__lbl {
+    color: var(--accent-primary, #3b82f6);
+}
+#achord-transpose-down,
+#achord-transpose-up {
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    direction: ltr;
+}
+/* הודעת הגרסה הקלה בראש השיר */
+.ams-easy-info {
+    position: relative;
+    padding-inline-end: 36px;
+}
+.ams-easy-info__close {
+    position: absolute;
+    inset-inline-end: 6px;
+    top: 6px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary, #6b7280);
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 50%;
 }
 
 .control-info {
@@ -578,6 +662,30 @@ p.achord-writer {
     background-color: var(--accent-primary);
     color: var(--accent-primary-text);
     border-color: var(--accent-primary);
+}
+
+
+/* כפתור "מילים בלבד" — מצב פעיל (אקורדים מוסתרים) */
+#achord-lyrics-only-toggle.active {
+    background-color: var(--accent-primary);
+    color: var(--accent-primary-text);
+    border-color: var(--accent-primary);
+}
+
+/* מצב "מילים בלבד": מסתירים אקורדים (רגילים ופלייסהולדרים) וטאבים,
+   מקפלים את רווח-האקורד של קבוצת-המילה, ומעלימים קבוצות ללא מילה
+   (אקורד עצמאי בין-מילים) שמסומנות ב-JS כ-uc-empty-lyric. */
+.achord-song-wrapper.uc-lyrics-only .achord-chord {
+    display: none;
+}
+.achord-song-wrapper.uc-lyrics-only .achord-word-group {
+    padding-bottom: 0;
+}
+.achord-song-wrapper.uc-lyrics-only .achord-word-group.uc-empty-lyric {
+    display: none;
+}
+.achord-song-wrapper.uc-lyrics-only .achord-tab-block {
+    display: none;
 }
 
 /* --- Popups & Diagrams --- */
@@ -2376,6 +2484,100 @@ body.single-achord_song_cpt .wp-block-group>h2.wp-block-heading {
     opacity: 0.7;
 }
 
+/* כרטיס-אמן שמשתלב בין תוצאות השירים */
+.achord-search-artist-item {
+    background: var(--bg-song, #fff);
+    background: color-mix(in srgb, var(--accent-primary, #B68C64) 12%, var(--bg-song, #fff));
+    border-color: color-mix(in srgb, var(--accent-primary, #B68C64) 45%, var(--border-color, #e2e8f0));
+    border-inline-start: 4px solid var(--accent-primary, #B68C64);
+}
+
+.achord-search-artist-item .result-link {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 14px;
+    padding: 14px 20px;
+}
+
+.achord-search-artist-item .artist-avatar {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-primary, #B68C64);
+    color: var(--accent-primary-text, #fff);
+}
+
+.achord-search-artist-item .artist-avatar svg {
+    width: 22px;
+    height: 22px;
+}
+
+.achord-search-artist-item .artist-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.achord-search-artist-item .artist-kicker,
+.achord-search-artist-item .artist-cta {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    color: color-mix(in srgb, var(--accent-primary, #B68C64) 55%, var(--text-primary, #0D1B33));
+}
+
+.achord-search-artist-item .result-title {
+    min-width: 0;
+}
+
+.achord-search-artist-item .artist-cta {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .achord-search-artist-item .result-link { padding: 12px 14px; gap: 10px; }
+    .achord-search-artist-item .artist-cta { font-size: 0.85rem; }
+}
+
+/* "הצג עוד" בסוף רשימת התוצאות */
+.achord-search-more {
+    display: block;
+    margin: 18px auto 0;
+    min-height: 44px;
+    padding: 10px 28px;
+    border-radius: 999px;
+    border: 2px solid var(--accent-primary, #B68C64);
+    background: transparent;
+    color: var(--text-primary, #0D1B33);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.achord-search-more:hover:not(:disabled),
+.achord-search-more:focus-visible {
+    background: var(--accent-primary, #B68C64);
+    color: var(--accent-primary-text, #fff);
+}
+
+.achord-search-more:disabled {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+/* אין שיר עם כל המילים — מציגים תוצאות קרובות */
+.achord-search-partial {
+    color: var(--text-secondary);
+}
+
 .achord-search-result-item .result-difficulty {
     font-size: 0.85rem;
     font-weight: 700;
@@ -3480,3 +3682,27 @@ body.single-achord_song_cpt .wp-block-group>h2.wp-block-heading {
 
 .drawer-close-btn:hover { background: var(--bg-control-hover); }
 .drawer-close-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+#achord-transpose-info {
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
+/* מצב לילה: מתג "קל" דולק בצבע הזהב של האקורדים, שיהיה בולט על הסרגל הכהה */
+.dark-mode #achord-toggle-version.active .ams-easy-sw__track {
+    background: #ffc857;
+}
+.dark-mode #achord-toggle-version.active .ams-easy-sw__lbl {
+    color: #ffc857;
+}
+
+/* כפתור רשימת אקורדים: טקסט Am במקום אייקון */
+#achord-chord-strip-toggle .ams-chord-ic {
+    font-family: "Roboto", Arial, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.3px;
+    line-height: 1;
+    direction: ltr;
+    unicode-bidi: isolate;
+}

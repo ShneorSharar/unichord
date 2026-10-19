@@ -117,36 +117,36 @@ add_shortcode('achord_run_bulk_indexer', function() {
                     foreach ($items as $it) {
                         $chord = $it[1];
                         $htmlLine .= "<span class='achord-word-group'>";
-                        $htmlLine .= "<span class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span>";
+                        $htmlLine .= "<span data-nosnippet class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span>";
                         $htmlLine .= "<span class='achord-lyrics'>&nbsp;</span></span> ";
                     }
                 }
                 // מילה רגילה
                 elseif ($n === 1) {
                     $htmlLine .= "<span class='achord-word-group'>";
-                    $htmlLine .= "<span class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
+                    $htmlLine .= "<span data-nosnippet class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
                     $htmlLine .= "<span class='achord-lyrics'>".esc_html($items[0][1])."</span></span> ";
                 }
                 // מילה עם אקורד בסופה - מילה[Am]
                 elseif ($n === 2 && $items[0][0] === 'text' && $items[1][0] === 'chord') {
                     $htmlLine .= "<span class='achord-word-group'>";
-                    $htmlLine .= "<span class='achord-chord' data-original='".esc_attr($items[1][1])."' data-current='".esc_attr($items[1][1])."'>".esc_html($items[1][1])."</span>";
+                    $htmlLine .= "<span data-nosnippet class='achord-chord' data-original='".esc_attr($items[1][1])."' data-current='".esc_attr($items[1][1])."'>".esc_html($items[1][1])."</span>";
                     $htmlLine .= "<span class='achord-lyrics'>".esc_html($items[0][1])."</span></span> ";
                 }
                 // פורמט ישן [Am]מילה - אקורד עצמאי ואז המילה (התנהגות קיימת)
                 elseif ($n === 2 && $items[0][0] === 'chord' && $items[1][0] === 'text') {
                     $chord = $items[0][1];
                     $htmlLine .= "<span class='achord-word-group'>";
-                    $htmlLine .= "<span class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span>";
+                    $htmlLine .= "<span data-nosnippet class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span>";
                     $htmlLine .= "<span class='achord-lyrics'>&nbsp;</span></span> ";
                     $htmlLine .= "<span class='achord-word-group'>";
-                    $htmlLine .= "<span class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
+                    $htmlLine .= "<span data-nosnippet class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
                     $htmlLine .= "<span class='achord-lyrics'>".esc_html($items[1][1])."</span></span> ";
                 }
                 // אקורד באמצע מילה - המ[Eb]רצע[A]: המילה מוצגת רציפה, כל אקורד מעל ההברה שלו
                 else {
                     $htmlLine .= "<span class='achord-word-group achord-midword'>";
-                    $htmlLine .= "<span class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
+                    $htmlLine .= "<span data-nosnippet class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
                     $htmlLine .= "<span class='achord-lyrics'>";
                     $i = 0;
                     while ($i < $n) {
@@ -154,7 +154,7 @@ add_shortcode('achord_run_bulk_indexer', function() {
                             $segHtml = esc_html($items[$i][1]);
                             if ($i + 1 < $n && $items[$i + 1][0] === 'chord') {
                                 $chord = $items[$i + 1][1];
-                                $segHtml .= "<span class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span>";
+                                $segHtml .= "<span data-nosnippet class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span>";
                                 $i += 2;
                             } else {
                                 $i += 1;
@@ -163,7 +163,7 @@ add_shortcode('achord_run_bulk_indexer', function() {
                         } else {
                             // אקורד ללא הברה לפניו (נדיר) - עוגן ברוחב-אפס בתחילת המילה
                             $chord = $items[$i][1];
-                            $htmlLine .= "<span class='achord-seg achord-seg-bare'><span class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span></span>";
+                            $htmlLine .= "<span class='achord-seg achord-seg-bare'><span data-nosnippet class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>".esc_html($chord)."</span></span>";
                             $i += 1;
                         }
                     }
@@ -382,7 +382,8 @@ public function render_song_shortcode($atts, $content = '') {
 
              data-song-raw="<?php echo esc_attr($editRawText); ?>"
 
-             data-easy-start="<?php echo (Achord_Master_Suite::easy_mode_on() && !empty($easy) && get_post_meta($post_id, '_ams_is_easy', true) === '1') ? '1' : '0'; ?>">
+             <?php /* auto-start של הגרסה הקלה נשמר למשתמשי מצב-קל — אך מדלגים עליו כשלמשתמש יש גרסה אישית (!$has_personal_version), כדי שהעריכה האישית שלו תמיד תוצג כברירת-מחדל. הגרסה הקלה עדיין זמינה בלחיצה על הכוכב (versionBtn/toggleVersion). */ ?>
+             data-easy-start="<?php echo (Achord_Master_Suite::easy_mode_on() && !empty($easy) && !$has_personal_version && get_post_meta($post_id, '_ams_is_easy', true) === '1') ? '1' : '0'; ?>">
             <script>
             /* מונע הבהוב-תמה (FOUC): מחיל את מחלקת-התמה + dark-mode מ-localStorage באופן
                סינכרוני, לפני הצביעה הראשונה — כך האקורדים כחולים והתמה נכונה כבר מהפריים
@@ -442,7 +443,7 @@ public function render_song_shortcode($atts, $content = '') {
 
                     <?php if ($is_shared_view && $shared_by_name): ?>
                     <div class="ams-shared-banner">
-                        🔗 גרסה אישית של <strong><?php echo esc_html($shared_by_name); ?></strong>
+                        <?php echo AMS_Icons::svg('link'); ?> גרסה אישית של <strong><?php echo esc_html($shared_by_name); ?></strong>
                         <a href="<?php echo esc_url(get_permalink($post_id)); ?>" class="ams-shared-back">← לגרסה הרשמית</a>
                     </div>
                     <?php endif; ?>
@@ -453,15 +454,15 @@ public function render_song_shortcode($atts, $content = '') {
 
                 <div class="achord-tabs-nav">
 
-                    <?php if ($has_chords): ?><button type="button" class="tab-btn <?php echo $first_tab === 'chords' ? 'active' : ''; ?>" data-tab="chords">🎸 אקורדים</button><?php endif; ?>
+                    <?php if ($has_chords): ?><button type="button" class="tab-btn <?php echo $first_tab === 'chords' ? 'active' : ''; ?>" data-tab="chords"><?php echo AMS_Icons::svg('guitar'); ?> אקורדים</button><?php endif; ?>
 
-                    <?php if ($youtube_original): ?><button type="button" class="tab-btn <?php echo $first_tab === 'original' ? 'active' : ''; ?>" data-tab="original">🎧 שיר מקורי</button><?php endif; ?>
+                    <?php if ($youtube_original): ?><button type="button" class="tab-btn <?php echo $first_tab === 'original' ? 'active' : ''; ?>" data-tab="original"><?php echo AMS_Icons::svg('headphones'); ?> שיר מקורי</button><?php endif; ?>
 
-                    <?php if ($lesson_guitar): ?><button type="button" class="tab-btn <?php echo $first_tab === 'lesson_guitar' ? 'active' : ''; ?>" data-tab="lesson_guitar">🎸 שיעור גיטרה</button><?php endif; ?>
+                    <?php if ($lesson_guitar): ?><button type="button" class="tab-btn <?php echo $first_tab === 'lesson_guitar' ? 'active' : ''; ?>" data-tab="lesson_guitar"><?php echo AMS_Icons::svg('guitar'); ?> שיעור גיטרה</button><?php endif; ?>
 
-                    <?php if ($lesson_piano): ?><button type="button" class="tab-btn <?php echo $first_tab === 'lesson_piano' ? 'active' : ''; ?>" data-tab="lesson_piano">🎹 שיעור פסנתר</button><?php endif; ?>
+                    <?php if ($lesson_piano): ?><button type="button" class="tab-btn <?php echo $first_tab === 'lesson_piano' ? 'active' : ''; ?>" data-tab="lesson_piano"><?php echo AMS_Icons::svg('piano'); ?> שיעור פסנתר</button><?php endif; ?>
 
-                    <?php if ($abc_code): ?><button type="button" class="tab-btn <?php echo $first_tab === 'score' ? 'active' : ''; ?>" data-tab="score">🎼 תווים</button><?php endif; ?>
+                    <?php if ($abc_code): ?><button type="button" class="tab-btn <?php echo $first_tab === 'score' ? 'active' : ''; ?>" data-tab="score"><?php echo AMS_Icons::svg('music'); ?> תווים</button><?php endif; ?>
 
                 </div>
 
@@ -537,11 +538,11 @@ public function render_song_shortcode($atts, $content = '') {
                     <div class="tavim-wrapper" style="margin-top:20px;">
                         <div class="tavim-notation"></div>
                         <div class="tavim-controls">
-                            <button id="tavim-play" class="button">נגן ▶️</button>
-                            <button id="tavim-pause" class="button">השהה ⏸️</button>
-                            <button id="tavim-stop" class="button">עצור ⏹️</button>
+                            <button id="tavim-play" class="button">נגן <?php echo AMS_Icons::svg('play'); ?></button>
+                            <button id="tavim-pause" class="button">השהה <?php echo AMS_Icons::svg('pause'); ?></button>
+                            <button id="tavim-stop" class="button">עצור <?php echo AMS_Icons::svg('stop'); ?></button>
                             
-                            <button id="tavim-tempo" class="button">קצב 🎵</button>
+                            <button id="tavim-tempo" class="button">קצב <?php echo AMS_Icons::svg('metronome'); ?></button>
                             
                             <div class="tempo-controls hidden" style="display:inline-flex; align-items:center; gap:10px; margin-right:10px;">
                                 <div class="tempo-display">טמפו: <span class="tempo-value"><?php echo $tempo ? $tempo : 120; ?></span> BPM</div>
@@ -561,7 +562,7 @@ public function render_song_shortcode($atts, $content = '') {
 
                 <div id="achord-popup" class="achord-popup hidden">
 
-                    <div class="achord-popup-content"><span class="achord-close">✖</span><div id="achord-diagram"></div></div>
+                    <div class="achord-popup-content"><span class="achord-close" aria-label="סגור"><?php echo AMS_Icons::svg('x'); ?></span><div id="achord-diagram"></div></div>
 
                 </div>
 
@@ -590,20 +591,32 @@ public function render_song_shortcode($atts, $content = '') {
 
                                 <button type="button" class="drawer-button" id="achord-font-increase" title="הגדל גופן">א+</button>
 
-                                <button type="button" class="drawer-button icon-button" id="achord-dark-mode" title="מצב לילה">🌙</button>
+                                <button type="button" class="drawer-button icon-button" id="achord-dark-mode" title="מצב לילה" aria-label="מצב לילה"><?php echo AMS_Icons::svg('moon'); ?></button>
 
-                                <button type="button" class="drawer-button icon-button" id="achord-toggle-theme" title="החלף ערכת עיצוב">🎨</button>
+                                <button type="button" class="drawer-button icon-button" id="achord-toggle-theme" title="החלף ערכת עיצוב" aria-label="החלף ערכת עיצוב"><?php echo AMS_Icons::svg('palette'); ?></button>
 
-                                <button type="button" class="drawer-button icon-button" id="achord-print" title="הדפסה">🖨️</button>
+                                <button type="button" class="drawer-button icon-button" id="uc-save-offline" title="שמור לצפייה לא מקוונת" aria-label="שמור לצפייה לא מקוונת"><?php echo AMS_Icons::svg('download', ['class' => 'uc-ic-save']); ?><?php echo AMS_Icons::svg('check', ['class' => 'uc-ic-saved']); ?></button>
 
-                                <button type="button" class="drawer-button icon-button" id="uc-save-offline" title="שמור לצפייה לא מקוונת" aria-label="שמור לצפייה לא מקוונת"><svg class="uc-ic uc-ic-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg><svg class="uc-ic uc-ic-saved" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button>
-
-                                <button type="button" class="drawer-button icon-button" id="uc-offline-manage" title="שירים שמורים במכשיר" aria-label="שירים שמורים במכשיר"><svg class="uc-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
+                                <button type="button" class="drawer-button icon-button" id="uc-offline-manage" title="שירים שמורים במכשיר" aria-label="שירים שמורים במכשיר"><?php echo AMS_Icons::svg('folder'); ?></button>
 
                             </div>
 
                         </div>
 
+
+                        <?php if ($has_chords): ?>
+                        <div class="drawer-group">
+
+                            <span class="drawer-label">תצוגת שיר</span>
+
+                            <div class="drawer-buttons-row">
+
+                                <button type="button" class="drawer-button" id="achord-lyrics-only-toggle" aria-pressed="false" title="הסתר אקורדים והצג רק את מילות השיר">מילים בלבד</button>
+
+                            </div>
+
+                        </div>
+                        <?php endif; ?>
 
                         <div class="drawer-combined-row">
 
@@ -611,7 +624,7 @@ public function render_song_shortcode($atts, $content = '') {
 
                                 <span class="drawer-label">כלי נגינה</span>
 
-                                <div class="drawer-buttons-row"><button type="button" class="drawer-button icon-button" id="achord-toggle-instrument" title="החלף כלי נגינה">🎸</button></div>
+                                <div class="drawer-buttons-row"><button type="button" class="drawer-button icon-button" id="achord-toggle-instrument" title="החלף כלי נגינה" aria-label="החלף כלי נגינה"><?php echo AMS_Icons::svg('guitar'); ?></button></div>
 
                             </div>
 
@@ -643,17 +656,18 @@ public function render_song_shortcode($atts, $content = '') {
 
                         </div>
 
-                        <?php if (is_user_logged_in() && $has_chords): ?>
+                        <?php // מחברת ?np=view-N: העמוד הוא /notebook/ ולא שיר, אז "ערוך גרסה אישית" היה נשמר על מספר העמוד ("שיר לא נמצא"). שם יש כפתור "עריכה" בראש התצוגה.
+                        if (is_user_logged_in() && $has_chords && get_post_type($post_id) === 'achord_song_cpt'): ?>
                         <div class="drawer-group">
 
                             <span class="drawer-label">גרסה שלי</span>
 
                             <div class="drawer-buttons-row">
 
-                                <button type="button" class="drawer-button <?php echo $has_personal_version ? 'has-personal' : ''; ?>" id="achord-personal-edit" title="ערוך גרסה אישית">✏️ ערוך</button>
+                                <button type="button" class="drawer-button <?php echo $has_personal_version ? 'has-personal' : ''; ?>" id="achord-personal-edit" title="ערוך גרסה אישית"><?php echo AMS_Icons::svg('pencil'); ?> ערוך</button>
 
                                 <?php if ($has_personal_version): ?>
-                                <button type="button" class="drawer-button" id="achord-share-personal" title="שתף גרסה אישית">🔗 שתף</button>
+                                <button type="button" class="drawer-button" id="achord-share-personal" title="שתף גרסה אישית"><?php echo AMS_Icons::svg('link'); ?> שתף</button>
                                 <?php endif; ?>
 
                             </div>
@@ -669,7 +683,7 @@ public function render_song_shortcode($atts, $content = '') {
 
                     <div class="new-drawer-body">
 
-                         <button id="achord-close-font-drawer-btn" class="font-drawer-close-btn">✖</button>
+                         <button id="achord-close-font-drawer-btn" class="font-drawer-close-btn" aria-label="סגור"><?php echo AMS_Icons::svg('x'); ?></button>
 
                         <div class="new-drawer-header"><h4>פרויקט אות.חיים</h4></div>
 
@@ -695,21 +709,21 @@ public function render_song_shortcode($atts, $content = '') {
 
                         <?php if ($has_chords): ?>
 
-                        <button type="button" class="control-button" id="achord-transpose-down" title="הורד חצי טון">♭</button>
+                        <button type="button" class="control-button" id="achord-transpose-down" title="הורד חצי טון" aria-label="הורד חצי טון">−½</button>
 
                         <span class="control-info" id="achord-transpose-info">0</span>
 
-                        <button type="button" class="control-button" id="achord-transpose-up" title="העלה חצי טון">♯</button>
+                        <button type="button" class="control-button" id="achord-transpose-up" title="העלה חצי טון" aria-label="העלה חצי טון">+½</button>
 
                         <span class="control-info" id="achord-capo-info">קאפו <?php echo esc_html($baseCapo); ?></span>
 
                         <?php if (!empty($easy) || $easyTranspose != 0): ?>
 
-                        <button type="button" class="control-button" id="achord-toggle-version" title="גרסה קלה">★</button>
+                        <button type="button" class="control-button" id="achord-toggle-version" title="גרסה קלה" aria-label="גרסה קלה" aria-pressed="false"><span class="ams-easy-sw" aria-hidden="true"><span class="ams-easy-sw__lbl">קל</span><span class="ams-easy-sw__track"></span></span></button>
 
                         <?php endif; ?>
 
-                        <button type="button" class="control-button" id="achord-chord-strip-toggle" title="הצג רשימת אקורדים">🎵</button>
+                        <button type="button" class="control-button" id="achord-chord-strip-toggle" title="הצג רשימת אקורדים" aria-label="הצג רשימת אקורדים"><span class="ams-chord-ic" aria-hidden="true">Am</span></button>
 
                         <?php endif; ?>
 
@@ -718,11 +732,11 @@ public function render_song_shortcode($atts, $content = '') {
                             class="control-button ams-save-btn <?php echo AMS_Saved_Songs_Handler::is_saved($post_id) ? 'is-saved' : ''; ?>"
                             id="achord-save-song"
                             aria-label="מועדפים"
-                            title="מועדפים — שמור שיר זה לרשימה שלך"><svg class="ams-bookmark-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 3h14a1 1 0 0 1 1 1v17l-8-4-8 4V4a1 1 0 0 1 1-1z"/></svg></button>
+                            title="מועדפים: שמור שיר זה לרשימה שלך"><svg class="ams-bookmark-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 3h14a1 1 0 0 1 1 1v17l-8-4-8 4V4a1 1 0 0 1 1-1z"/></svg></button>
                         <?php endif; ?>
 
 
-                        <button type="button" class="control-button" id="achord-options-toggle" title="אפשרויות" aria-label="אפשרויות" aria-expanded="false" aria-controls="achord-options-drawer"><svg class="uc-ic-dots" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2.1"/><circle cx="12" cy="12" r="2.1"/><circle cx="19" cy="12" r="2.1"/></svg><svg class="uc-ic-x" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                        <button type="button" class="control-button" id="achord-options-toggle" title="אפשרויות" aria-label="אפשרויות" aria-expanded="false" aria-controls="achord-options-drawer"><?php echo AMS_Icons::svg('dots'); ?><?php echo AMS_Icons::svg('x'); ?></button>
 
                     </div>
 
@@ -730,7 +744,7 @@ public function render_song_shortcode($atts, $content = '') {
 
                         <button type="button" class="control-button" id="achord-scroll-down" title="האט גלילה">-</button>
 
-                        <button type="button" class="control-button" id="achord-scroll-toggle" title="נגן/השהה">▶️</button>
+                        <button type="button" class="control-button" id="achord-scroll-toggle" title="נגן/השהה" aria-label="נגן/השהה גלילה"><?php echo AMS_Icons::svg('play'); ?></button>
 
                         <button type="button" class="control-button" id="achord-scroll-up" title="הגבר גלילה">+</button>
 
@@ -740,31 +754,113 @@ public function render_song_shortcode($atts, $content = '') {
 
             </div>
 
-            <?php if (is_user_logged_in() && $has_chords): ?>
+            <?php if (is_user_logged_in() && $has_chords && get_post_type($post_id) === 'achord_song_cpt'):
+                // גשר-נתונים לעורך-האקורדים המשובץ במודאל (אותו מנוע כמו טופס ההעלאה).
+                // הספרייה זהה לזו שבטופס ההעלאה; ה-nonce משמש את התצוגה-החיה (achord_live_preview).
+                $pe_qualities = [ '', 'm', '7', 'maj7', 'm7', 'sus4', 'sus2', 'dim', 'aug', '6', 'm6', '9', 'm9', 'add9', 'dim7', 'm7b5' ];
+                $pe_order     = [ 'C','C#','D','D#','E','F','F#','G','G#','A','A#','B' ];
+                $pe_library   = [];
+                foreach ( $pe_order as $pe_root ) {
+                    $pe_chords = [];
+                    foreach ( $pe_qualities as $pe_q ) { $pe_chords[] = $pe_root . $pe_q; }
+                    $pe_library[ $pe_root ] = $pe_chords;
+                }
+            ?>
+            <script>
+            window.ACHORD_PERSONAL_EDITOR_DATA = {
+                library: <?php echo wp_json_encode($pe_library); ?>,
+                ajaxUrl: <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>,
+                nonce:   <?php echo wp_json_encode(wp_create_nonce('achord_upload_nonce')); ?>
+            };
+            </script>
             <div class="achord-personal-modal" id="achord-personal-modal" hidden>
                 <div class="achord-personal-modal-inner">
                     <div class="achord-personal-modal-header">
-                        <h3>✏️ עריכת השיר — הגרסה שלך</h3>
-                        <button type="button" class="achord-personal-modal-close" id="achord-personal-modal-close">✖</button>
+                        <h3><?php echo AMS_Icons::svg('pencil'); ?> עריכת השיר: הגרסה שלך</h3>
+                        <button type="button" class="achord-personal-modal-close" id="achord-personal-modal-close" aria-label="סגור"><?php echo AMS_Icons::svg('x'); ?></button>
                     </div>
-                    <p class="achord-personal-modal-hint">ערוך את האקורדים בפורמט: <code>מילה[Am]</code>, ואז בחר:
-                        <strong>🔒 גרסה אישית</strong> = פרטי, רק במחברת שלך · <strong>🌐 הצע תיקון</strong> = יישלח לאישור ויעדכן את כולם.
-                        <em>(זה לא קשור לכפתור המועדפים ★)</em></p>
-                    <textarea class="achord-personal-textarea" id="achord-personal-textarea" rows="14" dir="rtl" spellcheck="false"></textarea>
+                    <p class="achord-personal-modal-hint">ערוך ב<strong>עריכת מילים</strong> (פורמט <code>מילה[Am]</code>) או ב<strong>הוסף אקורדים</strong> (גרירת אקורדים על המילים), ואז בחר:
+                        <strong><?php echo AMS_Icons::svg('lock'); ?> גרסה אישית</strong> = פרטי, רק במחברת שלך · <strong><?php echo AMS_Icons::svg('globe'); ?> הצע תיקון</strong> = יישלח לאישור ויעדכן את כולם.
+                        <em>(זה לא קשור לכפתור המועדפים <?php echo AMS_Icons::svg('star'); ?>)</em></p>
+                    <!-- עורך-האקורדים המשובץ (אותו מנוע כמו טופס העלאת-השיר).
+                         main.js קורא ל-window.initAchordEditor עם ה-ids של pe-* ומקבל
+                         API ‏{setContent,getContent}. ה-textarea pe-editor-normal הוא
+                         מקור-האמת המסודר (פורמט מילה[Am]); מצב-האקורדים מאפשר גרירה. -->
+                    <div id="achord-personal-editor" dir="rtl">
+                        <div class="auf-rec-bar-wrap">
+                            <div class="auf-rec-bar-header">
+                                <span class="auf-label">אקורדים שנבחרו</span>
+                                <div class="auf-rec-bar-actions">
+                                    <button type="button" id="pe-edit-rec-btn" class="auf-ghost-btn" aria-pressed="false">עריכה</button>
+                                    <button type="button" id="pe-open-library-btn" class="auf-ghost-btn">טבלת אקורדים</button>
+                                </div>
+                            </div>
+                            <div id="pe-recommended-bar" class="auf-rec-bar" role="toolbar" aria-label="אקורדים שנבחרו"></div>
+                        </div>
+
+                        <div class="auf-toolbar">
+                            <div class="auf-chord-input-wrap">
+                                <input type="text" class="auf-input auf-input--sm" id="pe-chord-input"
+                                       placeholder="אקורד..." autocomplete="off" spellcheck="false">
+                                <button type="button" id="pe-add-chord-btn" class="auf-ghost-btn">+</button>
+                            </div>
+                        </div>
+
+                        <div class="auf-editor-wrap">
+                            <div class="auf-editor-mode-bar">
+                                <button type="button" id="pe-mode-text" class="auf-mode-btn auf-mode-btn--active" aria-pressed="true"><?php echo AMS_Icons::svg('pencil'); ?> עריכת מילים</button>
+                                <button type="button" id="pe-mode-chords" class="auf-mode-btn" aria-pressed="false"><?php echo AMS_Icons::svg('guitar'); ?> הוסף אקורדים</button>
+                                <button type="button" id="pe-preview-btn" class="auf-ghost-btn"><?php echo AMS_Icons::svg('eye'); ?> תצוגה חיה</button>
+                            </div>
+
+                            <div id="pe-text-mode" class="auf-editor-panel">
+                                <textarea class="auf-textarea" id="pe-editor-normal" rows="14" dir="rtl"
+                                          spellcheck="false" placeholder="מילים ואקורדים בפורמט: מילה[Am]"></textarea>
+                            </div>
+
+                            <div id="pe-chord-mode" class="auf-editor-panel" hidden>
+                                <div class="auf-chord-hint">לחץ/י על מילה ← בחר/י אקורד מהסרגל או גרור/י ישירות</div>
+                                <div id="pe-token-canvas" class="auf-token-canvas" dir="rtl"
+                                     role="group" aria-label="בחירת מיקום אקורדים"></div>
+                            </div>
+
+                            <div id="pe-preview-panel" class="auf-editor-panel" hidden>
+                                <div id="pe-song-preview" class="auf-preview-content"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- מודאל ספריית-אקורדים של העורך המשובץ -->
+                    <div id="pe-library-modal" class="auf-modal" hidden role="dialog"
+                         aria-modal="true" aria-labelledby="pe-modal-title">
+                        <div class="auf-modal__overlay"></div>
+                        <div class="auf-modal__content">
+                            <div class="auf-modal__header">
+                                <h3 id="pe-modal-title" class="auf-section__title">ספריית אקורדים מלאה</h3>
+                                <button type="button" class="auf-modal__close" aria-label="סגור"><?php echo AMS_Icons::svg('x'); ?></button>
+                            </div>
+                            <div class="auf-modal__body">
+                                <input type="text" id="pe-library-search" class="auf-input"
+                                       placeholder="חיפוש אקורד... (לדוגמה: Am7)" autocomplete="off">
+                                <div id="pe-library-grid" class="auf-library-grid"></div>
+                            </div>
+                        </div>
+                    </div>
 
                     <input type="text" class="achord-proposal-note" id="achord-personal-note" dir="rtl"
-                           placeholder="הערה קצרה לעורך — רלוונטי רק ל'הצע תיקון לכולם' (לא חובה)" maxlength="200" />
+                           placeholder="הערה קצרה לעורך, רלוונטי רק ל'הצע תיקון לכולם' (לא חובה)" maxlength="200" />
 
                     <div class="achord-save-bar" role="group" aria-label="שמירת הגרסה">
                         <button type="button" class="achord-save-bar__btn achord-save-bar__btn--personal" id="achord-personal-save">
-                            <span class="achord-save-bar__title">🔒 שמור גרסה אישית</span>
-                            <span class="achord-save-bar__sub">רק אצלך — תחליף את מה שאתה רואה בשיר הזה</span>
+                            <span class="achord-save-bar__title"><?php echo AMS_Icons::svg('lock'); ?> שמור גרסה אישית</span>
+                            <span class="achord-save-bar__sub">רק אצלך, תחליף את מה שאתה רואה בשיר הזה</span>
                         </button>
                         <button type="button" class="achord-save-bar__btn achord-save-bar__btn--public" id="achord-personal-propose">
-                            <span class="achord-save-bar__title">🌐 הצע תיקון לכולם</span>
-                            <span class="achord-save-bar__sub">יישלח לאישור; אם יאושר — יעדכן את הגרסה הרשמית. נשמר גם אצלך.</span>
+                            <span class="achord-save-bar__title"><?php echo AMS_Icons::svg('globe'); ?> הצע תיקון לכולם</span>
+                            <span class="achord-save-bar__sub">יישלח לאישור; אם יאושר, יעדכן את הגרסה הרשמית. נשמר גם אצלך.</span>
                         </button>
                     </div>
+                    <p class="achord-proposal-license" style="margin:0 0 10px;font-size:13px;line-height:1.4;color:var(--text-secondary,#64748b);"><?php echo esc_html( function_exists('uc_proposal_license_text') ? uc_proposal_license_text() : 'שליחת התיקון משחררת אותו תחת הרישיון של האתר.' ); ?></p>
                     <div class="achord-personal-modal-actions">
                         <?php if ($has_personal_version): ?>
                         <button type="button" class="achord-personal-btn-reset" id="achord-personal-reset">חזור למקורי</button>
@@ -930,9 +1026,9 @@ public function render_song_shortcode($atts, $content = '') {
                 $chord = isset($match[2]) ? esc_html(trim($match[2], '[]')) : '';
                 $htmlLine .= "<span class='achord-word-group'>";
                 if (!empty($chord)) {
-                    $htmlLine .= "<span class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>{$chord}</span>";
+                    $htmlLine .= "<span data-nosnippet class='achord-chord' data-original='".esc_attr($chord)."' data-current='".esc_attr($chord)."'>{$chord}</span>";
                 } else {
-                    $htmlLine .= "<span class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
+                    $htmlLine .= "<span data-nosnippet class='achord-chord achord-placeholder-chord'>&nbsp;</span>";
                 }
                 $htmlLine .= "<span class='achord-lyrics'>{$lyrics}</span></span> ";
             }
@@ -945,9 +1041,14 @@ public function render_song_shortcode($atts, $content = '') {
         $post_type = 'achord_song_cpt';
         if ($tag === 'achord_lessons_accordion') $post_type = 'lesson';
         if ($tag === 'achord_tavim_accordion') $post_type = 'tavim_score';
-        $taxonomies_to_include = ['genre', 'singer', 'level'];
+        $taxonomies_to_include = apply_filters('ams_accordion_taxonomies', ['genre', 'singer', 'level'], $post_type);
         ob_start();
-        $posts_query = new WP_Query(['post_type' => $post_type, 'posts_per_page' => -1, 'post_status' => 'publish', 'orderby' => 'title', 'order' => 'ASC']);
+        $acc_query_args = ['post_type' => $post_type, 'posts_per_page' => -1, 'post_status' => 'publish', 'orderby' => 'title', 'order' => 'ASC'];
+        // מצב גרסה-קלה גלובלי — רשימות הדפדוף מציגות רק שירים קלים (דפוס זהה להמלצות/קשורים)
+        if ($post_type === 'achord_song_cpt' && Achord_Master_Suite::easy_mode_on()) {
+            $acc_query_args['meta_query'] = [['key' => '_ams_is_easy', 'value' => '1', 'compare' => '=']];
+        }
+        $posts_query = new WP_Query($acc_query_args);
         if ($posts_query->have_posts()) {
             $categorized_posts = [];
             foreach ($taxonomies_to_include as $taxonomy) $categorized_posts[$taxonomy] = [];
@@ -1201,6 +1302,11 @@ public function render_song_index_shortcode($atts = [], $content = '') {
         ]];
     }
 
+    // מצב גרסה-קלה גלובלי — אינדקס א-ב מציג רק שירים קלים (דפוס זהה להמלצות/קשורים)
+    if ($post_type === 'achord_song_cpt' && Achord_Master_Suite::easy_mode_on()) {
+        $query_args['meta_query'] = [['key' => '_ams_is_easy', 'value' => '1', 'compare' => '=']];
+    }
+
     $q = new WP_Query($query_args);
     if (!$q->have_posts()) {
         return '<div class="achord-accordion-no-posts">לא נמצאו שירים.</div>';
@@ -1428,20 +1534,41 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                         </label>
                         <label class="ams-pill">
                             <input type="radio" name="content_type" value="chords">
-                            <span class="ams-pill-text">🎸 אקורדים</span>
+                            <span class="ams-pill-text"><?php echo AMS_Icons::svg('guitar'); ?> אקורדים</span>
                         </label>
                         <label class="ams-pill">
                             <input type="radio" name="content_type" value="score">
-                            <span class="ams-pill-text">🎼 תווים</span>
+                            <span class="ams-pill-text"><?php echo AMS_Icons::svg('music'); ?> תווים</span>
                         </label>
+                        <?php
+                        // אופציות "שיעור" מוצגות רק אם קיים לפחות שיר מפורסם אחד עם דגל
+                        // השיעור המתאים ב-_achord_content_flags (כרגע 0 שירים — האופציות
+                        // החזירו תמיד תוצאה ריקה). בדיקת DB עם transient ל-12 שעות.
+                        $ams_lesson_counts = get_transient('ams_lesson_flag_counts');
+                        if (!is_array($ams_lesson_counts)) {
+                            global $wpdb;
+                            $ams_lesson_counts = [];
+                            foreach (['lesson_guitar', 'lesson_piano'] as $ams_flag) {
+                                $ams_lesson_counts[$ams_flag] = (int) $wpdb->get_var($wpdb->prepare(
+                                    "SELECT COUNT(*) FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = '_achord_content_flags' AND pm.meta_value LIKE %s AND p.post_status = 'publish'",
+                                    '%' . $wpdb->esc_like($ams_flag) . '%'
+                                ));
+                            }
+                            set_transient('ams_lesson_flag_counts', $ams_lesson_counts, 12 * HOUR_IN_SECONDS);
+                        }
+                        ?>
+                        <?php if (!empty($ams_lesson_counts['lesson_guitar'])): ?>
                         <label class="ams-pill">
                             <input type="radio" name="content_type" value="lesson_guitar">
-                            <span class="ams-pill-text">🎸 שיעור גיטרה</span>
+                            <span class="ams-pill-text"><?php echo AMS_Icons::svg('guitar'); ?> שיעור גיטרה</span>
                         </label>
+                        <?php endif; ?>
+                        <?php if (!empty($ams_lesson_counts['lesson_piano'])): ?>
                         <label class="ams-pill">
                             <input type="radio" name="content_type" value="lesson_piano">
-                            <span class="ams-pill-text">🎹 שיעור פסנתר</span>
+                            <span class="ams-pill-text"><?php echo AMS_Icons::svg('piano'); ?> שיעור פסנתר</span>
                         </label>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -1460,9 +1587,17 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
     return ob_get_clean();
 }
 
+    /**
+     * כתובת עמוד ההתחברות עם חזרה לעמוד הנוכחי — משמש בהודעות "יש להתחבר".
+     */
+    private function ams_login_url() {
+        $redirect = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+        return esc_url(home_url('/login/') . '?redirect_to=' . rawurlencode($redirect));
+    }
+
     public function render_upload_form_shortcode() {
         if (!is_user_logged_in()) {
-            return '<div class="achord-notice"><strong>יש להתחבר כדי להעלות שיר חדש.</strong></div>';
+            return '<div class="achord-notice"><strong>יש <a href="' . $this->ams_login_url() . '">להתחבר</a> כדי להעלות שיר חדש.</strong></div>';
         }
 
         // אם מדובר בעריכת Entry ייעודי – ננסה למשוך ערכי מילוי מוקדם
@@ -1688,9 +1823,9 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                     <!-- מצב עריכה -->
                     <div class="auf-editor-wrap">
                         <div class="auf-editor-mode-bar">
-                            <button type="button" id="auf-mode-text" class="auf-mode-btn auf-mode-btn--active" aria-pressed="true">✏️ עריכת מילים</button>
-                            <button type="button" id="auf-mode-chords" class="auf-mode-btn" aria-pressed="false">🎸 הוסף אקורדים</button>
-                            <button type="button" id="auf-preview-btn" class="auf-ghost-btn">👁 תצוגה חיה</button>
+                            <button type="button" id="auf-mode-text" class="auf-mode-btn auf-mode-btn--active" aria-pressed="true"><?php echo AMS_Icons::svg('pencil'); ?> עריכת מילים</button>
+                            <button type="button" id="auf-mode-chords" class="auf-mode-btn" aria-pressed="false"><?php echo AMS_Icons::svg('guitar'); ?> הוסף אקורדים</button>
+                            <button type="button" id="auf-preview-btn" class="auf-ghost-btn"><?php echo AMS_Icons::svg('eye'); ?> תצוגה חיה</button>
                         </div>
 
                         <!-- מצב טקסט -->
@@ -1768,11 +1903,11 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                     <div class="auf-field">
                         <label class="auf-label" for="auf-editor-easy">
                             מילים ואקורדים לגרסה קלה
-                            <span class="auf-muted">(ריק = ייווצר אוטומטית)</span>
+                            <span class="auf-muted">(לא חובה. ריק = אין גרסה קלה)</span>
                         </label>
                         <textarea class="auf-textarea" id="auf-editor-easy" name="version_easy"
                                   rows="8" dir="rtl"
-                                  placeholder="השאר/י ריק ליצירה אוטומטית..."><?php echo esc_textarea($prefill_upload['easy_content'] ?? ''); ?></textarea>
+                                  placeholder="אפשר להשאיר ריק"><?php echo esc_textarea($prefill_upload['easy_content'] ?? ''); ?></textarea>
                     </div>
                 </div>
             </section>
@@ -1816,7 +1951,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
             <div class="auf-modal__content">
                 <div class="auf-modal__header">
                     <h3 id="auf-modal-title" class="auf-section__title">ספריית אקורדים מלאה</h3>
-                    <button type="button" class="auf-modal__close" aria-label="סגור">✕</button>
+                    <button type="button" class="auf-modal__close" aria-label="סגור"><?php echo AMS_Icons::svg('x'); ?></button>
                 </div>
                 <div class="auf-modal__body">
                     <input type="text" id="auf-library-search" class="auf-input"
@@ -1834,7 +1969,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
      */
     public function render_my_versions_shortcode() {
         if (!is_user_logged_in()) {
-            return '<p class="ams-notice">יש להתחבר כדי לצפות בגרסאות שלך.</p>';
+            return '<p class="ams-notice">יש <a href="' . $this->ams_login_url() . '">להתחבר</a> כדי לצפות בגרסאות שלך.</p>';
         }
 
         $user_id   = get_current_user_id();
@@ -1853,9 +1988,9 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
         <div class="ams-my-versions" dir="rtl">
 
             <section class="ams-mv-section">
-                <h2 class="ams-mv-title">✏️ גרסאות אישיות</h2>
+                <h2 class="ams-mv-title"><?php echo AMS_Icons::svg('pencil'); ?> גרסאות אישיות</h2>
                 <?php if (empty($personals)): ?>
-                    <p class="ams-mv-empty">עדיין לא יצרת גרסאות אישיות. כנס לשיר ולחץ על ✏️ כדי להתחיל.</p>
+                    <p class="ams-mv-empty">עדיין לא יצרת גרסאות אישיות. כנס לשיר ולחץ על <?php echo AMS_Icons::svg('pencil'); ?> כדי להתחיל.</p>
                 <?php else: ?>
                 <ul class="ams-mv-list">
                     <?php foreach ($personals as $p):
@@ -1873,7 +2008,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                             <span class="ams-mv-date">עודכן: <?php echo esc_html($modified); ?></span>
                         </div>
                         <div class="ams-mv-item-actions">
-                            <a class="ams-mv-btn ams-mv-btn-edit" href="<?php echo esc_url($song_url); ?>">פתח ✏️</a>
+                            <a class="ams-mv-btn ams-mv-btn-edit" href="<?php echo esc_url($song_url); ?>">פתח <?php echo AMS_Icons::svg('pencil'); ?></a>
                         </div>
                     </li>
                     <?php endforeach; ?>
@@ -1882,9 +2017,9 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
             </section>
 
             <section class="ams-mv-section">
-                <h2 class="ams-mv-title">📝 הצעות עריכה שלי</h2>
+                <h2 class="ams-mv-title"><?php echo AMS_Icons::svg('note-pencil'); ?> הצעות עריכה שלי</h2>
                 <?php if (empty($proposals)): ?>
-                    <p class="ams-mv-empty">עדיין לא הצעת עריכות. כנס לשיר ולחץ על 📝 כדי להציע שינוי.</p>
+                    <p class="ams-mv-empty">עדיין לא הצעת עריכות. כנס לשיר ולחץ על <?php echo AMS_Icons::svg('note-pencil'); ?> כדי להציע שינוי.</p>
                 <?php else: ?>
                 <ul class="ams-mv-list">
                     <?php
@@ -2018,7 +2153,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
      */
     public function render_saved_songs_shortcode() {
         if (!is_user_logged_in()) {
-            return '<p class="ams-notice">יש להתחבר כדי לראות שירים שמורים.</p>';
+            return '<p class="ams-notice">יש <a href="' . $this->ams_login_url() . '">להתחבר</a> כדי לראות שירים שמורים.</p>';
         }
 
         $saved_ids = AMS_Saved_Songs_Handler::get_saved_ids();
@@ -2051,11 +2186,11 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                         </a>
                         <div class="ams-saved-badges">
                             <?php if ($genre): ?><span class="ams-saved-badge"><?php echo esc_html($genre); ?></span><?php endif; ?>
-                            <?php if (in_array('chords', (array)$flags)): ?><span class="ams-saved-badge">🎸 אקורדים</span><?php endif; ?>
-                            <?php if (in_array('score', (array)$flags)): ?><span class="ams-saved-badge">🎼 תווים</span><?php endif; ?>
-                            <?php if (in_array('lesson_guitar', (array)$flags) || in_array('lesson_piano', (array)$flags)): ?><span class="ams-saved-badge">🎬 שיעור</span><?php endif; ?>
+                            <?php if (in_array('chords', (array)$flags)): ?><span class="ams-saved-badge"><?php echo AMS_Icons::svg('guitar'); ?> אקורדים</span><?php endif; ?>
+                            <?php if (in_array('score', (array)$flags)): ?><span class="ams-saved-badge"><?php echo AMS_Icons::svg('music'); ?> תווים</span><?php endif; ?>
+                            <?php if (in_array('lesson_guitar', (array)$flags) || in_array('lesson_piano', (array)$flags)): ?><span class="ams-saved-badge"><?php echo AMS_Icons::svg('film'); ?> שיעור</span><?php endif; ?>
                         </div>
-                        <button type="button" class="ams-saved-remove" data-id="<?php echo esc_attr($song->ID); ?>" title="הסר מהמועדפים">✕</button>
+                        <button type="button" class="ams-saved-remove" data-id="<?php echo esc_attr($song->ID); ?>" title="הסר מהמועדפים" aria-label="הסר מהמועדפים"><?php echo AMS_Icons::svg('x'); ?></button>
                     </li>
                     <?php endforeach; ?>
                 </ul>
@@ -2106,7 +2241,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
         ob_start();
         ?>
         <div class="ams-review-proposals" dir="rtl">
-            <h2 class="ams-mv-title">📋 הצעות עריכה ממתינות לאישור</h2>
+            <h2 class="ams-mv-title"><?php echo AMS_Icons::svg('clipboard'); ?> הצעות עריכה ממתינות לאישור</h2>
             <?php if (empty($proposals)): ?>
                 <p class="ams-mv-empty">אין הצעות ממתינות כרגע. 🎉</p>
             <?php else: ?>
@@ -2140,8 +2275,8 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                     </div>
 
                     <div class="ams-diff-toolbar">
-                        <button type="button" class="ams-diff-toggle" data-mode="proposal">📄 הצעה בלבד</button>
-                        <button type="button" class="ams-diff-toggle active" data-mode="diff">🔍 הצג שינויים</button>
+                        <button type="button" class="ams-diff-toggle" data-mode="proposal"><?php echo AMS_Icons::svg('scroll'); ?> הצעה בלבד</button>
+                        <button type="button" class="ams-diff-toggle active" data-mode="diff"><?php echo AMS_Icons::svg('search'); ?> הצג שינויים</button>
                     </div>
 
                     <div class="ams-diff-panel">
@@ -2150,16 +2285,22 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                     <pre class="ams-review-content" style="display:none;"><?php echo esc_html($proposal_raw); ?></pre>
 
                     <div class="ams-review-actions">
-                        <button type="button" class="ams-review-btn ams-review-approve" data-id="<?php echo esc_attr($pr->ID); ?>">✓ אשר</button>
+                        <button type="button" class="ams-review-btn ams-review-approve" data-id="<?php echo esc_attr($pr->ID); ?>"><?php echo AMS_Icons::svg('check'); ?> אשר</button>
                         <div class="ams-reject-group">
                             <input type="text" class="ams-reject-reason" placeholder="סיבת הדחייה (לא חובה)" maxlength="200" dir="rtl" />
-                            <button type="button" class="ams-review-btn ams-review-reject" data-id="<?php echo esc_attr($pr->ID); ?>">✕ דחה</button>
+                            <button type="button" class="ams-review-btn ams-review-reject" data-id="<?php echo esc_attr($pr->ID); ?>"><?php echo AMS_Icons::svg('x'); ?> דחה</button>
                         </div>
                     </div>
                     <p class="ams-review-status" id="ams-review-status-<?php echo esc_attr($pr->ID); ?>"></p>
                 </li>
                 <?php endforeach; ?>
             </ul>
+            <style>
+            .ams-diff-w-add{background:rgba(22,163,74,.30);border-radius:3px;padding:0 1px;color:inherit}
+            .ams-diff-w-del{background:rgba(220,38,38,.28);border-radius:3px;padding:0 1px;color:inherit}
+            .ams-diff-fold{display:block;width:100%;margin:0;padding:4px 10px;border:0;border-block:1px dashed rgba(127,127,127,.35);background:transparent;color:inherit;opacity:.75;font:inherit;font-size:.9em;text-align:center;cursor:pointer}
+            .ams-diff-fold:hover,.ams-diff-fold:focus-visible{opacity:1}
+            </style>
             <script>
             (function() {
                 // nonce נלקח בזמן הלחיצה ולא בזמן אתחול הסקריפט —
@@ -2168,36 +2309,70 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                 function getUrl()   { return (typeof ams_ajax_data !== 'undefined') ? ams_ajax_data.ajax_url : '/wp-admin/admin-ajax.php'; }
 
                 /* ── Line Diff (LCS-based) ── */
-                function diffLines(oldLines, newLines) {
-                    const m = oldLines.length, n = newLines.length;
-                    // Safety: avoid O(m*n) blowup on very large content
-                    if (m * n > 200000) return newLines.map(t => ({ type: 'add', text: t }));
+                // ההשוואה היא על שורה מנורמלת: \r\n מול \n, ורווחים כפולים/בקצוות, לא נחשבים שינוי.
+                // שורה שהשתנתה מוצגת כזוג (ישן ואז חדש) והמילים/האקורדים ששונו מודגשים בתוכה.
+                function splitLines(s) { return String(s).replace(/\r\n?/g, '\n').split('\n'); }
+                function normKey(s)    { return s.replace(/\s+/g, ' ').trim(); }
+                function isSpace(t)    { return /^\s+$/.test(t); }
 
+                function lcsOps(a, b) {
+                    const m = a.length, n = b.length;
                     const dp = [];
-                    for (let i = 0; i <= m; i++) { dp[i] = []; for (let j = 0; j <= n; j++) dp[i][j] = 0; }
+                    for (let i = 0; i <= m; i++) { dp[i] = new Array(n + 1).fill(0); }
                     for (let i = 1; i <= m; i++)
                         for (let j = 1; j <= n; j++)
-                            dp[i][j] = oldLines[i-1] === newLines[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j], dp[i][j-1]);
-
-                    const result = [];
+                            dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j], dp[i][j-1]);
+                    const ops = [];
                     let i = m, j = n;
                     while (i > 0 || j > 0) {
-                        if (i > 0 && j > 0 && oldLines[i-1] === newLines[j-1]) {
-                            result.unshift({ type: 'equal', text: oldLines[i-1] });
-                            i--; j--;
-                        } else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
-                            result.unshift({ type: 'add', text: newLines[j-1] });
-                            j--;
-                        } else {
-                            result.unshift({ type: 'remove', text: oldLines[i-1] });
-                            i--;
-                        }
+                        if (i > 0 && j > 0 && a[i-1] === b[j-1]) { ops.unshift({ t: 'eq', i: i-1, j: j-1 }); i--; j--; }
+                        else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) { ops.unshift({ t: 'add', j: j-1 }); j--; }
+                        else { ops.unshift({ t: 'del', i: i-1 }); i--; }
                     }
-                    return result;
+                    return ops;
+                }
+
+                function diffLines(oldLines, newLines) {
+                    // Safety: avoid O(m*n) blowup on very large content
+                    if (oldLines.length * newLines.length > 200000) return newLines.map(t => ({ type: 'add', text: t }));
+                    const ops = lcsOps(oldLines.map(normKey), newLines.map(normKey));
+                    return ops.map(o => o.t === 'eq'  ? { type: 'equal',  text: newLines[o.j] }
+                                      : o.t === 'add' ? { type: 'add',    text: newLines[o.j] }
+                                      :                 { type: 'remove', text: oldLines[o.i] });
                 }
 
                 function escHtml(s) {
                     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                }
+
+                // פירוק שורה לאסימונים: אקורד [..], רווח, מילה.
+                function tokens(s) { return s.match(/\[[^\]]*\]|\s+|[^\s\[]+/g) || []; }
+
+                // מחזיר [htmlOld, htmlNew] עם הדגשת האסימונים ששונו, או null אם השורות שונות מדי.
+                function wordDiff(oldLine, newLine) {
+                    const a = tokens(oldLine.trim()), b = tokens(newLine.trim());
+                    if (a.length * b.length > 40000) return null;
+                    const key = t => isSpace(t) ? ' ' : t;
+                    const ops = lcsOps(a.map(key), b.map(key));
+                    const same  = ops.filter(o => o.t === 'eq' && !isSpace(b[o.j])).length;
+                    const words = Math.max(a.filter(t => !isSpace(t)).length, b.filter(t => !isSpace(t)).length, 1);
+                    if (same / words < 0.3) return null;
+                    let ho = '', hn = '';
+                    for (const o of ops) {
+                        if (o.t === 'eq')       { ho += escHtml(a[o.i]); hn += escHtml(b[o.j]); }
+                        else if (o.t === 'del') { ho += isSpace(a[o.i]) ? a[o.i] : '<mark class="ams-diff-w-del">' + escHtml(a[o.i]) + '</mark>'; }
+                        else                    { hn += isSpace(b[o.j]) ? b[o.j] : '<mark class="ams-diff-w-add">' + escHtml(b[o.j]) + '</mark>'; }
+                    }
+                    return [ho, hn];
+                }
+
+                function diffRow(type, html) {
+                    const cls  = type === 'equal' ? '' : (type === 'add' ? 'ams-diff-add' : 'ams-diff-remove');
+                    const sign = type === 'equal' ? ' ' : (type === 'add' ? '+' : '−');
+                    return '<div class="ams-diff-row ' + cls + '">'
+                         + '<span class="ams-diff-sign">' + sign + '</span>'
+                         + '<span class="ams-diff-text" dir="rtl">' + html + '</span>'
+                         + '</div>';
                 }
 
                 function renderDiff(item) {
@@ -2212,36 +2387,72 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                         return;
                     }
 
-                    const oldLines = original.split('\n');
-                    const newLines = proposed.split('\n');
-                    const hunks    = diffLines(oldLines, newLines);
-
+                    const hunks   = diffLines(splitLines(original), splitLines(proposed));
                     const added   = hunks.filter(h => h.type === 'add').length;
                     const removed = hunks.filter(h => h.type === 'remove').length;
 
                     let html = '<div class="ams-diff-stats">';
-                    html    += '<span class="ams-diff-stat-add">+' + added + ' שורות</span> ';
-                    html    += '<span class="ams-diff-stat-remove">−' + removed + ' שורות</span>';
-                    html    += '</div>';
-                    html    += '<div class="ams-diff-table">';
+                    if (!added && !removed) {
+                        html += '<span>אין שינוי בתוכן (רק רווחים או סוף-שורה)</span>';
+                    } else {
+                        html += '<span class="ams-diff-stat-add">+' + added + ' שורות</span> ';
+                        html += '<span class="ams-diff-stat-remove">−' + removed + ' שורות</span>';
+                    }
+                    html += '</div>';
 
-                    for (const h of hunks) {
-                        const cls  = h.type === 'equal' ? '' : (h.type === 'add' ? 'ams-diff-add' : 'ams-diff-remove');
-                        const sign = h.type === 'equal' ? ' ' : (h.type === 'add' ? '+' : '−');
-                        html += '<div class="ams-diff-row ' + cls + '">'
-                              + '<span class="ams-diff-sign">' + sign + '</span>'
-                              + '<span class="ams-diff-text" dir="rtl">' + escHtml(h.text) + '</span>'
-                              + '</div>';
+                    // בניית שורות: רצף שינויים = זוגות ישן/חדש, ואז השאריות.
+                    const rows = [];
+                    for (let k = 0; k < hunks.length; ) {
+                        if (hunks[k].type === 'equal') { rows.push({ type: 'equal', html: escHtml(hunks[k].text) }); k++; continue; }
+                        const dels = [], adds = [];
+                        while (k < hunks.length && hunks[k].type !== 'equal') {
+                            if (hunks[k].type === 'remove') dels.push(hunks[k].text); else adds.push(hunks[k].text);
+                            k++;
+                        }
+                        const pairs = Math.min(dels.length, adds.length);
+                        for (let p = 0; p < pairs; p++) {
+                            const wd = wordDiff(dels[p], adds[p]);
+                            rows.push({ type: 'remove', html: wd ? wd[0] : escHtml(dels[p]) });
+                            rows.push({ type: 'add',    html: wd ? wd[1] : escHtml(adds[p]) });
+                        }
+                        dels.slice(pairs).forEach(t => rows.push({ type: 'remove', html: escHtml(t) }));
+                        adds.slice(pairs).forEach(t => rows.push({ type: 'add',    html: escHtml(t) }));
+                    }
+
+                    // קיפול רצפים ארוכים של שורות זהות (נשארות 2 שורות הקשר מכל צד של שינוי).
+                    const CTX = 2;
+                    html += '<div class="ams-diff-table">';
+                    for (let k = 0; k < rows.length; ) {
+                        if (rows[k].type !== 'equal') { html += diffRow(rows[k].type, rows[k].html); k++; continue; }
+                        let e = k;
+                        while (e < rows.length && rows[e].type === 'equal') e++;
+                        const head = k === 0 ? 0 : CTX, tail = e === rows.length ? 0 : CTX;
+                        if ((added || removed) && e - k > head + tail + 1) {
+                            for (let q = k; q < k + head; q++) html += diffRow('equal', rows[q].html);
+                            let hidden = '';
+                            for (let q = k + head; q < e - tail; q++) hidden += diffRow('equal', rows[q].html);
+                            html += '<button type="button" class="ams-diff-fold">··· ' + (e - tail - k - head) + ' שורות ללא שינוי (להצגה)</button>'
+                                  + '<div class="ams-diff-folded" hidden>' + hidden + '</div>';
+                            for (let q = e - tail; q < e; q++) html += diffRow('equal', rows[q].html);
+                        } else {
+                            for (let q = k; q < e; q++) html += diffRow('equal', rows[q].html);
+                        }
+                        k = e;
                     }
                     html += '</div>';
                     panel.innerHTML = html;
+                    panel.querySelectorAll('.ams-diff-fold').forEach(b => b.addEventListener('click', function() {
+                        const box = this.nextElementSibling;
+                        if (box) box.hidden = false;
+                        this.remove();
+                    }));
                 }
 
                 function renderProposalOnly(item) {
                     const proposed = JSON.parse(item.dataset.proposed || '""');
                     const panel    = item.querySelector('.ams-diff-panel');
                     let html = '<div class="ams-diff-table">';
-                    proposed.split('\n').forEach(line => {
+                    splitLines(proposed).forEach(line => {
                         html += '<div class="ams-diff-row"><span class="ams-diff-sign"> </span>'
                               + '<span class="ams-diff-text" dir="rtl">' + escHtml(line) + '</span></div>';
                     });
@@ -2314,7 +2525,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
      */
     public function render_user_profile_shortcode() {
         if (!is_user_logged_in()) {
-            return '<p class="ams-notice">יש להתחבר כדי לראות את הפרופיל שלך.</p>';
+            return '<p class="ams-notice">יש <a href="' . $this->ams_login_url() . '">להתחבר</a> כדי לראות את הפרופיל שלך.</p>';
         }
 
         $user    = wp_get_current_user();
@@ -2373,7 +2584,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                     if (isset($role_labels[$achord_role])):
                         $rl = $role_labels[$achord_role];
                     ?>
-                        <span class="ams-profile-role-badge <?php echo esc_attr($rl['class']); ?>">✦ <?php echo esc_html($rl['label']); ?></span>
+                        <span class="ams-profile-role-badge <?php echo esc_attr($rl['class']); ?>"><?php echo AMS_Icons::svg('star'); ?> <?php echo esc_html($rl['label']); ?></span>
                     <?php endif; ?>
                 </div>
                 <a class="ams-profile-edit-link" href="<?php echo esc_url(get_edit_profile_url($user_id)); ?>">עריכת פרופיל ↗</a>
@@ -2389,20 +2600,20 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
                 </a>
 
                 <a class="ams-stat-card" href="<?php echo esc_url($versions_url); ?>">
-                    <span class="ams-stat-icon">✏️</span>
+                    <span class="ams-stat-icon"><?php echo AMS_Icons::svg('pencil'); ?></span>
                     <span class="ams-stat-num"><?php echo $personal_count; ?></span>
                     <span class="ams-stat-label">גרסאות אישיות</span>
                 </a>
 
                 <a class="ams-stat-card" href="<?php echo esc_url($versions_url); ?>#proposals">
-                    <span class="ams-stat-icon">📝</span>
+                    <span class="ams-stat-icon"><?php echo AMS_Icons::svg('note-pencil'); ?></span>
                     <span class="ams-stat-num"><?php echo count($proposals); ?></span>
                     <span class="ams-stat-label">הצעות עריכה</span>
                 </a>
 
                 <?php if ($review_url): ?>
                 <a class="ams-stat-card ams-stat-card--editor" href="<?php echo esc_url($review_url); ?>">
-                    <span class="ams-stat-icon">📋</span>
+                    <span class="ams-stat-icon"><?php echo AMS_Icons::svg('clipboard'); ?></span>
                     <span class="ams-stat-num"><?php echo $pending_count; ?></span>
                     <span class="ams-stat-label">ממתינות לאישור</span>
                 </a>
@@ -2413,7 +2624,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
             <!-- פירוט הצעות -->
             <?php if (!empty($proposals)): ?>
             <div class="ams-profile-section">
-                <h3 class="ams-profile-section-title">📝 הצעות העריכה שלי</h3>
+                <h3 class="ams-profile-section-title"><?php echo AMS_Icons::svg('note-pencil'); ?> הצעות העריכה שלי</h3>
                 <div class="ams-profile-proposal-summary">
                     <span class="ams-prop-badge ams-prop-pending"><?php echo $pending_count; ?> ממתינות</span>
                     <span class="ams-prop-badge ams-prop-approved"><?php echo $approved_count; ?> אושרו</span>
@@ -2458,7 +2669,7 @@ public function render_simple_search_form_shortcode($atts = [], $content = '') {
             case 'has_barre':
                 return '<div class="ams-version-note ams-version-note--medium" style="display:none;">'
                      . '<strong class="ams-version-note__title">גרסה בינונית</strong>'
-                     . '<span class="ams-version-note__text">פישטנו את האקורדים עד כמה שאפשר, אך השיר עדיין כולל אקורדים מתקדמים — מתאים לנגנים ברמת ביניים, פחות למתחילים.</span>'
+                     . '<span class="ams-version-note__text">פישטנו את האקורדים עד כמה שאפשר, אך השיר עדיין כולל אקורדים מתקדמים. מתאים לנגנים ברמת ביניים, פחות למתחילים.</span>'
                      . '</div>';
             // דרגות הגרסה הקלה (barre_free / one_f / one_bm / few_semi) ו-none —
             // ללא הודעה למעלה; כפתור-הכוכב משנה צבע כשהוא לחוץ.

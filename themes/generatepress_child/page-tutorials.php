@@ -13,13 +13,13 @@ $uc_tut_base = get_stylesheet_directory_uri() . '/assets/tutorials/scenes/';
 
 /* הסרטונים הקצרים (לפי הסדר שבו כדאי ללמוד) */
 $uc_tuts = [
-    [ 'f' => 'search',       'icon' => '🔎', 'title' => 'מוצאים שיר',          'desc' => 'מקלידים שם של שיר — והאקורדים, המילים והתווים נפתחים מיד.' ],
-    [ 'f' => 'song-tools',   'icon' => '🎚️', 'title' => 'כלי עמוד השיר',       'desc' => 'שינוי סולם, גלילה אוטומטית, בחירת גופן ושמירה למועדפים.' ],
-    [ 'f' => 'chord-editor', 'icon' => '🎸', 'title' => 'תורמים שיר',          'desc' => 'גוררים אקורד מעל מילה — וזהו. כל אחד יכול לתרום, חינם.' ],
-    [ 'f' => 'learn-chords', 'icon' => '🎤', 'title' => 'לומדים אקורדים',      'desc' => 'מנגנים, והמנוע מקשיב למיקרופון ומאשר את האקורד בזמן אמת.' ],
-    [ 'f' => 'learn-flute',  'icon' => '🎵', 'title' => 'לומדים חליל',         'desc' => 'תרשים אצבוע ברור לכל תו — לחלילית או לחליל אירי.' ],
-    [ 'f' => 'request-song', 'icon' => '✉️', 'title' => 'מבקשים שיר חסר',      'desc' => 'לא מצאתם שיר? בקשו אותו בלחיצה — נוסיף אותו בקרוב.' ],
-    [ 'f' => 'install-pwa',  'icon' => '📲', 'title' => 'מתקינים כאפליקציה',   'desc' => 'הוסיפו את unichord למסך הבית — ועובד מצוין גם בלי אינטרנט.' ],
+    [ 'f' => 'search',       'icon' => 'search',       'title' => 'מוצאים שיר',          'desc' => 'מקלידים שם של שיר. האקורדים, המילים והתווים נפתחים מיד.' ],
+    [ 'f' => 'song-tools',   'icon' => 'sliders',      'title' => 'כלי עמוד השיר',       'desc' => 'שינוי סולם, גלילה אוטומטית, בחירת גופן ושמירה למועדפים.' ],
+    [ 'f' => 'chord-editor', 'icon' => 'guitar',       'title' => 'תורמים שיר',          'desc' => 'גוררים אקורד מעל מילה, וזהו. כל אחד יכול לתרום, חינם.' ],
+    [ 'f' => 'learn-chords', 'icon' => 'microphone',   'title' => 'לומדים אקורדים',      'desc' => 'מנגנים, והמנוע מקשיב למיקרופון ומאשר את האקורד בזמן אמת.' ],
+    [ 'f' => 'learn-flute',  'icon' => 'music-note',   'title' => 'לומדים חליל',         'desc' => 'תרשים אצבוע ברור לכל תו, לחלילית או לחליל אירי.' ],
+    [ 'f' => 'request-song', 'icon' => 'mail',         'title' => 'מבקשים שיר חסר',      'desc' => 'לא מצאתם שיר? בקשו אותו בלחיצה, ונוסיף אותו בקרוב.' ],
+    [ 'f' => 'install-pwa',  'icon' => 'mobile',       'title' => 'מתקינים כאפליקציה',   'desc' => 'הוסיפו את unichord למסך הבית, ויעבוד מצוין גם בלי אינטרנט.' ],
 ];
 ?>
 
@@ -28,16 +28,16 @@ $uc_tuts = [
     <header class="uc-tut__hero">
         <span class="uc-tut__kicker">מדריך וידאו</span>
         <h1 class="uc-tut__title">ככה משתמשים ב-<span class="uc-tut__mark">uni<b>chord</b></span></h1>
-        <p class="uc-tut__sub">סרטונים קצרים שמראים בדיוק איך עושים כל דבר באתר. בלי הסברים מסובכים — פשוט מסתכלים.</p>
+        <p class="uc-tut__sub">סרטונים קצרים שמראים בדיוק איך עושים כל דבר באתר. בלי הסברים מסובכים, פשוט מסתכלים.</p>
     </header>
 
     <!-- ══ סרטון הסבר מלא ══ -->
     <section class="uc-tut__feature" aria-label="סרטון הסבר מלא">
         <div class="uc-embed uc-embed--wide">
             <iframe src="<?php echo esc_url( $uc_tut_base . 'explainer.html' ); ?>"
-                    title="unichord — סרטון הסבר מלא" loading="lazy" allowfullscreen></iframe>
+                    title="unichord · סרטון הסבר מלא" loading="lazy" allowfullscreen></iframe>
         </div>
-        <p class="uc-tut__hint">▶ הסרטון רץ אוטומטית · הקליקו עליו כדי לעצור ולהמשיך</p>
+        <p class="uc-tut__hint"><?php echo ams_icon( 'play' ); ?> הסרטון רץ אוטומטית · הקליקו עליו כדי לעצור ולהמשיך</p>
     </section>
 
     <!-- ══ מדריכים קצרים ══ -->
@@ -51,7 +51,7 @@ $uc_tuts = [
                                 title="<?php echo esc_attr( $t['title'] ); ?>" loading="lazy"></iframe>
                     </div>
                     <div class="uc-tcard__body">
-                        <h3 class="uc-tcard__title"><span aria-hidden="true"><?php echo $t['icon']; ?></span> <?php echo esc_html( $t['title'] ); ?></h3>
+                        <h3 class="uc-tcard__title"><span aria-hidden="true"><?php echo ams_icon( $t['icon'] ); ?></span> <?php echo esc_html( $t['title'] ); ?></h3>
                         <p class="uc-tcard__desc"><?php echo esc_html( $t['desc'] ); ?></p>
                     </div>
                 </article>

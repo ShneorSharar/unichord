@@ -27,22 +27,38 @@ function achord_child_enqueue_assets() {
         filemtime( $dir . '/assets/css/achord-child.css' )
     );
 
+    // מערכת האייקונים המרכזית (Phosphor) — נטענת ב-head כדי שתהיה זמינה לכל
+    // סקריפט (drawer/upload/pwa/a11y) לפני שהוא רץ. מגדירה window.UC_ICON(name).
+    wp_enqueue_script(
+        'uc-icons',
+        $uri . '/assets/js/uc-icons.js',
+        [],
+        filemtime( $dir . '/assets/js/uc-icons.js' ),
+        false
+    );
+
     // Drawer JS
     wp_enqueue_script(
         'achord-appdrawer',
         $uri . '/assets/js/achord-drawer.js',
-        [],
+        [ 'uc-icons' ],
         filemtime( $dir . '/assets/js/achord-drawer.js' ),
         true
     );
 
-    // Upload form JS — on the public uploader and on the personal notebook editor
+    // Upload form JS — on the public uploader, on the personal notebook editor,
+    // וגם בעמוד-שיר בודד למשתמש-מחובר: שם משובץ אותו מנוע-עורך במודאל
+    // "ערוך גרסה אישית / הצע תיקון" (window.initAchordEditor במצב embed).
     global $post;
-    if ( is_a( $post, 'WP_Post' ) && (
+    $achord_needs_editor = is_a( $post, 'WP_Post' ) && (
             has_shortcode( $post->post_content, 'achord_upload_song' )
             || has_shortcode( $post->post_content, 'achord_notebook' )
             || has_shortcode( $post->post_content, 'achord_notebook_editor' )
-    ) ) {
+    );
+    if ( is_singular( 'achord_song_cpt' ) && is_user_logged_in() ) {
+        $achord_needs_editor = true;
+    }
+    if ( $achord_needs_editor ) {
         wp_enqueue_script(
             'achord-upload',
             $uri . '/assets/js/achord-upload.js',
@@ -328,7 +344,7 @@ function achord_custom_header_output() { ?>
 
     <div class="achord-topbar">
       <div class="achord-brandwrap">
-        <a class="uc-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="unichord — דף הבית">
+        <a class="uc-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" aria-label="unichord, דף הבית">
           <span class="uc-wordmark">un<span class="uc-i">i</span>chord</span>
           <span class="uc-slogan">החופש לנגן</span>
         </a>
@@ -352,7 +368,7 @@ function achord_custom_header_output() { ?>
     <section id="achord-panel" class="achord-panel" aria-hidden="true" aria-label="תפריט ראשי">
       <div class="achord-panel__top">
         <div class="achord-panel__title">תפריט</div>
-        <button id="achord-close-btn" type="button" aria-label="סגור">✕</button>
+        <button id="achord-close-btn" type="button" aria-label="סגור"><?php echo ams_icon('x'); ?></button>
       </div>
       <div class="achord-panel__body">
 
@@ -419,7 +435,7 @@ function achord_custom_header_output() { ?>
           <span class="uc-me__avatar" aria-hidden="true"><?php echo esc_html( $uc_initial ); ?></span>
           <span class="uc-me__text">
             <span class="uc-me__name">
-              <span class="screen-reader-text">הפרופיל שלי — </span><?php echo esc_html( $uc_name ); ?>
+              <span class="screen-reader-text">הפרופיל שלי, </span><?php echo esc_html( $uc_name ); ?>
             </span>
             <span class="uc-me__mail"><?php echo esc_html( $user->user_email ); ?></span>
           </span>
@@ -583,7 +599,7 @@ function achord_footer_credits_output() {
 function achord_custom_footer_output() { ?>
   <footer class="achord-footer" role="contentinfo" dir="rtl">
     <div class="achord-footer__inner">
-      <p class="achord-footer__tagline"><span dir="ltr">unichord</span> · החופש לנגן — אקורדים, תווים ושיעורים לשירי ארץ ישראל</p>
+      <p class="achord-footer__tagline"><span dir="ltr">unichord</span> · החופש לנגן. אקורדים, מילים ותווים לשירי ארץ ישראל</p>
       <nav class="achord-footer__nav" aria-label="ניווט תחתון">
         <a href="<?php echo esc_url( home_url( '/' ) ); ?>">ראשי</a>
         <a href="<?php echo esc_url( home_url( '/madrich/' ) ); ?>">מדריך</a>
@@ -591,6 +607,7 @@ function achord_custom_footer_output() { ?>
         <a href="<?php echo esc_url( home_url( '/contributors/' ) ); ?>">תורמים</a>
         <a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">אודות</a>
         <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">יצירת קשר</a>
+        <a href="<?php echo esc_url( home_url( '/copyright/' ) ); ?>">זכויות יוצרים</a>
       </nav>
       <?php achord_footer_credits_output(); ?>
       <p class="achord-footer__copy">
@@ -643,30 +660,91 @@ function achord_song_share_strings( $post_id ) {
         'lesson_guitar' => 'שיעור גיטרה',
         'lesson_piano'  => 'שיעור פסנתר',
     ];
-    $parts = array_filter( array_map( fn( $f ) => $flag_labels[ $f ] ?? null, $flags ) );
+    $parts = array_values( array_filter( array_map( fn( $f ) => $flag_labels[ $f ] ?? null, $flags ) ) );
     if ( empty( $parts ) ) return null;
 
-    $title        = get_the_title( $post_id );
+    $content      = (string) get_post_field( 'post_content', $post_id );
     $singer_terms = get_the_terms( $post_id, 'singer' );
     $singer = ( ! is_wp_error( $singer_terms ) && ! empty( $singer_terms ) ) ? $singer_terms[0]->name : '';
 
-    // כותרת שיתוף בסגנון "אקורדים לשיר X - אמן" (מתאים לציפיות מ-Tab4U וגם ל-SEO)
-    $og_title = 'אקורדים לשיר ' . $title;
+    // שם השיר בלבד: [song_title] מהתוכן, אחרת כותרת הפוסט בלי סיומת "– אמן" (שאחרת מוכפלת)
+    $song = '';
+    if ( preg_match( '/\[song_title\](.*?)\[\/song_title\]/su', $content, $m ) ) $song = trim( wp_strip_all_tags( $m[1] ) );
+    if ( $song === '' ) {
+        $song = get_the_title( $post_id );
+        if ( $singer ) $song = preg_replace( '/\s*[–\-]\s*' . preg_quote( $singer, '/' ) . '\s*$/u', '', $song );
+    }
+    $song = html_entity_decode( $song, ENT_QUOTES, 'UTF-8' );
+    // "Silver Spear, The" → "The Silver Spear"
+    $song = preg_replace( '/^(.+),\s*(The|A|An)$/u', '$2 $1', $song );
+
+    $is_chords = in_array( 'chords', $flags, true );
+    $label     = $is_chords ? 'אקורדים' : $parts[0];
+
+    // כותרת לגוגל: "ליל אמש אקורדים – שולי נתן" (המילה שמחפשים בתוך הכותרת)
+    $seo_title = $song . ' ' . $label;
+    if ( $singer ) $seo_title .= ' – ' . $singer;
+
+    // כותרת שיתוף בסגנון "אקורדים לשיר X - אמן"
+    $og_title = $label . ' לשיר ' . $song;
     if ( $singer ) $og_title .= ' - ' . $singer;
 
-    $description = 'השיר ' . $title;
-    if ( $singer ) $description .= ' של ' . $singer;
-    $description .= ' — ' . implode( ', ', $parts ) . '. בחינם ב-unichord.';
+    // אקורדי הגרסה הרגילה, לפי שכיחות
+    $chords = [];
+    if ( $is_chords ) {
+        $body = preg_match( '/\[version=normal\](.*?)\[\/version\]/su', $content, $m ) ? $m[1] : '';
+        if ( preg_match_all( '/\[([A-G](?:#|b)?[mMajindsugb0-9+°ø()\-]{0,8}(?:\/[A-G](?:#|b)?)?)\]/u', $body, $cm ) ) {
+            $freq = array_count_values( $cm[1] );
+            arsort( $freq );
+            $chords = array_keys( $freq );
+        }
+    }
+    $has_easy = get_post_meta( $post_id, '_ams_is_easy', true ) === '1';
 
-    return [ 'og_title' => $og_title, 'description' => $description ];
+    $bits = [ $label . ' לשיר ' . $song . ( $singer ? ' של ' . $singer : '' ) ];
+    $n = count( $chords );
+    if ( $n > 0 && $n <= 6 ) {
+        $bits[] = $n . ' אקורדים: ' . implode( ' ', $chords );
+    } elseif ( $n > 6 ) {
+        $bits[] = 'אקורדים עיקריים: ' . implode( ' ', array_slice( $chords, 0, 5 ) );
+    }
+    if ( $has_easy ) $bits[] = 'יש גרסה קלה למתחילים';
+    $extra = array_diff( $parts, [ $label ] );
+    if ( $extra ) $bits[] = 'גם ' . implode( ', ', $extra );
+    $description = implode( ' · ', $bits ) . '. ' . ( $is_chords ? 'שינוי סולם וגלילה אוטומטית, ' : '' ) . 'בחינם ביוניקורד.';
+
+    return [ 'seo_title' => $seo_title, 'og_title' => $og_title, 'description' => $description ];
 }
+
+// כותרת הלשונית/גוגל בעמוד שיר: "ליל אמש אקורדים – שולי נתן | יוניקורד"
+add_filter( 'document_title_parts', function ( $parts ) {
+    if ( is_front_page() && ! is_paged() ) return [ 'title' => 'יוניקורד – אקורדים לשירים בעברית, בחינם ובלי פרסומות' ];
+    if ( ! is_singular( 'achord_song_cpt' ) ) return $parts;
+    $s = achord_song_share_strings( get_queried_object_id() );
+    if ( ! $s ) return $parts;
+    return [ 'title' => $s['seo_title'], 'site' => 'יוניקורד' ];
+} );
+add_filter( 'document_title_separator', function ( $sep ) {
+    return is_singular( 'achord_song_cpt' ) ? '|' : $sep;
+} );
 
 add_action( 'wp_head', 'achord_song_meta_description', 1 );
 function achord_song_meta_description() {
-    if ( ! is_singular( 'achord_song_cpt' ) ) return;
-    $s = achord_song_share_strings( get_the_ID() );
-    if ( ! $s ) return;
-    echo '<meta name="description" content="' . esc_attr( $s['description'] ) . '">' . "\n";
+    if ( is_admin() || is_404() || is_search() ) return;
+    if ( is_singular( 'achord_song_cpt' ) ) {
+        $s = achord_song_share_strings( get_the_ID() );
+        if ( ! $s ) return;
+        echo '<meta name="description" content="' . esc_attr( $s['description'] ) . '">' . "\n";
+        return;
+    }
+    // שאר העמודים (בית/עמודים/ארכיונים): אותה ברירת־מחדל ממותגת כמו ב-achord_open_graph_tags
+    $desc = 'אקורדים, מילים ותווים לשירי ארץ ישראל. חינם, בלי פרסומות, קוד פתוח.';
+    if ( is_front_page() ) $desc = 'מעל 1,400 שירים עם אקורדים לגיטרה ולפסנתר · גרסאות קלות למתחילים · שינוי סולם וגלילה אוטומטית · מחברת אישית ושמירה לשימוש בלי אינטרנט. בחינם ובלי פרסומות.';
+    if ( is_singular() && has_excerpt( get_the_ID() ) ) {
+        $ex = wp_strip_all_tags( get_the_excerpt( get_the_ID() ) );
+        if ( $ex ) $desc = $ex;
+    }
+    echo '<meta name="description" content="' . esc_attr( $desc ) . '">' . "\n";
 }
 
 /**
@@ -681,7 +759,7 @@ function achord_open_graph_tags() {
     $image     = home_url( '/pwa-icons/icon-512.png' );
     $type      = 'website';
     $title     = '';
-    $desc      = 'אקורדים, מילים, תווים ושיעורים לשירי ארץ ישראל. חינם, בלי פרסומות, קוד פתוח.';
+    $desc      = 'אקורדים, מילים ותווים לשירי ארץ ישראל. חינם, בלי פרסומות, קוד פתוח.';
     $url       = home_url( add_query_arg( [], $GLOBALS['wp']->request ?? '' ) );
 
     if ( is_singular( 'achord_song_cpt' ) ) {
@@ -693,17 +771,22 @@ function achord_open_graph_tags() {
         if ( $s ) $desc = $s['description'];
     } elseif ( is_front_page() || is_home() ) {
         $url   = home_url( '/' );
-        $title = 'unichord — אקורדים לשירי ארץ ישראל';
+        $title = 'יוניקורד – אקורדים לשירים בעברית, בחינם ובלי פרסומות';
+        $desc  = 'מעל 1,400 שירים עם אקורדים לגיטרה ולפסנתר · גרסאות קלות למתחילים · שינוי סולם וגלילה אוטומטית · מחברת אישית ושמירה לשימוש בלי אינטרנט. בחינם ובלי פרסומות.';
     } elseif ( is_singular() ) {
         $pid   = get_the_ID();
         $url   = get_permalink( $pid );
         $title = get_the_title( $pid );
-        $ex    = wp_strip_all_tags( get_the_excerpt( $pid ) );
+        $ex    = has_excerpt( $pid ) ? wp_strip_all_tags( get_the_excerpt( $pid ) ) : '';
         if ( $ex ) $desc = $ex;
-    } elseif ( is_tax() || is_category() || is_tag() || is_post_type_archive() ) {
+    } elseif ( is_post_type_archive() ) {
+        $obj   = get_queried_object();
+        $title = post_type_archive_title( '', false ) ?: ( $obj->labels->name ?? 'unichord' );
+        $title = 'אקורדים ל' . $title . ' | unichord';
+    } elseif ( is_tax() || is_category() || is_tag() ) {
         $obj   = get_queried_object();
         $title = single_term_title( '', false ) ?: ( $obj->name ?? 'unichord' );
-        $title = $title . ' — אקורדים | unichord';
+        $title = 'אקורדים ל' . $title . ' | unichord';
     } else {
         $title = wp_get_document_title();
     }
@@ -743,7 +826,7 @@ function achord_song_share_bar( $content ) {
     $url   = get_permalink( $pid );
     $s     = achord_song_share_strings( $pid );
     $label = $s ? $s['og_title'] : ( 'אקורדים לשיר ' . get_the_title( $pid ) );
-    $wa    = 'https://wa.me/?text=' . rawurlencode( '🎸 ' . $label . ' — ב-unichord: ' . $url );
+    $wa    = 'https://wa.me/?text=' . rawurlencode( '🎸 ' . $label . '. ב-unichord: ' . $url );
     $fb    = 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode( $url );
 
     $wa_icon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.16c-.24.68-1.42 1.31-1.95 1.36-.5.05-1.13.21-3.8-.79-3.2-1.26-5.25-4.5-5.41-4.71-.16-.21-1.3-1.73-1.3-3.3 0-1.57.82-2.34 1.11-2.66.29-.32.64-.4.85-.4.21 0 .43 0 .61.01.2.01.46-.07.72.55.27.64.92 2.21 1 2.37.08.16.13.35.02.56-.1.21-.16.35-.32.53-.16.18-.34.41-.48.55-.16.16-.33.34-.14.66.19.32.85 1.4 1.83 2.27 1.26 1.12 2.32 1.47 2.64 1.63.32.16.51.13.7-.08.19-.21.81-.94 1.03-1.27.21-.32.43-.27.72-.16.29.11 1.86.88 2.18 1.04.32.16.53.24.61.37.08.13.08.74-.16 1.42z"/></svg>';
@@ -867,12 +950,12 @@ function achord_pwa_install_button() {
     <div id="uc-ios-sheet" role="dialog" aria-label="התקנת unichord למסך הבית">
       <div class="uc-ios-backdrop"></div>
       <div class="uc-ios-card">
-        <button class="uc-ios-x" aria-label="סגור">✕</button>
+        <button class="uc-ios-x" aria-label="סגור"><?php echo ams_icon('x'); ?></button>
         <div class="uc-ios-head">
           <img src="/pwa-icons/icon-192.png" alt="unichord">
           <h3>התקנת unichord למסך הבית</h3>
         </div>
-        <p class="uc-ios-sub">כדי להוסיף את האפליקציה למסך הבית — שלושה צעדים:</p>
+        <p class="uc-ios-sub">כדי להוסיף את האפליקציה למסך הבית, שלושה צעדים:</p>
         <ol>
           <li>
             <span class="uc-ios-num">1</span>
@@ -887,10 +970,10 @@ function achord_pwa_install_button() {
           </li>
           <li>
             <span class="uc-ios-num">3</span>
-            <span>הקש <strong>"הוסף"</strong> בפינה העליונה — וזהו! 🎸</span>
+            <span>הקש <strong>"הוסף"</strong> בפינה העליונה, וזהו! 🎸</span>
           </li>
         </ol>
-        <p class="uc-ios-note">💡 ההתקנה למסך הבית זמינה בדפדפן <strong>Safari</strong>. אם פתחת בדפדפן אחר, פתח את האתר ב-Safari.</p>
+        <p class="uc-ios-note"><?php echo ams_icon('lightbulb'); ?> ההתקנה למסך הבית זמינה בדפדפן <strong>Safari</strong>. אם פתחת בדפדפן אחר, פתח את האתר ב-Safari.</p>
       </div>
     </div>
 
@@ -1040,7 +1123,7 @@ function achord_pwa_offline_indicator() {
     </style>
     <div id="uc-offline-bar" role="status" aria-live="polite">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-      <span>מצב לא מקוון — מוצג תוכן שכבר נטען / שמרת במכשיר</span>
+      <span>מצב לא מקוון. מוצג תוכן שכבר נטען / שמרת במכשיר</span>
     </div>
     <script>
     (function () {

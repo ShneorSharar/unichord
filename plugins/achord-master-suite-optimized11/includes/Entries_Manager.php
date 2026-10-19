@@ -183,7 +183,7 @@ final class AMS_Entries_Manager {
                             <?php foreach($quick_chords as $chord): ?>
                                 <button type="button" class="quick-chord-btn" data-chord="<?php echo esc_attr($chord); ?>">
                                     <span class="chord-text"><?php echo esc_html($chord); ?></span>
-                                    <span class="star-icon" title="הוסף/הסר מהמומלצים">★</span>
+                                    <span class="star-icon" title="הוסף/הסר מהמומלצים"><?php echo AMS_Icons::svg('star'); ?></span>
                                 </button>
                             <?php endforeach; ?>
                         </div>

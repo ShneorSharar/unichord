@@ -292,8 +292,8 @@ class AMS_Contributors_Handler {
 
         if (empty($people)) {
             echo '<div class="uc-contrib-empty">'
-               . '<p class="uc-contrib-empty__title">עוד אין תורמים — היו הראשונים 🎸</p>'
-               . '<p class="uc-contrib-empty__sub">כל שיר שתוסיפו, כל תיקון וכל שיעור — והשם שלכם יופיע כאן ובעמוד השיר.</p>'
+               . '<p class="uc-contrib-empty__title">עוד אין תורמים. היו הראשונים ' . AMS_Icons::svg('guitar') . '</p>'
+               . '<p class="uc-contrib-empty__sub">כל שיר שתוסיפו, כל תיקון וכל שיעור, והשם שלכם יופיע כאן ובעמוד השיר.</p>'
                . '<a class="uc-btn uc-btn--primary" href="' . esc_url(home_url('/add-song/')) . '">הוסיפו שיר ראשון</a>'
                . '</div>';
             return ob_get_clean();

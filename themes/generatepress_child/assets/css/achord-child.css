@@ -808,8 +808,13 @@ body { padding-bottom: 20vh; }
    טופס העלאת שיר — עיצוב יפני + עורך ויזואלי
    ══════════════════════════════════════════════════════════════ */
 
-/* ── design tokens (scoped) ── */
-#achord-upload-form.auf-form {
+/* ── design tokens (scoped) ──
+   נגזרים גם לעורך-האקורדים המשובץ במודאל העריכה-האישית/הצעת-התיקון
+   שבעמוד השיר (#achord-personal-editor), כדי שאותם רכיבי .auf-* יעוצבו
+   נכון גם שם. השורש ההוא לא נושא class .auf-form כדי לא לרשת את פריסת
+   ה-780px/margin של הטופס המלא. */
+#achord-upload-form.auf-form,
+#achord-personal-editor {
     --auf-paper:       #F7F3EC;
     --auf-bg:          #EDE8DF;
     --auf-white:       #FFFFFF;
@@ -824,11 +829,20 @@ body { padding-bottom: 20vh; }
     --auf-t:           0.17s ease;
     --auf-shadow:      0 1px 4px rgba(0,0,0,.07);
 }
-.dark-mode #achord-upload-form.auf-form {
+.dark-mode #achord-upload-form.auf-form,
+.dark-mode #achord-personal-editor {
     --auf-paper:       #1C2128;
     --auf-gold-light:  rgba(181,147,106,0.1);
     --auf-muted:       rgba(220,210,200,0.45);
 }
+
+/* ── עורך משובץ במודאל: מבטל את מרווחי-הכרטיס החיצוניים כדי שיֵשֵׁב צפוף
+   בתוך המודאל, ומאפשר לקנבס/טקסט לגדול לגובה סביר. ── */
+#achord-personal-editor { display: flex; flex-direction: column; gap: 0.9rem; direction: rtl; font-family: Assistant, sans-serif; }
+#achord-personal-editor .auf-section { background: transparent; border: 0; box-shadow: none; }
+#achord-personal-editor .auf-section__body { padding: 0; display: flex; flex-direction: column; gap: 0.9rem; }
+#achord-personal-editor .auf-textarea { min-height: 220px; }
+#achord-personal-editor .auf-token-canvas { max-height: 46vh; overflow-y: auto; }
 
 /* ── override plugin's sticky-bar padding-top (old layout artefact) ── */
 #achord-upload-form {
@@ -2052,6 +2066,33 @@ body.dark-mode.theme-conductor .achord-site-title { color: var(--uc-gold); }
 .achord-accordion-section-title { font-family: var(--uc-font-display); font-weight: 700; }
 .entry-title, .uc-archive-hero__title { font-family: var(--uc-font-display); }
 
+/* ── כותרת עמוד (entry-title) במצב כהה: GeneratePress משאיר את הכחול-כהה של
+   מצב-בהיר גם בכהה ⇒ טקסט כהה על רקע כהה (למשל "הוספת שיר" בעורך). ממירים
+   לזהב המותג — עקבי עם המרת --text-dark-blue → --uc-gold בכל האתר. ── */
+body.dark-mode .entry-title,
+body.dark-mode .entry-title a,
+body.dark-mode .page-header .entry-title,
+body.dark-mode header.entry-header .entry-title { color: var(--uc-gold-text, #D8A86E); }
+
+/* ── מצב כהה: הודעות "התחבר/גישה" (‎.achord-notice‎ / ‎.ams-notice‎) יורשות את
+   ‎--contrast‎ הכהה של GeneratePress (‎#0D1B33‎) וקישור כחול (‎#00509D‎) —
+   טקסט כהה על רקע לילה. ממירים לטקסט קרם + קישור זהב קריא. ── */
+body.dark-mode .achord-notice,
+body.dark-mode .achord-notice strong,
+body.dark-mode .ams-notice { color: var(--uc-ink, #EDE6D8); }
+body.dark-mode .achord-notice a,
+body.dark-mode .ams-notice a { color: var(--uc-gold-text, #D8A86E); text-decoration: underline; }
+
+/* ── מצב כהה: כפתורי עמוד 404 — הרקע הופך לזהב בהיר (‎--uc-gold-deep‎ = ‎#E8BC83‎
+   בלילה) ותחתיו טקסט לבן נותן 1.76:1. מקבעים זוג קריא: זהב בהיר + דיו כהה
+   (7.9:1), עקבי עם דפוס ה-CTA הכהה. ── */
+body.dark-mode .achord-404__btn,
+body.dark-mode .achord-404__search-btn {
+  background: #E8BC83;
+  border-color: #E8BC83;
+  color: #1F2937;
+}
+
 /* ── 2. אלמנט חתימה: קו תחתון מצויר-ביד (טרקוטה) ── */
 .uc-underline { position: relative; white-space: nowrap; color: var(--uc-gold); }
 .uc-underline::after {
@@ -2516,8 +2557,8 @@ body.dark-mode.theme-conductor .achord-site-title { color: var(--uc-gold); }
 /* Honeypot — מוסתר מבני אדם אך נשאר ב-DOM כדי שבוטים ימלאו אותו */
 .uc-contact__hp {
   position: absolute !important;
-  left: -9999px !important;
-  width: 1px; height: 1px; overflow: hidden;
+  width: 1px !important; height: 1px !important;
+  overflow: hidden !important; clip-path: inset(50%); white-space: nowrap;
 }
 
 /* הודעות סטטוס */
@@ -2727,7 +2768,7 @@ body.dark-mode.theme-conductor .achord-site-title { color: var(--uc-gold); }
   border-color: var(--uc-gold);
   box-shadow: 0 0 0 3px var(--uc-gold-tint);
 }
-.uc-reqform__hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; opacity: 0; }
+.uc-reqform__hp { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip-path: inset(50%); white-space: nowrap; opacity: 0; }
 .uc-reqform__actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
 .uc-reqform__msg { font-size: 0.92rem; font-weight: 600; }
 .uc-reqform__msg.is-ok    { color: #2e7d4f; }
@@ -3208,3 +3249,41 @@ body.dark-mode .achord-footer__credit,
 body.dark-mode .achord-footer__copy,
 body.dark-mode .achord-footer__copy span { color: #E5E7EB; }
 body.dark-mode .achord-footer__copy { opacity: 0.75; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   מצב לילה — מגירות עמוד-השיר של הפלאגין (בחר-גופן / אפשרויות) (30.7.2026)
+   הפאנל מקבל רקע כהה (--bg-control ⇒ rgba(55,65,81,.9)) במצב לילה, אבל:
+   (א) שמות-הגופנים ב-#oot-haim-font-list יורשים את דיו מצב-היום #0D1B33 (≈1.3:1);
+   (ב) הקישור "לאתר הראשי של המיזם" נשאר בכחול-הקישורים הגלובלי #00509D (≈1.8:1).
+   מוארים ל-#E5E7EB (≥8:1 על הפאנל). scoped ל-body.dark-mode — אפס השפעה על יום.
+   li.active (רקע זהב, טקסט לבן מהפלאגין) ו-li.error (אדום+קו-חוצה) מוחרגים.
+   ניתן להסיר את הבלוק כדי לחזור למצב הקודם.
+   ────────────────────────────────────────────────────────────────────────── */
+body.dark-mode .achord-options-drawer .new-drawer-font-list li:not(.active):not(.error),
+body.dark-mode .achord-options-drawer .new-drawer-font-list li:not(.active):not(.error) .font-name,
+body.dark-mode .achord-options-drawer .new-drawer-content p,
+body.dark-mode .achord-options-drawer .new-drawer-header h4 { color: #E5E7EB; }
+body.dark-mode .achord-options-drawer a.drawer-button,
+body.dark-mode .achord-options-drawer a.drawer-button:visited,
+body.dark-mode .achord-options-drawer a.drawer-button:hover,
+body.dark-mode .achord-options-drawer a.drawer-button:focus { color: #E5E7EB; }
+
+/* ==========================================================================
+   מערכת האייקונים המרכזית (Phosphor, inline SVG) — .uc-ic
+   כל אייקון משתמש ב-currentColor ולכן יורש אוטומטית את צבע-הטקסט של כל
+   ערכת עיצוב (מנצח/אולפן × יום/לילה). הוגדר ע"י AMS_Icons / ams_icon().
+   ========================================================================== */
+.uc-ic {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.14em;
+    flex: 0 0 auto;
+    line-height: 0;
+}
+/* כפתורי אייקון במגירת התצוגה (מצב לילה, ערכה, הדפסה, כלי נגינה) */
+.drawer-button.icon-button .uc-ic { width: 20px; height: 20px; }
+/* כפתורי בקרה (אפשרויות, נגן/השהה גלילה) — משקל זהה לאימוג'י הקודם */
+.control-button .uc-ic { width: 22px; height: 22px; }
+/* אייקון לצד טקסט בטאבים (אקורדים / שיר מקורי / שיעור) */
+.tab-btn .uc-ic { width: 1.05em; height: 1.05em; margin-inline-end: 0.15em; vertical-align: -0.16em; }

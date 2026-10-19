@@ -125,7 +125,7 @@
       '<div class="uc-modal-card" role="dialog" aria-label="ניהול הורדות לא מקוונות">' +
         '<div class="uc-modal-head">' +
           '<h2>שירים שמורים במכשיר</h2>' +
-          '<button class="uc-modal-x" aria-label="סגור">✕</button>' +
+          '<button class="uc-modal-x" aria-label="סגור">' + UC_ICON('x') + '</button>' +
         '</div>' +
         '<div class="uc-modal-meta"></div>' +
         '<ul class="uc-modal-list"></ul>' +
@@ -201,7 +201,7 @@
     api.list().then(function (r) {
       var items = (r && r.items) || [];
       if (!items.length) {
-        listEl.innerHTML = '<li class="uc-oh-empty">עדיין לא שמרת שירים לצפייה לא מקוונת.<br>כשתהיה מקוון — פתח שיר ולחץ 📥.</li>';
+        listEl.innerHTML = '<li class="uc-oh-empty">עדיין לא שמרת שירים לצפייה לא מקוונת.<br>כשתהיה מקוון — פתח שיר ולחץ ' + UC_ICON('download') + '.</li>';
         return;
       }
       listEl.innerHTML = '';

@@ -554,7 +554,7 @@ const WhistleFingering = (function () {
         const panel = document.createElement('div');
         panel.id = 'whistle-panel';
         panel.innerHTML = `
-            <div class="wp-panel-title">📖 תו נוכחי — לחץ על תו לצפייה</div>
+            <div class="wp-panel-title">${UC_ICON('book-open')} תו נוכחי. לחץ על תו לצפייה</div>
             <div class="wp-header">
                 <span class="wp-instrument-label">${INSTRUMENT_LABELS[state.instrument] || ''}${state.octaveLabel ? ' · ' + state.octaveLabel : ''}</span>
                 <span class="wp-note-name">—</span>
@@ -566,7 +566,7 @@ const WhistleFingering = (function () {
             </div>
             <div class="wp-diagram-area">
                 <div class="wp-diagram"></div>
-                <p class="wp-hint">לחץ על תו בתווים, או לחץ ▶️ נגן לסנכרון אוטומטי</p>
+                <p class="wp-hint">לחץ על תו בתווים, או לחץ ${UC_ICON('play')} נגן לסנכרון אוטומטי</p>
             </div>
         `;
         wrapper.appendChild(panel);
@@ -719,7 +719,7 @@ const WhistleFingering = (function () {
         full.id = 'whistle-full-panel';
 
         const titleExtra = state.octaveLabel ? ` · ${state.octaveLabel}` : '';
-        let html = `<div class="wfp-title">${INSTRUMENT_LABELS[state.instrument] || ''} — אצבוע מלא (${notes.length} תווים${titleExtra})</div>`;
+        let html = `<div class="wfp-title">${INSTRUMENT_LABELS[state.instrument] || ''} · אצבוע מלא (${notes.length} תווים${titleExtra})</div>`;
         html += `<div class="wfp-strip">`;
 
         notes.forEach((noteObj, idx) => {
@@ -929,7 +929,7 @@ const WhistleFingering = (function () {
     function updateMicBtn() {
         var b = document.getElementById('wpl-mic');
         if (!b) return;
-        b.textContent = mic.on ? '🎤 זיהוי נגינה פעיל' : '🎤 הפעל זיהוי נגינה';
+        b.innerHTML = mic.on ? UC_ICON('microphone') + ' זיהוי נגינה פעיל' : UC_ICON('microphone') + ' הפעל זיהוי נגינה';
         b.style.background = mic.on ? '#2e9e5b' : 'transparent';
         b.style.color = mic.on ? '#fff' : '#0D1B33';
         b.style.borderColor = mic.on ? '#2e9e5b' : '#d8cfc0';
@@ -1000,7 +1000,7 @@ const WhistleFingering = (function () {
             mic.on = false;
             if (mic.engine) mic.engine.stop();
             updateMicBtn();
-            setMicStatus('זיהוי נגינה כבוי — אפשר להתקדם עם "הבא"');
+            setMicStatus('זיהוי נגינה כבוי. אפשר להתקדם עם "הבא"');
             return;
         }
         // קריטי ל-iOS: יוצרים+מפעילים את ה-ctx כאן, סינכרונית במחווה, *לפני* ה-await
@@ -1101,12 +1101,12 @@ const WhistleFingering = (function () {
         box.innerHTML =
             '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
               '<span id="wpl-prog" style="font-size:.85rem;color:#6b6256"></span>' +
-              '<button id="wpl-exit" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:#6b6256">✕</button>' +
+              '<button id="wpl-exit" aria-label="יציאה" style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;color:#6b6256">' + UC_ICON('x') + '</button>' +
             '</div>' +
             '<div id="wpl-coach" style="min-height:1.3em;font-size:.95rem;color:#6b6256;margin-bottom:4px"></div>' +
             '<div id="wpl-note" style="font-size:2.4rem;font-weight:800;line-height:1.1"></div>' +
             '<div id="wpl-fing" style="display:flex;justify-content:center;align-items:center;min-height:120px;margin:6px 0"></div>' +
-            '<button id="wpl-mic" style="display:block;width:100%;min-height:44px;border:1.5px solid #d8cfc0;border-radius:14px;background:transparent;color:#0D1B33;font-size:.98rem;font-weight:700;padding:10px;cursor:pointer;margin-bottom:6px;transition:background .2s,border-color .2s">🎤 הפעל זיהוי נגינה</button>' +
+            '<button id="wpl-mic" style="display:block;width:100%;min-height:44px;border:1.5px solid #d8cfc0;border-radius:14px;background:transparent;color:#0D1B33;font-size:.98rem;font-weight:700;padding:10px;cursor:pointer;margin-bottom:6px;transition:background .2s,border-color .2s">' + UC_ICON('microphone') + ' הפעל זיהוי נגינה</button>' +
             '<div id="wpl-mic-status" style="min-height:1.2em;font-size:.82rem;color:#6b6256;margin-bottom:8px"></div>' +
             '<button id="wpl-next" style="display:block;width:100%;min-height:48px;border:none;border-radius:14px;background:#0D1B33;color:#F7F1E6;font-size:1.05rem;font-weight:700;padding:12px;cursor:pointer">הבא ⟶</button>';
         // מעל הכפתורים והתווים (ראש ה-wrapper) — דביק כדי להישאר גלוי בטלפון
@@ -1129,7 +1129,7 @@ const WhistleFingering = (function () {
         const noteEl = document.getElementById('wpl-note');
         const fingEl = document.getElementById('wpl-fing');
         if (prog)  prog.textContent = 'תו ' + (player.idx + 1) + ' מתוך ' + player.notes.length;
-        if (coach) coach.textContent = isNew ? '🦉 תו חדש — נכיר אותו!' : '';
+        if (coach) coach.textContent = isNew ? '🦉 תו חדש, נכיר אותו!' : '';
         if (noteEl) noteEl.innerHTML = label + (solfege(written) ? ' <span style="font-size:1.1rem;color:#B5936A">· ' + solfege(written) + '</span>' : '');
         if (!fingEl) return;
         const svg = fingeringSVGFor(cur.name);
@@ -1210,8 +1210,8 @@ const WhistleFingering = (function () {
         const btn = document.createElement('button');
         btn.id        = 'whistle-game-btn';
         btn.className = 'button whistle-btn whistle-game-btn';
-        btn.innerHTML = '🎮 מצב נגן';
-        btn.title     = 'מצב נגן — לעבור על השיר תו-תו וללמוד תווים + אצבוע';
+        btn.innerHTML = UC_ICON('game') + ' מצב נגן';
+        btn.title     = 'מצב נגן: לעבור על השיר תו-תו וללמוד תווים + אצבוע';
         btn.style.backgroundColor = '#d9822b';
         btn.style.color = '#fff';
         btn.addEventListener('click', startPlayerMode);

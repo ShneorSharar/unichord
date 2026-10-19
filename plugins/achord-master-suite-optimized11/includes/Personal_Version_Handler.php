@@ -79,7 +79,7 @@ class AMS_Personal_Version_Handler {
 
         $user_id  = get_current_user_id();
         $existing = self::get_personal_version($post_id, $user_id);
-        $title    = get_the_title($post_id) . ' — גרסה אישית';
+        $title    = get_the_title($post_id) . ' · גרסה אישית';
 
         if ($existing) {
             $result = wp_update_post([
@@ -158,7 +158,7 @@ class AMS_Personal_Version_Handler {
         $personal = self::get_personal_version($post_id, $user_id);
 
         if (!$personal) {
-            wp_send_json_error('אין גרסה אישית לשיתוף — שמור גרסה קודם.');
+            wp_send_json_error('אין גרסה אישית לשיתוף. שמור גרסה קודם.');
         }
 
         $token = self::get_or_create_share_token($personal->ID);

@@ -27,13 +27,49 @@ get_header();
       <span class="uc-phero__eyebrow">מדריך השימוש</span>
       <h1 class="uc-phero__title">איך מתחילים <span>לנגן</span> ב-unichord</h1>
       <p class="uc-phero__sub">
-        מצאתם שיר, פתחתם אותו — וכל הכלים כבר מחכים: אקורדים מעל המילים, שינוי סולם בלחיצה,
+        מצאתם שיר ופתחתם אותו? כל הכלים כבר מחכים: אקורדים מעל המילים, שינוי סולם בלחיצה,
         גרסה קלה למתחילים, תווים ושיעורי וידאו. הנה כל מה שצריך לדעת.
       </p>
     </div>
   </header>
 
   <div class="uc-prose">
+
+    <!-- ══ למה דווקא unichord ══ -->
+    <h2 id="why">למה דווקא unichord?</h2>
+    <p>יש לא מעט אתרי אקורדים. הנה הדברים שיש כאן, ואין באף אחד אחר.</p>
+    <div class="uc-feature-grid">
+      <div class="uc-feature">
+        <span class="uc-feature__icon"><?php echo ams_icon( 'book-open' ); ?></span>
+        <div class="uc-feature__title">אקורדים שאפשר לסמוך עליהם</div>
+        <div class="uc-feature__desc">המאגר מבוסס על <strong>ספר האקורדים הישראלי של אורן מוסטקי</strong>, עבודת עריכה של שנים, ומתפרסם כאן <strong>באישורו</strong>. אלה לא אקורדים שמישהו ניחש, אלה אקורדים מוגהים.</div>
+      </div>
+      <div class="uc-feature">
+        <span class="uc-feature__icon"><?php echo ams_icon( 'folders' ); ?></span>
+        <div class="uc-feature__title">מחברת אישית משלכם</div>
+        <div class="uc-feature__desc">שמרו שירים, סדרו אותם בתיקיות, והעלו אקורדים משלכם בעורך פשוט וידידותי. הכול נשמר במקום אחד ומחכה לכם. <a href="<?php echo esc_url( home_url( '/notebook/' ) ); ?>">למחברת ←</a></div>
+      </div>
+      <div class="uc-feature">
+        <span class="uc-feature__icon"><?php echo ams_icon( 'download' ); ?></span>
+        <div class="uc-feature__title">נגינה גם בלי אינטרנט</div>
+        <div class="uc-feature__desc">אפשר להתקין את unichord כאפליקציה ולשמור שירים לנגינה גם כשאין רשת, על הבמה, בטיול או סביב המדורה.</div>
+      </div>
+      <div class="uc-feature">
+        <span class="uc-feature__icon"><?php echo ams_icon( 'gift' ); ?></span>
+        <div class="uc-feature__title">חינם, פתוח, בלי פרסומות</div>
+        <div class="uc-feature__desc">כל מה שיש כאן חינמי לתמיד, בלי תשלום נסתר ובלי פרסומת אחת. הקוד פתוח לכולם, כי מאגר של הקהילה צריך להישאר של הקהילה.</div>
+      </div>
+      <div class="uc-feature">
+        <span class="uc-feature__icon"><?php echo ams_icon( 'pencil-line' ); ?></span>
+        <div class="uc-feature__title">גופני "אות חיים"</div>
+        <div class="uc-feature__desc">אפשר לבחור לקרוא ולנגן בכתב ידם של נופלי ה-7 באוקטובר ומלחמת חרבות ברזל, מתוך מיזם ההנצחה <a href="https://www.ot-hayim.co.il/" target="_blank" rel="noopener">אות.חיים</a>. כל גופן מקושר לסיפורו של מי שהונצח, כך שהזיכרון חי בכל שיר שמנגנים.</div>
+      </div>
+      <div class="uc-feature">
+        <span class="uc-feature__icon"><?php echo ams_icon( 'palette' ); ?></span>
+        <div class="uc-feature__title">עוצב לקריאה בזמן נגינה</div>
+        <div class="uc-feature__desc">האקורד יושב בדיוק מעל המילה שבה מנגנים אותו, גודל הטקסט מתכוונן, ומצב הלילה נעים לעיניים גם ממרחק וגם בחושך של ערב שירה.</div>
+      </div>
+    </div>
 
     <!-- ══ 3 צעדים ראשונים ══ -->
     <h2>בשלושה צעדים</h2>
@@ -54,7 +90,7 @@ get_header();
           <div class="uc-step__title">פתחו את דף השיר</div>
           <div class="uc-step__desc">
             האקורדים מופיעים בדיוק מעל המילה שבה מנגנים אותם. לחיצה על אקורד פותחת דיאגרמה
-            לגיטרה או לפסנתר — כך רואים בדיוק איפה לשים את האצבעות.
+            לגיטרה או לפסנתר, כך תדעו איפה לשים את האצבעות.
           </div>
         </div>
       </div>
@@ -63,8 +99,8 @@ get_header();
         <div class="uc-step__body">
           <div class="uc-step__title">התאימו לעצמכם ותנגנו</div>
           <div class="uc-step__desc">
-            שנו סולם כדי שיתאים לקול שלכם, הפעילו גלילה אוטומטית, ועברו לגרסה קלה אם רק התחלתם.
-            הכול חינם, בלי הרשמה.
+            שנו סולם כדי שיתאים לקול שלכם, והפעילו גלילה אוטומטית אם זה נוח לכם. עדיין בהתחלה?
+            יש גם גרסה קלה. הכול חינם, בלי הרשמה.
           </div>
         </div>
       </div>
@@ -72,52 +108,52 @@ get_header();
 
     <!-- ══ כלים בדף השיר ══ -->
     <h2>הכלים שבדף השיר</h2>
-    <p>כל שיר מגיע עם ארגז כלים שנועד להפוך נגינה לפשוטה — בדיוק כמו שאתם מכירים מהאתרים הגדולים, רק בחינם ובלי פרסומות.</p>
+    <p>כל שיר מגיע עם ארגז כלים שלם, שנועד להפוך את הנגינה לפשוטה. בחינם, בלי פרסומות.</p>
     <div class="uc-feature-grid">
       <div class="uc-feature">
-        <span class="uc-feature__icon">🔄</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'refresh' ); ?></span>
         <div class="uc-feature__title">שינוי סולם (טרנספוז)</div>
         <div class="uc-feature__desc">מעלים או מורידים את כל האקורדים בלחיצה, כדי שהשיר יתאים לטווח הקול שלכם או לכלי שבידיכם.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">⭐</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'star' ); ?></span>
         <div class="uc-feature__title">גרסה קלה</div>
-        <div class="uc-feature__desc">מחליפה אקורדים מורכבים בפשוטים יותר — מושלם לצעדים הראשונים עם הגיטרה או היוקלילי.</div>
+        <div class="uc-feature__desc">מחליפה אקורדים מורכבים בגרסה פשוטה יותר, נהדר לצעדים הראשונים עם הגיטרה או היוקלילי.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">📜</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'scroll' ); ?></span>
         <div class="uc-feature__title">גלילה אוטומטית</div>
         <div class="uc-feature__desc">הדף גולל לבד בקצב שתבחרו, כדי שהידיים יישארו על הכלי לאורך כל השיר.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">🎹</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'piano' ); ?></span>
         <div class="uc-feature__title">דיאגרמות אקורד</div>
-        <div class="uc-feature__desc">לחיצה על כל אקורד מציגה את אופן האחיזה לגיטרה ולפסנתר — בלי לנחש.</div>
+        <div class="uc-feature__desc">לחיצה על כל אקורד מראה איך לאחוז אותו, על הגיטרה או בפסנתר.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">🎼</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'music' ); ?></span>
         <div class="uc-feature__title">תווים ונגן חי</div>
-        <div class="uc-feature__desc">לשירים רבים יש תווים מלאים שאפשר אפילו להשמיע — לפסנתר, גיטרה וחליל. <a href="<?php echo esc_url( $uc_tavim ); ?>">לספריית התווים ←</a></div>
+        <div class="uc-feature__desc">לשירים רבים יש תווים מלאים שאפשר גם להשמיע, לפסנתר, גיטרה וחליל. <a href="<?php echo esc_url( $uc_tavim ); ?>">לספריית התווים ←</a></div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">🎬</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'film' ); ?></span>
         <div class="uc-feature__title">שיעורי וידאו</div>
-        <div class="uc-feature__desc">לשירים שיש להם שיעור, סרטון ההסבר מוטמע בדף — לומדים לנגן צעד-צעד מול המסך.</div>
+        <div class="uc-feature__desc">לשירים שיש להם שיעור, סרטון ההסבר מוטמע ממש בדף, ואתם לומדים לנגן צעד-צעד מול המסך.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">🔖</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'bookmark' ); ?></span>
         <div class="uc-feature__title">שמירת מועדפים</div>
-        <div class="uc-feature__desc">שומרים שירים ל<a href="<?php echo esc_url( $uc_saved ); ?>">"שירים שמורים"</a> כדי לחזור אליהם בקליק. דורש התחברות מהירה.</div>
+        <div class="uc-feature__desc">שומרים שירים ל<a href="<?php echo esc_url( $uc_saved ); ?>">"שירים שמורים"</a> כדי לחזור אליהם בקליק, אחרי התחברות מהירה.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">🌙</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'moon' ); ?></span>
         <div class="uc-feature__title">מצב לילה וגופנים</div>
-        <div class="uc-feature__desc">מצב כהה נוח לנגינה בערב, גודל טקסט מתכוונן וגופנים מיוחדים — מתאימים את התצוגה אליכם.</div>
+        <div class="uc-feature__desc">מצב כהה נוח לנגינה בערב, ואפשר גם לכוונן את גודל הטקסט ולבחור גופן שנוח לכם לקרוא.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">📲</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'mobile' ); ?></span>
         <div class="uc-feature__title">אפליקציה ומצב לא-מקוון</div>
-        <div class="uc-feature__desc">אפשר להתקין את unichord כאפליקציה ולשמור שירים לנגינה גם בלי אינטרנט — מתפריט ☰.</div>
+        <div class="uc-feature__desc">אפשר להתקין את unichord כאפליקציה ולשמור שירים לנגינה גם בלי אינטרנט, מהתפריט <?php echo ams_icon( 'menu' ); ?>.</div>
       </div>
     </div>
 
@@ -127,22 +163,22 @@ get_header();
     // רק סרטונים שכבר קיימים בתיקייה יוצגו (נמנע ממסגרות ריקות)
     $uc_vdir_path = get_theme_file_path( '/assets/videos/guide' );
     $uc_demos = array(
-      array( 'slug' => 'search',        'e' => '🔍', 'label' => 'מוצאים שיר' ),
-      array( 'slug' => 'transpose',     'e' => '🔄', 'label' => 'שינוי סולם' ),
-      array( 'slug' => 'chord-diagrams','e' => '🎹', 'label' => 'תרשים אקורד' ),
-      array( 'slug' => 'easy-version',  'e' => '⭐', 'label' => 'גרסה קלה' ),
-      array( 'slug' => 'autoscroll',    'e' => '📜', 'label' => 'גלילה אוטומטית' ),
-      array( 'slug' => 'chordlist',     'e' => '🎸', 'label' => 'כל האקורדים של השיר' ),
-      array( 'slug' => 'favorites',     'e' => '🔖', 'label' => 'שמירת מועדפים' ),
-      array( 'slug' => 'night-mode',    'e' => '🌙', 'label' => 'מצב לילה' ),
-      array( 'slug' => 'add-song',      'e' => '➕', 'label' => 'מוסיפים שיר' ),
+      array( 'slug' => 'search',        'e' => 'search',  'label' => 'מוצאים שיר' ),
+      array( 'slug' => 'transpose',     'e' => 'refresh', 'label' => 'שינוי סולם' ),
+      array( 'slug' => 'chord-diagrams','e' => 'piano',   'label' => 'תרשים אקורד' ),
+      array( 'slug' => 'easy-version',  'e' => 'star',    'label' => 'גרסה קלה' ),
+      array( 'slug' => 'autoscroll',    'e' => 'scroll',  'label' => 'גלילה אוטומטית' ),
+      array( 'slug' => 'chordlist',     'e' => 'guitar',  'label' => 'כל האקורדים של השיר' ),
+      array( 'slug' => 'favorites',     'e' => 'bookmark','label' => 'שמירת מועדפים' ),
+      array( 'slug' => 'night-mode',    'e' => 'moon',    'label' => 'מצב לילה' ),
+      array( 'slug' => 'add-song',      'e' => 'plus',    'label' => 'מוסיפים שיר' ),
     );
     $uc_demos = array_values( array_filter( $uc_demos, function ( $d ) use ( $uc_vdir_path ) {
       return file_exists( $uc_vdir_path . '/feat-' . $d['slug'] . '.9x16.mp4' );
     } ) );
     if ( $uc_demos ) : ?>
     <h2>רואים את זה בפעולה</h2>
-    <p>הדגמות אמת מתוך האתר — בדיוק מה שתראו על המסך. הסרטונים מתנגנים בשקט תוך כדי הגלילה.</p>
+    <p>הדגמות אמת מתוך האתר, בדיוק מה שתראו על המסך. הסרטונים מתנגנים בשקט תוך כדי הגלילה.</p>
     <div class="uc-demos">
       <?php foreach ( $uc_demos as $d ) :
         $vsrc = $uc_vdir . '/feat-' . $d['slug'] . '.9x16.mp4';
@@ -156,7 +192,7 @@ get_header();
             <source src="<?php echo esc_url( $vsrc ); ?>" type="video/mp4">
           </video>
         </div>
-        <figcaption class="uc-demo__cap"><span class="e"><?php echo esc_html( $d['e'] ); ?></span><?php echo esc_html( $d['label'] ); ?></figcaption>
+        <figcaption class="uc-demo__cap"><span class="e"><?php echo ams_icon( $d['e'] ); ?></span><?php echo esc_html( $d['label'] ); ?></figcaption>
       </figure>
       <?php endforeach; ?>
     </div>
@@ -197,30 +233,30 @@ get_header();
     <!-- ══ תרומה לקהילה ══ -->
     <h2>רוצים לתרום? הצטרפו אלינו</h2>
     <p>
-      unichord נבנה ביחד. כל שיר שמתווסף, כל תיקון וכל שיעור הופכים את המאגר לטוב יותר עבור כולם —
-      ונשארים <strong>חופשיים, חינמיים ופתוחים</strong> לכל אחד. וכשאתם תורמים — השם שלכם מופיע בעמוד השיר
+      unichord נבנה ביחד. כל שיר, תיקון או שיעור שמתווסף הופך את המאגר לטוב יותר בשביל כולם,
+      ונשאר <strong>חינמי ופתוח</strong> לכל אחד. כשאתם תורמים, השם שלכם מופיע בעמוד השיר
       וב<a href="<?php echo esc_url( home_url( '/contributors/' ) ); ?>">עמוד התורמים</a>.
     </p>
     <div class="uc-feature-grid">
       <div class="uc-feature">
-        <span class="uc-feature__icon">➕</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'plus' ); ?></span>
         <div class="uc-feature__title">הוספת שיר</div>
         <div class="uc-feature__desc">מכירים את האקורדים לשיר שעדיין לא אצלנו? הוסיפו אותו בעורך הפשוט שלנו. <a href="<?php echo esc_url( $uc_add ); ?>">להוספת שיר ←</a></div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">✏️</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'pencil' ); ?></span>
         <div class="uc-feature__title">תיקון והצעת עריכה</div>
-        <div class="uc-feature__desc">ראיתם אקורד או מילה לא מדויקים? אפשר להציע תיקון ישירות מדף השיר — אנחנו נבדוק ונעדכן.</div>
+        <div class="uc-feature__desc">ראיתם אקורד או מילה לא מדויקים? אפשר להציע תיקון ישירות מדף השיר, ואנחנו נבדוק ונעדכן.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">🎥</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'video' ); ?></span>
         <div class="uc-feature__title">העלאת שיעור וידאו</div>
         <div class="uc-feature__desc">מורים ונגנים: קשרו סרטון שיעור לשיר (גיטרה או פסנתר) ועזרו לאלפים ללמוד לנגן אותו.</div>
       </div>
       <div class="uc-feature">
-        <span class="uc-feature__icon">🎼</span>
+        <span class="uc-feature__icon"><?php echo ams_icon( 'music' ); ?></span>
         <div class="uc-feature__title">יצירת תווים</div>
-        <div class="uc-feature__desc">יודעים לכתוב תווים? הוסיפו תווים לשירים שעדיין אין להם — והפכו אותם לזמינים לכולם.</div>
+        <div class="uc-feature__desc">יודעים לכתוב תווים? הוסיפו תווים לשירים שעדיין אין להם, ותהפכו אותם לזמינים לכולם.</div>
       </div>
     </div>
 
@@ -231,9 +267,9 @@ get_header();
         <h2 class="uc-cta-band__title">מוכנים להתחיל?</h2>
         <p class="uc-cta-band__sub">
           <?php if ( $uc_total > 100 ) : ?>
-            <?php echo esc_html( number_format_i18n( $uc_total ) ); ?> שירים מחכים לכם — בחרו אחד ותנגנו.
+            <?php echo esc_html( number_format_i18n( $uc_total ) ); ?> שירים מחכים לכם. בחרו אחד ותנגנו.
           <?php else : ?>
-            בחרו שיר ותנגנו — חינם, בלי הרשמה.
+            בחרו שיר ותנגנו, חינם ובלי הרשמה.
           <?php endif; ?>
         </p>
         <div class="uc-btn-row">
@@ -248,7 +284,7 @@ get_header();
     <div class="uc-faq">
       <details>
         <summary>האם השימוש באמת חינמי?</summary>
-        <p>כן, לחלוטין. כל הפונקציות באתר — חיפוש, אקורדים, תווים, שיעורים וכלי הנגינה — חינמיות לתמיד, בלי פרסומות ובלי תשלום נסתר.</p>
+        <p>כן, לגמרי. כל מה שיש באתר חינמי לתמיד, אין פרסומות ואין תשלום נסתר בשום מקום.</p>
       </details>
       <details>
         <summary>צריך להירשם כדי לנגן?</summary>
@@ -256,11 +292,11 @@ get_header();
       </details>
       <details>
         <summary>מאיפה מגיעים השירים?</summary>
-        <p>הבסיס שלנו הוא ספר האקורדים הישראלי — מאות שירי מופת של ארץ ישראל. מעבר לזה, המאגר גדל בכל יום בזכות תרומות הקהילה.</p>
+        <p>הבסיס שלנו הוא ספר האקורדים הישראלי, מאות שירים ותיקים ואהובים של ארץ ישראל. מעבר לזה, המאגר גדל כל יום בזכות תרומות הקהילה.</p>
       </details>
       <details>
-        <summary>לא מצאתי שיר שחיפשתי — מה עושים?</summary>
-        <p>אפשר להוסיף אותו בעצמכם דרך <a href="<?php echo esc_url( $uc_add ); ?>">הוספת שיר</a>, ואם תרצו — לבקש מאיתנו או מהקהילה להוסיף אותו דרך <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">יצירת קשר</a>.</p>
+        <summary>לא מצאתי שיר שחיפשתי, מה עושים?</summary>
+        <p>אפשר להוסיף אותו בעצמכם דרך <a href="<?php echo esc_url( $uc_add ); ?>">הוספת שיר</a>, או לבקש מאיתנו ומהקהילה דרך <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">יצירת קשר</a>.</p>
       </details>
       <details>
         <summary>אפשר להשתמש באתר מהנייד?</summary>

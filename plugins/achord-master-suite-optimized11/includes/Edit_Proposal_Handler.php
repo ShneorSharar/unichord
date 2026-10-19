@@ -142,7 +142,7 @@ class AMS_Edit_Proposal_Handler {
             wp_send_json_success(['message' => 'ההצעה הקיימת עודכנה ועדיין ממתינה לאישור.']);
         }
 
-        $title  = get_the_title($post_id) . ' — הצעת עריכה';
+        $title  = get_the_title($post_id) . ' · הצעת עריכה';
         $new_id = wp_insert_post([
             'post_type'    => self::CPT,
             'post_title'   => $title,
@@ -174,7 +174,7 @@ class AMS_Edit_Proposal_Handler {
         $song_title    = get_the_title($song->ID);
         $review_url    = admin_url('admin.php?page=achord-review-proposals');
 
-        $subject = sprintf('[Achordim] הצעת עריכה חדשה: %s', $song_title);
+        $subject = sprintf('[unichord] הצעת עריכה חדשה: %s', $song_title);
 
         $body  = "שלום,\n\n";
         $body .= sprintf("המשתמש %s שלח הצעת עריכה לשיר \"%s\".\n\n", $proposer_name, $song_title);
@@ -182,7 +182,7 @@ class AMS_Edit_Proposal_Handler {
             $body .= sprintf("הערת המשתמש: %s\n\n", $note);
         }
         $body .= "לסקירה ואישור/דחייה:\n" . $review_url . "\n\n";
-        $body .= "— מערכת Achordim";
+        $body .= "מערכת unichord";
 
         $emails = array_map(function($u) { return $u->user_email; }, $editors);
         foreach (array_unique($emails) as $email) {
@@ -310,11 +310,11 @@ class AMS_Edit_Proposal_Handler {
         $song_title = get_the_title($proposal->post_parent);
         $song_url   = get_permalink($proposal->post_parent);
 
-        $subject = sprintf('[Achordim] ההצעה שלך אושרה: %s', $song_title);
+        $subject = sprintf('[unichord] ההצעה שלך אושרה: %s', $song_title);
         $body    = "שלום {$proposer->display_name},\n\n";
         $body   .= "הצעת העריכה שלך לשיר \"{$song_title}\" אושרה ושולבה בגרסה הרשמית!\n\n";
         $body   .= "לצפייה בשיר: {$song_url}\n\n";
-        $body   .= "תודה על התרומה!\n— מערכת Achordim";
+        $body   .= "תודה על התרומה!\nמערכת unichord";
 
         wp_mail($proposer->user_email, $subject, $body);
     }
@@ -329,14 +329,14 @@ class AMS_Edit_Proposal_Handler {
         $song_title = get_the_title($proposal->post_parent);
         $song_url   = get_permalink($proposal->post_parent);
 
-        $subject = sprintf('[Achordim] הצעתך לשיר "%s" נדחתה', $song_title);
+        $subject = sprintf('[unichord] הצעתך לשיר "%s" נדחתה', $song_title);
         $body    = "שלום {$proposer->display_name},\n\n";
         $body   .= "הצעת העריכה שלך לשיר \"{$song_title}\" נדחתה על ידי עורך.\n\n";
         if ($reason) {
             $body .= "סיבת הדחייה: {$reason}\n\n";
         }
         $body .= "תוכל לשלוח הצעה חדשה לאחר עדכון: {$song_url}\n\n";
-        $body .= "— מערכת Achordim";
+        $body .= "מערכת unichord";
 
         wp_mail($proposer->user_email, $subject, $body);
     }

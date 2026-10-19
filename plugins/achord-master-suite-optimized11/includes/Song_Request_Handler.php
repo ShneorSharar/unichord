@@ -115,7 +115,7 @@ class AMS_Song_Request_Handler {
             $rid   = (int) $existing[0];
             $count = (int) get_post_meta($rid, '_req_count', true);
             update_post_meta($rid, '_req_count', max(1, $count) + 1);
-            wp_send_json_success(['message' => 'מישהו כבר ביקש את השיר הזה — הוספנו את הקול שלכם! 🙌', 'dedup' => true]);
+            wp_send_json_success(['message' => 'מישהו כבר ביקש את השיר הזה, והוספנו את הקול שלכם! 🙌', 'dedup' => true]);
         }
 
         $rid = wp_insert_post([
@@ -143,7 +143,7 @@ class AMS_Song_Request_Handler {
             ], $uid);
         }
 
-        wp_send_json_success(['message' => 'הבקשה נשלחה — תודה! נעשה כמיטב יכולתנו להוסיף את השיר. 🎸']);
+        wp_send_json_success(['message' => 'הבקשה נשלחה, תודה! נעשה כמיטב יכולתנו להוסיף את השיר. 🎸']);
     }
 
     // ── אדמין ──
@@ -238,7 +238,7 @@ class AMS_Song_Request_Handler {
         ]);
 
         if (empty($requests)) {
-            echo '<div class="uc-req-empty"><p>עדיין אין בקשות פתוחות — היו הראשונים לבקש שיר 🎵</p></div>';
+            echo '<div class="uc-req-empty"><p>עדיין אין בקשות פתוחות. היו הראשונים לבקש שיר ' . AMS_Icons::svg('music-note') . '</p></div>';
             return ob_get_clean();
         }
 

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Achord Master Suite
  * Description:       תוסף מאוחד לניהול, הצגה והעלאת שירים, שיעורים ותווים. כולל תצוגת אקורדים אינטראקטיבית, ארכיונים, טופס העלאה ועוד.
- * Version:           1.1.2 (Stable Build)
+ * Version:           1.3.25
  * Author:            המוזיקאי שבך (נבנה ועוצב ע"י Gemini)
  * Text Domain:       achord-master-suite
  */
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 final class Achord_Master_Suite {
 
     private static $_instance = null;
-    public $version = '1.3.18';
+    public $version = '1.3.42';
     
     public $setup_handler;
     public $assets_handler;
@@ -57,6 +57,7 @@ final class Achord_Master_Suite {
      * כל המוקדים (חיפוש / המלצות / ארכיב / ברירת-מחדל בשיר) נשענים על זה.
      */
     public static function easy_mode_on() {
+        if (isset($_GET['easy'])) return $_GET['easy'] === '1';
         return !empty($_COOKIE['ams_easy_mode']);
     }
 
@@ -81,6 +82,31 @@ final class Achord_Master_Suite {
         $query->set('meta_query', $mq);
     }
 
+    /**
+     * ?easy=1 בכתובת מדליק את מצב גרסה-קלה (?easy=0 מכבה) — מקביל לטוגל שבבר-החיפוש,
+     * כולל עוגייה מתמשכת כדי שגם בקשות ה-AJAX והעמודים הבאים יסוננו.
+     */
+    public function handle_easy_mode_param() {
+        if (!isset($_GET['easy']) || headers_sent()) return;
+        if ($_GET['easy'] === '1') {
+            setcookie('ams_easy_mode', '1', time() + YEAR_IN_SECONDS, '/');
+        } else {
+            setcookie('ams_easy_mode', '', time() - HOUR_IN_SECONDS, '/');
+        }
+    }
+
+    /**
+     * ארכיוני רמת-קושי (/level/…) בוטלו — הפניית-קבע לספריית האקורדים;
+     * רמות "קל" מפנות עם פילטר הגרסה-הקלה דולק.
+     */
+    public function redirect_level_archive() {
+        if (!is_tax('level')) return;
+        $term    = get_queried_object();
+        $is_easy = $term && in_array(urldecode($term->slug), ['קל', 'קל-ממש'], true);
+        wp_safe_redirect(home_url($is_easy ? '/chords/?easy=1' : '/chords/'), 301);
+        exit;
+    }
+
     public static function instance() {
         if (is_null(self::$_instance)) {
             self::$_instance = new self();
@@ -101,7 +127,9 @@ final class Achord_Master_Suite {
     }
 
     private function load_dependencies() {
-        // ראשון — שכבת ההגנה על תוכן משתמשים; שאר ה-handlers משתמשים בה.
+        // ראשון מכל — מערכת האייקונים המרכזית (Phosphor); כל ה-handlers והערכה משתמשים בה.
+        require_once AMS_PLUGIN_DIR . 'includes/Icons.php';
+        // שכבת ההגנה על תוכן משתמשים; שאר ה-handlers משתמשים בה.
         require_once AMS_PLUGIN_DIR . 'includes/Content_Guard.php';
         require_once AMS_PLUGIN_DIR . 'includes/Setup_Handler.php';
         require_once AMS_PLUGIN_DIR . 'includes/Assets_Handler.php';
@@ -186,6 +214,8 @@ final class Achord_Master_Suite {
 
         // מצב "גרסה קלה" גלובלי — סינון שאילתות-רשימה ראשיות
         add_action('pre_get_posts', [$this, 'filter_easy_mode_query']);
+        add_action('init', [$this, 'handle_easy_mode_param']);
+        add_action('template_redirect', [$this, 'redirect_level_archive']);
     }
 }
 

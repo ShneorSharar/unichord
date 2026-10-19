@@ -306,12 +306,12 @@ class AMS_User_Role_Handler {
         $admin_mail = get_option('admin_email');
         $promo_url  = admin_url('admin.php?page=achord-promotion-candidates');
 
-        $subject = sprintf('unichord — %s מוכן להיות עורך', $user->display_name);
+        $subject = sprintf('unichord · %s מוכן להיות עורך', $user->display_name);
         $body    = "שלום,\n\n";
         $body   .= sprintf("המשתמש %s עומד בסף הקידום:\n", $user->display_name);
         $body   .= sprintf("• הצעות שאושרו: %d\n", $approved);
         $body   .= sprintf("• אחוז אישור: %d%%\n\n", $pct);
-        $body   .= "לקידום לעורך:\n" . $promo_url . "\n\n— מערכת unichord";
+        $body   .= "לקידום לעורך:\n" . $promo_url . "\n\nמערכת unichord";
 
         wp_mail($admin_mail, $subject, $body);
     }
@@ -345,7 +345,9 @@ class AMS_User_Role_Handler {
 
         $user = get_userdata($target_id);
         wp_send_json_success([
-            'message' => sprintf('המשתמש %s קודם לעורך.', $user ? $user->display_name : $target_id),
+            // esc_html: מוצג עכשיו דרך innerHTML (יחד עם אייקון ה-SVG), אז שם התצוגה של המשתמש
+            // (שדה שהמשתמש עצמו שולט בו) חייב בריחה כדי למנוע הזרקת HTML/XSS.
+            'message' => sprintf('המשתמש %s קודם לעורך.', esc_html($user ? $user->display_name : $target_id)),
         ]);
     }
 
@@ -368,9 +370,9 @@ class AMS_User_Role_Handler {
         $body   .= "הנחיות עריכה:\n";
         $body   .= "• בדוק שהאקורדים מדויקים ותואמים את הביצוע המקורי\n";
         $body   .= "• אשר רק הצעות שעברו בדיקה מוקפדת\n";
-        $body   .= "• בעת ספק — העדף לדחות ולבקש תיקון\n\n";
+        $body   .= "• בעת ספק, העדף לדחות ולבקש תיקון\n\n";
         $body   .= "לסקירת הצעות:\n{$review_url}\n\n";
-        $body   .= "תודה על תרומתך!\n— צוות unichord";
+        $body   .= "תודה על תרומתך!\nצוות unichord";
 
         wp_mail($user->user_email, $subject, $body);
     }
@@ -393,6 +395,10 @@ class AMS_User_Role_Handler {
     public function render_admin_page() {
         $candidates = self::get_promotion_candidates();
         $nonce      = wp_create_nonce('achord_promote_editor_nonce');
+        // UC_ICON() (JS) נטען רק ב-wp_enqueue_scripts (פרונט) ולא זמין כאן ב-wp-admin,
+        // לכן מרנדרים את האייקונים בצד PHP ומעבירים כמחרוזות JS בטוחות.
+        $icon_check = wp_json_encode(AMS_Icons::svg('check'));
+        $icon_x     = wp_json_encode(AMS_Icons::svg('x'));
         ?>
         <div class="wrap" dir="rtl">
             <h1>מועמדים לקידום לעורך</h1>
@@ -442,6 +448,8 @@ class AMS_User_Role_Handler {
             <?php endif; ?>
         </div>
         <script>
+        var achordIconCheck = <?php echo $icon_check; ?>;
+        var achordIconX     = <?php echo $icon_x; ?>;
         document.querySelectorAll('.achord-promote-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var userId = this.dataset.userId;
@@ -459,16 +467,16 @@ class AMS_User_Role_Handler {
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
                         if (data.success) {
-                            statusEl.textContent = '✓ ' + data.data.message;
+                            statusEl.innerHTML = achordIconCheck + ' ' + data.data.message;
                             document.getElementById('achord-candidate-row-' + userId)
                                     .style.opacity = '0.5';
                         } else {
-                            statusEl.textContent = '✕ ' + data.data;
+                            statusEl.innerHTML = achordIconX + ' ' + data.data;
                             btn.disabled = false;
                         }
                     })
                     .catch(function() {
-                        statusEl.textContent = '✕ שגיאת רשת';
+                        statusEl.innerHTML = achordIconX + ' שגיאת רשת';
                         btn.disabled = false;
                     });
             });

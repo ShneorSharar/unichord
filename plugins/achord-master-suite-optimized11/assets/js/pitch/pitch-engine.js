@@ -58,7 +58,7 @@ export class PitchEngine {
     // דולף מאזין בכל mount/unmount של תו/שאלה.
     this._onVisibility = () => {
       if (document.visibilityState === 'visible' && this.running && this.ctx && this.ctx.state !== 'running')
-        this._status('suspended', 'חזרת לעמוד — הקש/י לחידוש האזנה.');
+        this._status('suspended', 'חזרת לעמוד. הקש/י לחידוש האזנה.');
     };
   }
 
@@ -203,7 +203,7 @@ export class PitchEngine {
     if (s.autoGainControl === true) forced.push('בקרת-עוצמה (AGC)');
     if (forced.length) {
       this._status('warn',
-        'המכשיר כפה: ' + forced.join(', ') + ' — עלול לגרום לרעידת-גובה. נסה/י מיקרופון מובנה (לא Bluetooth).',
+        'המכשיר כפה: ' + forced.join(', ') + '. עלול לגרום לרעידת-גובה. נסה/י מיקרופון מובנה (לא Bluetooth).',
         { settings: s });
     }
   }

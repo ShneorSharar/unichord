@@ -96,7 +96,11 @@ class AMS_Assets_Handler {
             wp_enqueue_style('google-fonts-assistant', 'https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap', [], null);
             // Always load the main script in the footer. The defer attribute will be applied via filter below.
             wp_enqueue_script('ams-main-script', AMS_PLUGIN_URL . 'assets/js/main.js', ['jquery'], AMS_VERSION, true);
-            
+
+            // מזריק את מערכת האייקונים (window.UC_ICON) לפני main.js — מקור-אמת יחיד
+            // להחלפות דינמיות (▶️↔⏸️, 🎸↔🎹) ללא תלות ברשת או בסדר-טעינה.
+            wp_add_inline_script('ams-main-script', AMS_Icons::js_snippet(), 'before');
+
             wp_localize_script('ams-main-script', 'ams_ajax_data', [
                 'ajax_url'        => admin_url('admin-ajax.php'),
                 'upload_nonce'    => wp_create_nonce('achord_upload_nonce'),

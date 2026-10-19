@@ -54,9 +54,8 @@ class AMS_Template_Handler {
         $related_posts_html = $this->shortcode_handler->get_related_posts_html(get_the_ID());
         echo '<div class="related-posts-container">' . $related_posts_html . '</div>';
         
-        // קישורי פוטר (חדש)
-        echo $this->shortcode_handler->get_footer_links_html();
-        
+        // קישורי הפוטר הישנים (get_footer_links_html) הוסרו — הבלוק היה מוסתר ב-CSS,
+        // הכיל קישורים שבורים (/copyright/ = 404) ומיתוג ישן, ורק ניפח את ה-HTML.
         echo '</footer>';
     }
 }
@@ -122,7 +121,7 @@ class AMS_Template_Handler {
             
             // רק אם יש גם שיעור וגם ווידאו - הצג את הבאנר
             if (!empty($lesson_video_url)) {
-                return '<div class="lesson-link-banner"><a href="' . esc_url(get_permalink($related_lesson_id)) . '">🎵&nbsp; רוצה ללמוד איך לנגן? לחץ כאן לצפייה בשיעור המלא</a></div>';
+                return '<div class="lesson-link-banner"><a href="' . esc_url(get_permalink($related_lesson_id)) . '">' . AMS_Icons::svg('music-note') . '&nbsp; רוצה ללמוד איך לנגן? לחץ כאן לצפייה בשיעור המלא</a></div>';
             }
         }
         

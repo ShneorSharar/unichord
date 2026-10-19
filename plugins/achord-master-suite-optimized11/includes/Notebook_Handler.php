@@ -386,7 +386,7 @@ class AMS_Notebook_Handler {
                     ]);
                 }
                 if ($pub->post_status === 'publish') {
-                    wp_send_json_error('השיר כבר פורסם באתר. כדי לעדכן את הגרסה הציבורית — הצע תיקון מתוך עמוד השיר.');
+                    wp_send_json_error('השיר כבר פורסם באתר. כדי לעדכן את הגרסה הציבורית, הצע תיקון מתוך עמוד השיר.');
                 }
             }
         }
@@ -495,9 +495,17 @@ class AMS_Notebook_Handler {
 
     /* ════════════════════════ שורטקוד ראשי ════════════════════════ */
 
+    /**
+     * כתובת עמוד ההתחברות עם חזרה לעמוד הנוכחי — משמש בהודעות "יש להתחבר".
+     */
+    private function nb_login_url() {
+        $redirect = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+        return esc_url(home_url('/login/') . '?redirect_to=' . rawurlencode($redirect));
+    }
+
     public function render_notebook($atts = []) {
         if (!is_user_logged_in()) {
-            return '<p class="ams-notice">יש להתחבר כדי לפתוח את המחברת האישית שלך.</p>';
+            return '<p class="ams-notice">יש <a href="' . $this->nb_login_url() . '">להתחבר</a> כדי לפתוח את המחברת האישית שלך.</p>';
         }
 
         $np = isset($_GET['np']) ? sanitize_text_field(wp_unslash($_GET['np'])) : '';
@@ -530,7 +538,7 @@ class AMS_Notebook_Handler {
         <div class="ams-nb-view" dir="rtl">
             <div class="ams-nb-view-bar">
                 <a class="ams-nb-btn ams-nb-btn--ghost" href="<?php echo esc_url(self::notebook_url()); ?>">→ חזרה למחברת</a>
-                <a class="ams-nb-btn" href="<?php echo esc_url(self::notebook_url(['np' => 'edit-' . $post->ID])); ?>">✏️ עריכה</a>
+                <a class="ams-nb-btn" href="<?php echo esc_url(self::notebook_url(['np' => 'edit-' . $post->ID])); ?>"><?php echo AMS_Icons::svg('pencil'); ?> עריכה</a>
             </div>
             <?php echo do_shortcode($this->build_song_block($post)); ?>
         </div>
@@ -594,7 +602,8 @@ class AMS_Notebook_Handler {
                 'edit'   => self::notebook_url(['np' => 'edit-' . $p->ID]),
                 'folder' => (string) get_post_meta($p->ID, self::ITEM_FOLDER_META, true),
                 'assign' => ['item_type' => 'personal', 'item_id' => $p->ID],
-                'badge'  => '✍️ שלי',
+                'badge'  => 'שלי',
+                'badge_icon' => 'pencil-line',
                 'pub'    => $pub,
                 'pub_link' => $pub_link,
             ];
@@ -612,7 +621,8 @@ class AMS_Notebook_Handler {
                 'edit'   => get_permalink($song->ID),
                 'folder' => (string) get_post_meta($p->ID, self::ITEM_FOLDER_META, true),
                 'assign' => ['item_type' => 'personal', 'item_id' => $p->ID],
-                'badge'  => '🎸 גרסה שלי',
+                'badge'  => 'גרסה שלי',
+                'badge_icon' => 'guitar',
             ];
         }
         foreach ($saved_ids as $sid) {
@@ -629,7 +639,8 @@ class AMS_Notebook_Handler {
                 'edit'   => '',
                 'folder' => isset($saved_map[$sid]) ? (string) $saved_map[$sid] : '',
                 'assign' => ['item_type' => 'saved', 'item_id' => $sid],
-                'badge'  => '🔖 שמור',
+                'badge'  => 'שמור',
+                'badge_icon' => 'bookmark',
             ];
         }
 
@@ -651,27 +662,27 @@ class AMS_Notebook_Handler {
              data-folders="<?php echo esc_attr(wp_json_encode($folder_options)); ?>">
 
             <header class="ams-nb-head">
-                <h1 class="ams-nb-title">📓 המחברת שלי</h1>
-                <p class="ams-nb-tagline">השירים, האקורדים והגרסאות שלך — במקום אחד, פרטי לחלוטין.</p>
+                <h1 class="ams-nb-title"><?php echo AMS_Icons::svg('folder'); ?> המחברת שלי</h1>
+                <p class="ams-nb-tagline">השירים, האקורדים והגרסאות שלך במקום אחד, פרטי לחלוטין.</p>
                 <div class="ams-nb-head-actions">
-                    <a class="ams-nb-btn ams-nb-btn--primary" href="<?php echo esc_url(self::notebook_url(['np' => 'new'])); ?>">✍️ כתוב שיר חדש</a>
-                    <button type="button" class="ams-nb-btn ams-nb-btn--ghost" id="ams-nb-add-folder">📁 תיקייה חדשה</button>
+                    <a class="ams-nb-btn ams-nb-btn--primary" href="<?php echo esc_url(self::notebook_url(['np' => 'new'])); ?>"><?php echo AMS_Icons::svg('pencil-line'); ?> כתוב שיר חדש</a>
+                    <button type="button" class="ams-nb-btn ams-nb-btn--ghost" id="ams-nb-add-folder"><?php echo AMS_Icons::svg('folder'); ?> תיקייה חדשה</button>
                 </div>
             </header>
 
             <?php if (empty($items)): ?>
                 <div class="ams-nb-empty">
                     <p>המחברת שלך עדיין ריקה.</p>
-                    <p class="ams-nb-empty-sub">לחץ על <strong>✍️ כתוב שיר חדש</strong> כדי לכתוב שיר משלך, או שמור שירים מהספרייה והם יופיעו כאן.</p>
+                    <p class="ams-nb-empty-sub">לחץ על <strong><?php echo AMS_Icons::svg('pencil-line'); ?> כתוב שיר חדש</strong> כדי לכתוב שיר משלך, או שמור שירים מהספרייה והם יופיעו כאן.</p>
                 </div>
             <?php else: ?>
 
                 <div class="ams-nb-filters" role="group" aria-label="סינון">
                     <button type="button" class="ams-nb-chip is-active" data-filter="all">הכל</button>
-                    <button type="button" class="ams-nb-chip" data-filter="own">✍️ שלי</button>
-                    <button type="button" class="ams-nb-chip" data-filter="version">🎸 גרסאות</button>
-                    <button type="button" class="ams-nb-chip" data-filter="saved">🔖 שמורים</button>
-                    <button type="button" class="ams-nb-chip" data-filter="published">✅ מפורסמים</button>
+                    <button type="button" class="ams-nb-chip" data-filter="own"><?php echo AMS_Icons::svg('pencil-line'); ?> שלי</button>
+                    <button type="button" class="ams-nb-chip" data-filter="version"><?php echo AMS_Icons::svg('guitar'); ?> גרסאות</button>
+                    <button type="button" class="ams-nb-chip" data-filter="saved"><?php echo AMS_Icons::svg('bookmark'); ?> שמורים</button>
+                    <button type="button" class="ams-nb-chip" data-filter="published"><?php echo AMS_Icons::svg('check'); ?> מפורסמים</button>
                 </div>
 
                 <div class="ams-nb-folders">
@@ -688,14 +699,14 @@ class AMS_Notebook_Handler {
                     <section class="ams-nb-folder" data-folder-id="<?php echo esc_attr($fid); ?>">
                         <header class="ams-nb-folder-head">
                             <span class="ams-nb-folder-name">
-                                <?php echo ($fid === '') ? '🗂️' : '📁'; ?>
+                                <?php echo ($fid === '') ? AMS_Icons::svg('folders') : AMS_Icons::svg('folder'); ?>
                                 <span class="ams-nb-folder-label"><?php echo esc_html($f['name']); ?></span>
                                 <span class="ams-nb-folder-count"><?php echo count($f_items); ?></span>
                             </span>
                             <?php if ($fid !== ''): ?>
                             <span class="ams-nb-folder-tools">
-                                <button type="button" class="ams-nb-icon-btn ams-nb-rename" title="שנה שם">✎</button>
-                                <button type="button" class="ams-nb-icon-btn ams-nb-del-folder" title="מחק תיקייה">🗑</button>
+                                <button type="button" class="ams-nb-icon-btn ams-nb-rename" title="שנה שם" aria-label="שנה שם"><?php echo AMS_Icons::svg('pencil'); ?></button>
+                                <button type="button" class="ams-nb-icon-btn ams-nb-del-folder" title="מחק תיקייה" aria-label="מחק תיקייה"><?php echo AMS_Icons::svg('trash'); ?></button>
                             </span>
                             <?php endif; ?>
                         </header>
@@ -709,13 +720,13 @@ class AMS_Notebook_Handler {
                                 data-assign-type="<?php echo esc_attr($it['assign']['item_type']); ?>"
                                 data-assign-id="<?php echo esc_attr($it['assign']['item_id']); ?>">
                                 <a class="ams-nb-item-main" href="<?php echo esc_url($it['url']); ?>">
-                                    <span class="ams-nb-item-badge"><?php echo esc_html($it['badge']); ?></span>
+                                    <span class="ams-nb-item-badge"><?php if (!empty($it['badge_icon'])) echo AMS_Icons::svg($it['badge_icon']) . ' '; echo esc_html($it['badge']); ?></span>
                                     <span class="ams-nb-item-title"><?php echo esc_html($it['title']); ?></span>
                                     <?php if ($it['sub']): ?><span class="ams-nb-item-sub"><?php echo esc_html($it['sub']); ?></span><?php endif; ?>
                                     <?php if ($pub === 'pending'): ?>
-                                        <span class="ams-nb-status ams-nb-status--pending">⏳ ממתין לאישור</span>
+                                        <span class="ams-nb-status ams-nb-status--pending"><?php echo AMS_Icons::svg('hourglass'); ?> ממתין לאישור</span>
                                     <?php elseif ($pub === 'published'): ?>
-                                        <span class="ams-nb-status ams-nb-status--published">✅ פורסם</span>
+                                        <span class="ams-nb-status ams-nb-status--published"><?php echo AMS_Icons::svg('check'); ?> פורסם</span>
                                     <?php endif; ?>
                                 </a>
                                 <div class="ams-nb-item-actions">
@@ -726,8 +737,8 @@ class AMS_Notebook_Handler {
                                         <?php endforeach; ?>
                                     </select>
                                     <?php if ($it['type'] === 'own'): ?>
-                                    <a class="ams-nb-icon-btn" href="<?php echo esc_url($it['edit']); ?>" title="עריכה">✏️</a>
-                                    <button type="button" class="ams-nb-icon-btn ams-nb-del-song" title="מחק שיר">🗑</button>
+                                    <a class="ams-nb-icon-btn" href="<?php echo esc_url($it['edit']); ?>" title="עריכה" aria-label="עריכה"><?php echo AMS_Icons::svg('pencil'); ?></a>
+                                    <button type="button" class="ams-nb-icon-btn ams-nb-del-song" title="מחק שיר" aria-label="מחק שיר"><?php echo AMS_Icons::svg('trash'); ?></button>
                                     <?php endif; ?>
                                 </div>
                             </li>
@@ -856,7 +867,7 @@ class AMS_Notebook_Handler {
      */
     public function render_editor($atts = []) {
         if (!is_user_logged_in()) {
-            return '<p class="ams-notice">יש להתחבר כדי לכתוב שיר.</p>';
+            return '<p class="ams-notice">יש <a href="' . $this->nb_login_url() . '">להתחבר</a> כדי לכתוב שיר.</p>';
         }
         $atts = shortcode_atts(['personal_id' => 0], $atts, 'achord_notebook_editor');
         $personal_id = intval($atts['personal_id']);
@@ -906,14 +917,14 @@ class AMS_Notebook_Handler {
         <div class="ams-nb-editor-wrap" dir="rtl">
             <div class="ams-nb-view-bar">
                 <a class="ams-nb-btn ams-nb-btn--ghost" href="<?php echo esc_url(self::notebook_url()); ?>">→ חזרה למחברת</a>
-                <span class="ams-nb-editor-heading"><?php echo $personal_id ? '✏️ עריכת שיר במחברת' : '✍️ שיר חדש'; ?></span>
+                <span class="ams-nb-editor-heading"><?php echo $personal_id ? AMS_Icons::svg('pencil') . ' עריכת שיר במחברת' : AMS_Icons::svg('pencil-line') . ' שיר חדש'; ?></span>
             </div>
 
             <div class="ams-nb-context-banner" role="note">
-                <span class="ams-nb-context-banner__icon" aria-hidden="true">🔒</span>
+                <span class="ams-nb-context-banner__icon" aria-hidden="true"><?php echo AMS_Icons::svg('lock'); ?></span>
                 <div class="ams-nb-context-banner__text">
                     <strong><?php echo $personal_id ? 'אתה עורך שיר במחברת האישית שלך (פרטי).' : 'אתה כותב שיר חדש במחברת האישית שלך (פרטי).'; ?></strong>
-                    בסיום תוכל לבחור: <em>🔒 לשמור רק לעצמך במחברת</em>, או <em>🌐 להציע אותו לפרסום באתר לכולם</em>.
+                    בסיום תוכל לבחור: <em><?php echo AMS_Icons::svg('lock'); ?> לשמור רק לעצמך במחברת</em>, או <em><?php echo AMS_Icons::svg('globe'); ?> להציע אותו לפרסום באתר לכולם</em>.
                 </div>
             </div>
 
@@ -977,9 +988,9 @@ class AMS_Notebook_Handler {
 
                         <div class="auf-editor-wrap">
                             <div class="auf-editor-mode-bar">
-                                <button type="button" id="auf-mode-text" class="auf-mode-btn auf-mode-btn--active" aria-pressed="true">✏️ עריכת מילים</button>
-                                <button type="button" id="auf-mode-chords" class="auf-mode-btn" aria-pressed="false">🎸 הוסף אקורדים</button>
-                                <button type="button" id="auf-preview-btn" class="auf-ghost-btn">👁 תצוגה חיה</button>
+                                <button type="button" id="auf-mode-text" class="auf-mode-btn auf-mode-btn--active" aria-pressed="true"><?php echo AMS_Icons::svg('pencil'); ?> עריכת מילים</button>
+                                <button type="button" id="auf-mode-chords" class="auf-mode-btn" aria-pressed="false"><?php echo AMS_Icons::svg('guitar'); ?> הוסף אקורדים</button>
+                                <button type="button" id="auf-preview-btn" class="auf-ghost-btn"><?php echo AMS_Icons::svg('eye'); ?> תצוגה חיה</button>
                             </div>
                             <div id="auf-text-mode" class="auf-editor-panel">
                                 <textarea class="auf-textarea" id="auf-editor-normal" name="version_normal"
@@ -1021,11 +1032,11 @@ class AMS_Notebook_Handler {
 
                     <div class="achord-save-bar" role="group" aria-label="שמירת השיר">
                         <button type="submit" id="auf-submit-btn" class="achord-save-bar__btn achord-save-bar__btn--personal">
-                            <span class="achord-save-bar__title">🔒 <?php echo $personal_id ? 'שמור שינויים' : 'שמור במחברת'; ?></span>
-                            <span class="achord-save-bar__sub">פרטי — רק אצלך במחברת</span>
+                            <span class="achord-save-bar__title"><?php echo AMS_Icons::svg('lock'); ?> <?php echo $personal_id ? 'שמור שינויים' : 'שמור במחברת'; ?></span>
+                            <span class="achord-save-bar__sub">פרטי, רק אצלך במחברת</span>
                         </button>
                         <button type="button" id="auf-publish-btn" class="achord-save-bar__btn achord-save-bar__btn--public">
-                            <span class="achord-save-bar__title">🌐 הצע לפרסום באתר</span>
+                            <span class="achord-save-bar__title"><?php echo AMS_Icons::svg('globe'); ?> הצע לפרסום באתר</span>
                             <span class="achord-save-bar__sub">יישלח לאישור ויתווסף לספרייה הציבורית. נשמר גם אצלך.</span>
                         </button>
                     </div>
@@ -1039,7 +1050,7 @@ class AMS_Notebook_Handler {
                 <div class="auf-modal__content">
                     <div class="auf-modal__header">
                         <h3 id="auf-modal-title" class="auf-section__title">ספריית אקורדים מלאה</h3>
-                        <button type="button" class="auf-modal__close" aria-label="סגור">✕</button>
+                        <button type="button" class="auf-modal__close" aria-label="סגור"><?php echo AMS_Icons::svg('x'); ?></button>
                     </div>
                     <div class="auf-modal__body">
                         <input type="text" id="auf-library-search" class="auf-input" placeholder="חיפוש אקורד... (לדוגמה: Am7)" autocomplete="off">

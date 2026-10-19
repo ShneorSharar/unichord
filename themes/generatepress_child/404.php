@@ -10,7 +10,7 @@ get_header();
     <div class="achord-404__inner">
         <div class="achord-404__code">404</div>
         <h1 class="achord-404__title">העמוד לא נמצא</h1>
-        <p class="achord-404__text">הדף שחיפשת אינו קיים. אולי הוא הועבר או שהכתובת שגויה.</p>
+        <p class="achord-404__text">לא הצלחנו למצוא את הדף הזה. ייתכן שהוא הועבר, או שהכתובת נכתבה לא נכון.</p>
         <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="achord-404__btn">
             חזרה לדף הבית
         </a>
